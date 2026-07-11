@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model DesignFile {
+  id         String           @id @default(cuid())
+  title      String           @default("Untitled Design")
+  ownerId    String
+  canvasData Json?
+  isPublic   Boolean          @default(false)
+  shareToken String           @unique @default(cuid())
+  thumbnail  String?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  comments   Comment[]
+  versions   VersionHistory[]
+
+  @@index([ownerId])
+  @@index([shareToken])
+  @@index([updatedAt])
+}
+
+model Comment {
+  id         String     @id @default(cuid())
+  fileId     String
+  authorId   String
+  authorName String
+  x          Float
+  y          Float
+  text       String
+  createdAt  DateTime   @default(now())
+  file       DesignFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@index([fileId])
+}
+
+model VersionHistory {
+  id         String     @id @default(cuid())
+  fileId     String
+  authorId   String
+  authorName String
+  name       String
+  canvasData Json
+  createdAt  DateTime   @default(now())
+  file       DesignFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@index([fileId])
+}

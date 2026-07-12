@@ -12,6 +12,7 @@ import {
 } from "tldraw";
 import "tldraw/tldraw.css";
 import { useEditorContext } from "./EditorContext";
+import { MiniMapViewer } from "./MiniMapViewer";
 import {
   useMutation,
   useOthers,
@@ -65,6 +66,7 @@ function CanvasInner({
   const editor = useEditor();
   const { setEditor } = useEditorContext();
   const updatePresence = useUpdateMyPresence();
+  const [showMiniMap, setShowMiniMap] = useState(true);
 
   // Liveblocks shared storage — used for real-time collaboration sync
   const root = useStorage((root) => root);
@@ -107,6 +109,13 @@ function CanvasInner({
       if (!isTyping && !isCmdOrCtrl && !isShift && key === "t") {
         e.preventDefault();
         editor.setCurrentTool("text");
+        return;
+      }
+
+      // Toggle Mini Map (M key)
+      if (!isTyping && !isCmdOrCtrl && !isShift && key === "m") {
+        e.preventDefault();
+        setShowMiniMap((prev) => !prev);
         return;
       }
 
@@ -368,6 +377,11 @@ function CanvasInner({
     <>
       <CursorOverlay readonly={readonly} />
       <CommentPins />
+      {showMiniMap && (
+        <div className="absolute top-3 right-3 z-40 rounded border border-border bg-surface/80 p-2 shadow-lg backdrop-blur">
+          <MiniMapViewer />
+        </div>
+      )}
     </>
   );
 }

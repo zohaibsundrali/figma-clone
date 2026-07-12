@@ -6,6 +6,7 @@ import { UserButton } from "@clerk/nextjs";
 import { FileGrid } from "./FileGrid";
 import { SearchAndFilters } from "./SearchAndFilters";
 import { AnalyticsPanel } from "./AnalyticsPanel";
+import { WorkspaceSettings } from "./WorkspaceSettings";
 import type { DesignFileSummary } from "@/types";
 import {
   Folder,
@@ -27,7 +28,8 @@ import {
   Grid,
   Plus,
   Bell,
-  BarChart3
+  BarChart3,
+  Settings
 } from "lucide-react";
 
 interface DashboardClientProps {
@@ -436,6 +438,18 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
               <BarChart3 className="h-4 w-4" />
               <span>Analytics</span>
             </button>
+
+            <button
+              onClick={() => setSelectedTab("workspace")}
+              className={`flex w-full items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                selectedTab === "workspace"
+                  ? "bg-accent/10 text-accent font-bold"
+                  : "text-muted hover:text-foreground hover:bg-border/20"
+              }`}
+            >
+              <Settings className="h-4 w-4" />
+              <span>Workspace</span>
+            </button>
           </div>
 
           {/* Starred Projects Section */}
@@ -642,9 +656,11 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
             onFilterChange={setFilteredFiles}
           />
 
-          {/* Grid Layout of files or Analytics */}
+          {/* Grid Layout of files, Analytics, or Workspace Settings */}
           {selectedTab === "analytics" ? (
             <AnalyticsPanel userId="user_id" />
+          ) : selectedTab === "workspace" ? (
+            <WorkspaceSettings workspaceId="workspace_default" />
           ) : (
             <div className={isSearching ? "opacity-75 transition-opacity" : ""}>
               <FileGrid

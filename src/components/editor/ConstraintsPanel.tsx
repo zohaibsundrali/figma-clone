@@ -1,6 +1,6 @@
 "use client";
 
-import { useEditor, track } from "tldraw";
+import { track } from "tldraw";
 import { useState, useEffect } from "react";
 import { Lock, Maximize2, Square } from "lucide-react";
 import { useEditorContext } from "./EditorContext";
@@ -65,8 +65,7 @@ const CONSTRAINT_PRESETS = {
 };
 
 export const ConstraintsPanel = track(function ConstraintsPanel() {
-  const editor = useEditor();
-  const { fileId } = useEditorContext();
+  const { editor, fileId } = useEditorContext();
   const [constraints, setConstraints] = useState<Map<string, ShapeConstraints>>(
     new Map()
   );

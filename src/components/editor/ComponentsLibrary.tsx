@@ -1,6 +1,6 @@
 "use client";
 
-import { useEditor, track } from "tldraw";
+import { track } from "tldraw";
 import { useState, useEffect } from "react";
 import { Copy, Trash2, Settings, Package } from "lucide-react";
 import { useEditorContext } from "./EditorContext";
@@ -23,8 +23,7 @@ interface ComponentInstance {
 }
 
 export const ComponentsLibrary = track(function ComponentsLibrary() {
-  const editor = useEditor();
-  const { fileId } = useEditorContext();
+  const { editor, fileId } = useEditorContext();
   const [components, setComponents] = useState<Component[]>([]);
   const [instances, setInstances] = useState<Map<string, ComponentInstance>>(new Map());
   const [componentName, setComponentName] = useState("");

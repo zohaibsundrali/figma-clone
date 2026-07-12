@@ -184,7 +184,7 @@ export default async function Home() {
               Log in
             </Link>
             <Link
-              href="/dashboard"
+              href="/sign-up"
               className="inline-flex items-center rounded-md bg-sky-500 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-sky-400"
             >
               Get Started
@@ -210,7 +210,7 @@ export default async function Home() {
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/dashboard"
+              href="/sign-up"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-sky-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-sky-400"
             >
               Start designing for free
@@ -286,7 +286,7 @@ export default async function Home() {
                 </ul>
                 <div className="mt-8">
                   <Link
-                    href={plan.name === "Organization" ? "#" : "/dashboard"}
+                    href={plan.name === "Organization" ? "#" : "/sign-up"}
                     className={`flex h-11 w-full items-center justify-center rounded-lg text-sm font-semibold transition-colors ${plan.highlighted ? "bg-sky-500 text-white hover:bg-sky-400" : "border border-white/10 bg-white/5 text-white hover:bg-white/10"}`}
                   >
                     {plan.cta}

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEditor, track } from "tldraw";
+import { track } from "tldraw";
+import { useEditorContext } from "./EditorContext";
 import {
   AlignLeft,
   AlignCenter,
@@ -26,7 +27,7 @@ export const AlignmentToolsMenu = track(function AlignmentToolsMenu({
   isOpen,
   onClose,
 }: AlignmentMenuProps) {
-  const editor = useEditor();
+  const { editor } = useEditorContext();
 
   if (!isOpen || !editor) return null;
 

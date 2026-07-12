@@ -2,11 +2,11 @@
 
 import { useCallback, useState, useTransition, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { UserButton } from "@clerk/nextjs";
 import { FileGrid } from "./FileGrid";
 import { SearchAndFilters } from "./SearchAndFilters";
 import { AnalyticsPanel } from "./AnalyticsPanel";
 import { WorkspaceSettings } from "./WorkspaceSettings";
+import { SidebarUserMenu } from "./SidebarUserMenu";
 import type { DesignFileSummary } from "@/types";
 import {
   Folder,
@@ -23,8 +23,6 @@ import {
   ChevronDown,
   Globe,
   Star,
-  FileCode,
-  Presentation,
   Grid,
   Plus,
   Bell,
@@ -306,7 +304,7 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
     }
 
     return filteredFiles.filter((file) => {
-      if (selectedTab === "all" || selectedTab === "recent") {
+      if (selectedTab === "all" || selectedTab === "recent" || selectedTab === "drafts") {
         return true;
       }
       if (selectedTab === "shared") {
@@ -321,6 +319,7 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
 
   const activeTabTitle = useMemo(() => {
     if (selectedTab === "all") return "All projects";
+    if (selectedTab === "drafts") return "Drafts";
     if (selectedTab === "recent") return "Recents";
     if (selectedTab === "shared") return "Shared files";
     if (selectedTab === "archived") return "Trash";
@@ -333,15 +332,9 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
       <aside className="w-64 border-r border-border bg-surface flex flex-col justify-between flex-shrink-0 h-full">
         <div className="flex flex-col gap-4 p-4 min-h-0 overflow-y-auto">
           {/* User Profile dropdown & notifications */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5 cursor-pointer hover:bg-border/30 p-1.5 rounded-lg transition-colors">
-              <div className="h-6 w-6 rounded-full bg-accent flex items-center justify-center text-xs font-bold text-white shadow-inner">
-                Z
-              </div>
-              <span className="text-xs font-bold text-foreground">Zohaib</span>
-              <ChevronDown className="h-3 w-3 text-muted" />
-            </div>
-            <button className="text-muted hover:text-foreground transition-colors p-1.5 rounded-full hover:bg-border/40">
+          <div className="flex items-center justify-between gap-2">
+            <SidebarUserMenu />
+            <button className="text-muted hover:text-foreground transition-colors p-1.5 rounded-full hover:bg-border/40 flex-shrink-0">
               <Bell className="h-4 w-4" />
             </button>
           </div>
@@ -396,9 +389,9 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
             </div>
 
             <button
-              onClick={() => setSelectedTab("all")}
+              onClick={() => setSelectedTab("drafts")}
               className={`flex w-full items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                selectedTab === "all"
+                selectedTab === "drafts"
                   ? "bg-accent/10 text-accent font-bold"
                   : "text-muted hover:text-foreground hover:bg-border/20"
               }`}
@@ -431,7 +424,7 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
               <span>Trash</span>
             </button>
 
-            <button
+            {/* <button
               onClick={() => setSelectedTab("analytics")}
               className={`flex w-full items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-semibold transition-colors ${
                 selectedTab === "analytics"
@@ -441,7 +434,7 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
             >
               <BarChart3 className="h-4 w-4" />
               <span>Analytics</span>
-            </button>
+            </button> */}
 
             <button
               onClick={() => setSelectedTab("workspace")}
@@ -555,7 +548,7 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
             <span className="text-sm font-bold text-foreground capitalize">{activeTabTitle}</span>
           </div>
 
-          {/* Center/Right: Create Template Buttons and Clerk User Profile */}
+          {/* Right: Create Template Buttons */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               {/* + Design Button (Blue) */}
@@ -567,31 +560,7 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
                 <Plus className="h-3.5 w-3.5" />
                 <span>Design</span>
               </button>
-
-              {/* + FigJam Button (Purple) */}
-              <button
-                onClick={() => handleCreate("figjam")}
-                disabled={creating}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-sm disabled:opacity-50"
-              >
-                <FileCode className="h-3.5 w-3.5" />
-                <span>FigJam</span>
-              </button>
-
-              {/* + Slides Button (Orange) */}
-              <button
-                onClick={() => handleCreate("slides")}
-                disabled={creating}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold transition-all shadow-sm disabled:opacity-50"
-              >
-                <Presentation className="h-3.5 w-3.5" />
-                <span>Slides</span>
-              </button>
             </div>
-
-            {/* Clerk User Profile button */}
-            <div className="h-px bg-border w-4" />
-            <UserButton />
           </div>
         </header>
 
@@ -656,7 +625,7 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
 
           {/* Search and Filters */}
           <SearchAndFilters
-            files={filteredFiles}
+            files={files}
             onFilterChange={setFilteredFiles}
           />
 

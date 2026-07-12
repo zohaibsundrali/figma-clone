@@ -1,28 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-import { getOwnedFile } from "@/lib/file-access";
+import { getCurrentUserId } from "@/lib/file-access";
 
 type RouteParams = { params: Promise<{ fileId: string }> };
 
 export async function GET(
-  _request: NextRequest,
+  req: NextRequest,
   { params }: RouteParams
 ) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const userId = await getCurrentUserId();
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { fileId } = await params;
 
-    const file = await getOwnedFile(fileId, userId);
-    if (!file) {
-      return NextResponse.json(
-        { error: "File not found or unauthorized" },
-        { status: 404 }
-      );
+    // Verify user owns this file
+    const file = await prisma.designFile.findUnique({
+      where: { id: fileId },
+      select: { ownerId: true },
+    });
+
+    if (!file || file.ownerId !== userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const versions = await prisma.versionHistory.findMany({
@@ -31,61 +30,58 @@ export async function GET(
     });
 
     return NextResponse.json(versions);
-  } catch (error) {
-    console.error("[VERSIONS_GET]", error);
-    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
+  } catch (err) {
+    console.error("[Versions GET]", err);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
 
 export async function POST(
-  request: NextRequest,
+  req: NextRequest,
   { params }: RouteParams
 ) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const userId = await getCurrentUserId();
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { fileId } = await params;
-
-    const file = await getOwnedFile(fileId, userId);
-    if (!file) {
-      return NextResponse.json(
-        { error: "File not found or unauthorized" },
-        { status: 404 }
-      );
-    }
-
-    const body = await request.json();
+    const body = await req.json();
     const { name, canvasData, authorName } = body;
 
-    if (!name || typeof name !== "string" || name.trim() === "") {
-      return NextResponse.json({ error: "name is required" }, { status: 400 });
-    }
-    if (!canvasData) {
-      return NextResponse.json(
-        { error: "canvasData is required" },
-        { status: 400 }
-      );
+    // Verify user owns this file
+    const file = await prisma.designFile.findUnique({
+      where: { id: fileId },
+      select: { ownerId: true },
+    });
+
+    if (!file || file.ownerId !== userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const version = await prisma.versionHistory.create({
       data: {
         fileId,
         authorId: userId,
-        authorName:
-          typeof authorName === "string" && authorName.trim()
-            ? authorName.trim()
-            : "Anonymous",
-        name: name.trim(),
-        canvasData,
+        authorName: authorName || "Unknown",
+        name: name || "Version snapshot",
+        canvasData: canvasData || {},
       },
     });
 
+    // Log activity
+    await prisma.activity.create({
+      data: {
+        fileId,
+        authorId: userId,
+        authorName: authorName || "You",
+        action: "version_saved",
+        details: `Version "${name}" saved`,
+      },
+    }).catch((err) => console.error("[Activity logging]", err));
+
     return NextResponse.json(version, { status: 201 });
-  } catch (error) {
-    console.error("[VERSIONS_POST]", error);
-    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
+  } catch (err) {
+    console.error("[Versions POST]", err);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

@@ -289,6 +289,46 @@ Select 2+ shapes → Combine button activates
 - Clone the text instead of flipping
 - Consider rotating for mirrored effect
 
+### 5. Distribution Tools (`src/components/editor/DistributionToolsMenu.tsx`)
+
+**What:** Automatically space and arrange multiple shapes evenly
+
+**Operations:**
+- **Horizontal Equal Gap** — Equal spacing between shapes (no overlap)
+- **Horizontal Equal Space** — Evenly distribute across available width
+- **Vertical Equal Gap** — Equal spacing between shapes (no overlap)
+- **Vertical Equal Space** — Evenly distribute across available height
+- **Grid Layout** — Arrange in rectangular grid pattern
+- **Center Horizontal** — Align all shapes to canvas center X
+- **Center Vertical** — Align all shapes to canvas center Y
+
+**How it works:**
+- Select 3+ shapes
+- Click distribution button (bottom toolbar)
+- Choose distribution mode
+- Shapes automatically repositioned
+- Original spacing preserved/calculated
+
+**Keyboard Shortcuts:**
+```
+(None - access via UI button)
+Select 3+ shapes → Distribution button activates
+```
+
+**Workflows enabled:**
+- Create evenly-spaced UI components
+- Arrange icons in grid patterns
+- Organize layers or guides
+- Create responsive layouts
+- Professional spacing in designs
+
+**Usage Example:**
+```typescript
+// Select 5 buttons in a row
+// Click Distribution → Horizontal Equal Space
+// Buttons automatically space evenly across canvas
+```
+
 ---
 
-**Next:** Add distribution tools, guides library, and advanced constraint system in Phase 15.
+**Next:** Add guides library and advanced constraint system in Phase 17.

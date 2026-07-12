@@ -380,6 +380,7 @@ function CanvasInner({
       <SmartGuides />
       <TransformControls />
       <PathOperationsMenu />
+      <DistributionToolsMenu />
       {showMiniMap && (
         <div className="absolute top-3 right-3 z-40 rounded border border-border bg-surface/80 p-2 shadow-lg backdrop-blur">
           <MiniMapViewer />
@@ -462,6 +463,7 @@ import { FigmaTextShapeUtil } from "./FigmaTextShapeUtil";
 import { SmartGuides } from "./SmartGuides";
 import { TransformControls } from "./TransformControls";
 import { PathOperationsMenu } from "./PathOperationsMenu";
+import { DistributionToolsMenu } from "./DistributionToolsMenu";
 
 interface EditorCanvasProps {
   initialData: unknown | null;

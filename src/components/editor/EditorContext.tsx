@@ -29,6 +29,8 @@ export interface NotificationItem {
 interface EditorContextValue {
   editor: Editor | null;
   setEditor: (editor: Editor | null) => void;
+  fileId: string | null;
+  setFileId: (id: string | null) => void;
   isCommentsMode: boolean;
   setIsCommentsMode: (mode: boolean) => void;
   comments: Comment[];
@@ -46,6 +48,8 @@ interface EditorContextValue {
 export const EditorContext = createContext<EditorContextValue>({
   editor: null,
   setEditor: () => {},
+  fileId: null,
+  setFileId: () => {},
   isCommentsMode: false,
   setIsCommentsMode: () => {},
   comments: [],

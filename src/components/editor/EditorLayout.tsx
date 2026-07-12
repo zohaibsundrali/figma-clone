@@ -60,6 +60,7 @@ export function EditorLayout({
     [file.id]
   );
 
+  const [fileId, setFileId] = useState(file.id);
   const [isCommentsMode, setIsCommentsMode] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isVersionHistoryOpen, setIsVersionHistoryOpen] = useState(false);
@@ -143,6 +144,8 @@ export function EditorLayout({
     <EditorContext.Provider value={{
       editor,
       setEditor,
+      fileId,
+      setFileId,
       isCommentsMode,
       setIsCommentsMode,
       comments,

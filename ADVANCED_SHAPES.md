@@ -214,6 +214,44 @@ export function EditorCanvas() {
 4. Resize - constrained elements scale proportionally
 5. Adjust only responsive parts
 
+### 4. Path Operations (`src/components/editor/PathOperationsMenu.tsx`)
+
+**What:** Boolean operations for combining/modifying multiple shapes
+
+**Operations:**
+- **Union** — Combine shapes into one bounding shape
+- **Intersect** — Keep only overlapping area
+- **Subtract** — Subtract second shape(s) from first
+- **Divide** — Split shapes at intersection points
+
+**How it works:**
+- Select 2+ shapes
+- Click combine button (bottom toolbar)
+- Choose operation from dropdown menu
+- Creates new shape, deletes originals
+- Logs action to activity history
+
+**Usage:**
+```typescript
+// Select multiple shapes
+// Click Combine button
+// Choose Union/Intersect/Subtract/Divide
+// Operation executes, creates result shape
+```
+
+**Keyboard shortcuts:**
+```
+(None - access via UI button)
+Select 2+ shapes → Combine button activates
+```
+
+**Workflows enabled:**
+- Cutout designs (subtract circular mask from background)
+- Overlapping patterns (union for merged designs)
+- Complex shapes (build from simple shapes)
+- Icon design (combine basic shapes)
+- Negative space design (intersect for creative effects)
+
 ## Future Enhancements
 
 ### Priority 1 (High Impact)
@@ -226,7 +264,7 @@ export function EditorCanvas() {
 - [ ] 3D rotation preview
 - [ ] Perspective transform
 - [ ] Morph/blend shapes
-- [ ] Path operations (union, intersect, subtract)
+- [ ] Advanced path operations (with curves)
 
 ### Priority 3 (Polish)
 - [ ] Transform history

@@ -377,6 +377,9 @@ function CanvasInner({
     <>
       <CursorOverlay readonly={readonly} />
       <CommentPins />
+      <SmartGuides />
+      <TransformControls />
+      <PathOperationsMenu />
       {showMiniMap && (
         <div className="absolute top-3 right-3 z-40 rounded border border-border bg-surface/80 p-2 shadow-lg backdrop-blur">
           <MiniMapViewer />
@@ -456,6 +459,9 @@ const CommentPins = track(() => {
 import { EditorContextMenu } from "./EditorContextMenu";
 
 import { FigmaTextShapeUtil } from "./FigmaTextShapeUtil";
+import { SmartGuides } from "./SmartGuides";
+import { TransformControls } from "./TransformControls";
+import { PathOperationsMenu } from "./PathOperationsMenu";
 
 interface EditorCanvasProps {
   initialData: unknown | null;

@@ -24,7 +24,7 @@ function parseLineHeight(lh: string | number | undefined, fontSize: number): num
 }
 
 // Letter spacing parser: converts user input to a CSS compatible spacing value
-function parseLetterSpacing(ls: string | number | undefined): string {
+function parseLetterSpacing(ls: string | number | null | undefined): string {
   if (!ls) return "normal";
   if (typeof ls === "number") return `${ls}px`;
   const str = String(ls).trim();
@@ -105,7 +105,11 @@ export class FigmaTextShapeUtil extends TextShapeUtil {
     const bgRadius = typeof meta.bgRadius === 'number' ? meta.bgRadius : 0;
     
     // Spacing
-    const letterSpacing = parseLetterSpacing(meta.letterSpacing);
+    const letterSpacing = parseLetterSpacing(
+      typeof meta.letterSpacing === 'string' || typeof meta.letterSpacing === 'number'
+        ? meta.letterSpacing
+        : undefined
+    );
     const paragraphSpacing = typeof meta.paragraphSpacing === 'number' ? meta.paragraphSpacing : 0;
     const paragraphIndentation = typeof meta.paragraphIndentation === 'number' ? meta.paragraphIndentation : 0;
     const textAlign = (meta.textAlign as string) || shape.props.textAlign || "start";
@@ -153,7 +157,7 @@ export class FigmaTextShapeUtil extends TextShapeUtil {
       lineHeight,
       labelColor: textColor,
       textWidth: Math.max(0, shape.props.w - bgPaddingX * 2),
-      textHeight: Math.max(0, shape.props.h - bgPaddingY * 2),
+      textHeight: Math.max(0, (shape.props as any).h - bgPaddingY * 2),
       style: {
         ...(element.props.style || {}),
         ...customVariables,
@@ -200,7 +204,11 @@ export class FigmaTextShapeUtil extends TextShapeUtil {
     const paragraphSpacing = typeof meta.paragraphSpacing === 'number' ? meta.paragraphSpacing : 0;
     const paragraphIndentation = typeof meta.paragraphIndentation === 'number' ? meta.paragraphIndentation : 0;
     const textAlign = (meta.textAlign as string) || shape.props.textAlign || "start";
-    const letterSpacing = parseLetterSpacing(meta.letterSpacing);
+    const letterSpacing = parseLetterSpacing(
+      typeof meta.letterSpacing === 'string' || typeof meta.letterSpacing === 'number'
+        ? meta.letterSpacing
+        : undefined
+    );
 
     const html = `<div style="text-align: ${textAlign}; text-indent: ${paragraphIndentation}px; letter-spacing: ${letterSpacing}; --figma-paragraph-spacing: ${paragraphSpacing}px;">${rawHtml}</div>`;
 

@@ -1,16 +1,16 @@
 import { auth } from "@clerk/nextjs/server";
-import { prisma } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/file-access";
 
 export async function GET(
   req: Request,
-  { params }: { params: { fileId: string } }
+  { params }: { params: Promise<{ fileId: string }> }
 ) {
   try {
     const userId = await getCurrentUserId();
     if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-    const fileId = params.fileId;
+    const { fileId } = await params;
     const guides = await prisma.guide.findMany({
       where: { fileId },
       orderBy: [{ setName: "asc" }, { position: "asc" }],
@@ -25,13 +25,13 @@ export async function GET(
 
 export async function POST(
   req: Request,
-  { params }: { params: { fileId: string } }
+  { params }: { params: Promise<{ fileId: string }> }
 ) {
   try {
     const userId = await getCurrentUserId();
     if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-    const fileId = params.fileId;
+    const { fileId } = await params;
     const body = await req.json();
     const { setName, position, type, locked = false, color = "#4f46e5" } = body;
 

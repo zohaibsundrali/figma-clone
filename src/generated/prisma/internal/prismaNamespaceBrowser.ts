@@ -57,7 +57,8 @@ export const ModelName = {
   Comment: 'Comment',
   VersionHistory: 'VersionHistory',
   Activity: 'Activity',
-  Template: 'Template'
+  Template: 'Template',
+  Guide: 'Guide'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -179,6 +180,21 @@ export const TemplateScalarFieldEnum = {
 } as const
 
 export type TemplateScalarFieldEnum = (typeof TemplateScalarFieldEnum)[keyof typeof TemplateScalarFieldEnum]
+
+
+export const GuideScalarFieldEnum = {
+  id: 'id',
+  fileId: 'fileId',
+  setName: 'setName',
+  position: 'position',
+  type: 'type',
+  locked: 'locked',
+  color: 'color',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GuideScalarFieldEnum = (typeof GuideScalarFieldEnum)[keyof typeof GuideScalarFieldEnum]
 
 
 export const SortOrder = {

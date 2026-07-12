@@ -586,6 +586,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
 
   // Helper: update property for selection
   function updateProp(key: string, value: unknown) {
+    if (!editor) return;
     editor.markHistoryStoppingPoint(`change-property-${key}`);
     editor.updateShapes(
       selectedShapes.map((s) => {
@@ -602,12 +603,13 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
             [key]: value,
           },
         };
-      })
+      }) as any
     );
   }
 
   // Helper: update meta property for selection
   function updateMetaProp(key: string, value: unknown) {
+    if (!editor) return;
     editor.markHistoryStoppingPoint(`change-meta-${key}`);
     editor.updateShapes(
       selectedShapes.map((s) => ({
@@ -617,12 +619,13 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
           ...s.meta,
           [key]: value,
         },
-      }))
+      })) as any
     );
   }
 
   // Multi-update values helper
   function updateMetaProps(updates: Record<string, unknown>) {
+    if (!editor) return;
     editor.markHistoryStoppingPoint("change-multiple-meta");
     editor.updateShapes(
       selectedShapes.map((s) => ({
@@ -632,11 +635,12 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
           ...s.meta,
           ...updates,
         },
-      }))
+      })) as any
     );
   }
 
   function updateAlign(align: "start" | "middle" | "end" | "justify") {
+    if (!editor) return;
     const tldrawAlign = align === "justify" ? "start" : align;
     editor.markHistoryStoppingPoint("change-text-alignment");
     editor.updateShapes(
@@ -651,7 +655,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
           ...s.meta,
           textAlign: align,
         },
-      }))
+      })) as any
     );
   }
 
@@ -670,7 +674,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
     if (s.type === "text") {
       return richTextToText(editor, s.props.richText);
     }
-    return (s.props.text as string) || "";
+    return "";
   }, "");
 
   // 3. Typography values
@@ -794,9 +798,9 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                 <input
                   type="number"
                   aria-label="Width"
-                  disabled={sharedResizeMode === "auto-width"}
+                  disabled={(sharedResizeMode as any) === "auto-width"}
                   value={sharedW === "Mixed" ? "" : sharedW}
-                  placeholder={sharedResizeMode === "auto-width" ? "Auto" : sharedW === "Mixed" ? "Mixed" : ""}
+                  placeholder={(sharedResizeMode as any) === "auto-width" ? "Auto" : sharedW === "Mixed" ? "Mixed" : ""}
                   onChange={(e) => {
                     const val = Number(e.target.value);
                     updateProp("w", val);
@@ -812,9 +816,9 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                 <input
                   type="number"
                   aria-label="Height"
-                  disabled={sharedResizeMode === "auto-width" || sharedResizeMode === "auto-height"}
+                  disabled={(sharedResizeMode as any) === "auto-width" || (sharedResizeMode as any) === "auto-height" || sharedResizeMode === "Mixed"}
                   value={sharedH === "Mixed" ? "" : sharedH}
-                  placeholder={sharedResizeMode !== "fixed" ? "Auto" : sharedH === "Mixed" ? "Mixed" : ""}
+                  placeholder={(sharedResizeMode as any) !== "fixed" ? "Auto" : sharedH === "Mixed" ? "Mixed" : ""}
                   onChange={(e) => {
                     const val = Number(e.target.value);
                     updateProp("h", val);
@@ -925,7 +929,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     };
                   }
                   return s;
-                })
+                }) as any
               );
             }}
             onKeyDown={(e) => e.stopPropagation()}
@@ -1250,7 +1254,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                   <div className="flex items-center gap-1.5 p-0.5 bg-surface-elevated border border-border rounded">
                     <button
                       onClick={() => updateMetaProp("textDecoration", "none")}
-                      className={`flex-1 py-1 text-[9px] font-bold rounded hover:bg-border/40 transition-colors ${sharedTextDecoration === "none" ? "bg-accent text-white" : "text-muted"
+                      className={`flex-1 py-1 text-[9px] font-bold rounded hover:bg-border/40 transition-colors ${(sharedTextDecoration as any) === "none" ? "bg-accent text-white" : "text-muted"
                         }`}
                       title="None"
                     >
@@ -1258,7 +1262,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     </button>
                     <button
                       onClick={() => updateMetaProp("textDecoration", "underline")}
-                      className={`flex-1 py-1 text-[9px] font-bold rounded hover:bg-border/40 transition-colors ${sharedTextDecoration === "underline" ? "bg-accent text-white" : "text-muted"
+                      className={`flex-1 py-1 text-[9px] font-bold rounded hover:bg-border/40 transition-colors ${(sharedTextDecoration as any) === "underline" ? "bg-accent text-white" : "text-muted"
                         }`}
                       title="Underline"
                     >
@@ -1266,7 +1270,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     </button>
                     <button
                       onClick={() => updateMetaProp("textDecoration", "line-through")}
-                      className={`flex-1 py-1 text-[9px] font-bold rounded hover:bg-border/40 transition-colors ${sharedTextDecoration === "line-through" ? "bg-accent text-white" : "text-muted"
+                      className={`flex-1 py-1 text-[9px] font-bold rounded hover:bg-border/40 transition-colors ${(sharedTextDecoration as any) === "line-through" ? "bg-accent text-white" : "text-muted"
                         }`}
                       title="Strikethrough"
                     >
@@ -1786,7 +1790,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                           props: nextProps,
                           meta: nextMeta,
                         };
-                      })
+                      }) as any
                     );
                   }}
                   className="w-full bg-surface-elevated text-xs border border-border rounded px-2 py-1 outline-none text-foreground focus:border-accent cursor-pointer"

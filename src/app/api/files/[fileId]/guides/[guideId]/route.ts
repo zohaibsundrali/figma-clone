@@ -1,16 +1,16 @@
 import { auth } from "@clerk/nextjs/server";
-import { prisma } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/file-access";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { fileId: string; guideId: string } }
+  { params }: { params: Promise<{ fileId: string; guideId: string }> }
 ) {
   try {
     const userId = await getCurrentUserId();
     if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { guideId } = params;
+    const { guideId } = await params;
     const body = await req.json();
     const { position, locked, color } = body;
 
@@ -33,13 +33,13 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { fileId: string; guideId: string } }
+  { params }: { params: Promise<{ fileId: string; guideId: string }> }
 ) {
   try {
     const userId = await getCurrentUserId();
     if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { fileId, guideId } = params;
+    const { fileId, guideId } = await params;
 
     await prisma.guide.delete({
       where: { id: guideId },

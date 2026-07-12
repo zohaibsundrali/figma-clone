@@ -52,3 +52,8 @@ export type Activity = Prisma.ActivityModel
  * 
  */
 export type Template = Prisma.TemplateModel
+/**
+ * Model Guide
+ * 
+ */
+export type Guide = Prisma.GuideModel

@@ -378,6 +378,80 @@ Toggle visibility: Button on canvas
 - Activity logging on create/delete
 - Persistent storage across sessions
 
+### 7. Constraint-based Layouts (`src/components/editor/ConstraintsPanel.tsx`)
+
+**What:** Define how shapes respond to container resizing (responsive design)
+
+**Constraint Types:**
+- **Lock Aspect Ratio** — Maintains width-to-height ratio when resizing
+- **Pin Left** — Distance from left edge stays fixed
+- **Pin Right** — Distance from right edge stays fixed
+- **Pin Top** — Distance from top edge stays fixed
+- **Pin Bottom** — Distance from bottom edge stays fixed
+- **Fixed Width** — Width doesn't change when stretched
+- **Fixed Height** — Height doesn't change when stretched
+
+**Quick Presets:**
+- **Fixed Size** — No resizing, maintains position
+- **Flexible Width** — Stretches left-to-right, fixed height
+- **Flexible Height** — Stretches top-to-bottom, fixed width
+- **Hug Contents** — Sizes to fit children (for containers)
+- **Fill Container** — Stretches to fill entire parent
+
+**How it works:**
+- Select shape(s)
+- Click "Constraints" tab in right sidebar
+- Choose preset or manually select constraints
+- Constraints applied to shape
+- Activity logged for audit trail
+
+**Keyboard Shortcuts:**
+```
+(None - access via Constraints tab)
+```
+
+**Workflows enabled:**
+- Responsive button designs (flexible width, fixed height)
+- Responsive containers (fill container preset)
+- Responsive typography (fixed size with aspect ratio)
+- Adaptive icons (scale with aspect ratio lock)
+- Layout documentation
+- Design system components
+
+**Example Constraints:**
+```
+Button (Flexible Width):
+- Pin Left, Pin Right (stretches horizontally)
+- Pin Top (stays at top)
+- Fixed Height (30px)
+- Lock Aspect Ratio: false
+
+Card (Fill Container):
+- Pin all sides (stretches to fill)
+- Fixed Width/Height: false
+- Aspect Ratio Lock: false
+→ Scales with container size
+
+Icon (Fixed):
+- Pin Left, Pin Top
+- Fixed Width (24px), Fixed Height (24px)
+- Aspect Ratio Lock: true
+→ Never resizes
+```
+
+**Integration:**
+- ConstraintsPanel in right sidebar
+- "Constraints" tab alongside Design, Prototype, Activity, etc.
+- Select multiple shapes to apply constraints batch
+- Preset buttons for common patterns
+- Real-time visual feedback in panel
+
+**Future Enhancement:**
+- Visual constraint editor on canvas
+- Constraint solver for automatic sizing
+- Export constraints to CSS media queries
+- Batch constraint application
+
 ---
 
-**Next:** Add constraint-based layout system and component instances in Phase 18.
+**Next:** Add component instances and overrides in Phase 19.

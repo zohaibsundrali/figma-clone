@@ -13,6 +13,7 @@ import { InspectPanel } from "./InspectPanel";
 import { ActivityLog } from "./ActivityLog";
 import { CollaboratorsPanel } from "./CollaboratorsPanel";
 import { GuidesPanel } from "./GuidesPanel";
+import { ConstraintsPanel } from "./ConstraintsPanel";
 import { TopToolbar } from "./TopToolbar";
 import { VersionHistorySidebar } from "./VersionHistorySidebar";
 import { RoomProvider } from "@/lib/liveblocks";
@@ -39,7 +40,7 @@ export function EditorLayout({
   const [file, setFile] = useState(initialFile);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [editor, setEditor] = useState<Editor | null>(null);
-  const [activeRightTab, setActiveRightTab] = useState<"design" | "prototype" | "inspect" | "activity" | "collaborators" | "guides">("design");
+  const [activeRightTab, setActiveRightTab] = useState<"design" | "prototype" | "inspect" | "activity" | "collaborators" | "guides" | "constraints">("design");
   const handleSave = useAutoSave(file.id, setSaveStatus);
 
   const handleFileChange = useCallback(
@@ -242,6 +243,16 @@ export function EditorLayout({
               >
                 Guides
               </button>
+              <button
+                onClick={() => setActiveRightTab("constraints")}
+                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
+                  activeRightTab === "constraints"
+                    ? "border-accent text-accent"
+                    : "border-transparent text-muted hover:text-foreground"
+                }`}
+              >
+                Constraints
+              </button>
             </div>
             
             <div className="flex-1 overflow-hidden flex flex-col">
@@ -259,6 +270,7 @@ export function EditorLayout({
                 </div>
               )}
               {activeRightTab === "guides" && <GuidesPanel />}
+              {activeRightTab === "constraints" && <ConstraintsPanel />}
             </div>
           </aside>
           {isVersionHistoryOpen && (

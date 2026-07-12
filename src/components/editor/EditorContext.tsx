@@ -41,8 +41,8 @@ interface EditorContextValue {
   setNotifications: React.Dispatch<React.SetStateAction<NotificationItem[]>>;
   isNotificationsOpen: boolean;
   setIsNotificationsOpen: (open: boolean) => void;
-  activeRightTab: "design" | "prototype" | "inspect" | "activity" | "collaborators" | "guides";
-  setActiveRightTab: (tab: "design" | "prototype" | "inspect" | "activity" | "collaborators" | "guides") => void;
+  activeRightTab: "design" | "prototype" | "inspect" | "activity" | "collaborators" | "guides" | "constraints";
+  setActiveRightTab: (tab: "design" | "prototype" | "inspect" | "activity" | "collaborators" | "guides" | "constraints") => void;
 }
 
 export const EditorContext = createContext<EditorContextValue>({

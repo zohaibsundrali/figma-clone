@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import { FileGrid } from "./FileGrid";
 import { SearchAndFilters } from "./SearchAndFilters";
+import { AnalyticsPanel } from "./AnalyticsPanel";
 import type { DesignFileSummary } from "@/types";
 import {
   Folder,
@@ -25,7 +26,8 @@ import {
   Presentation,
   Grid,
   Plus,
-  Bell
+  Bell,
+  BarChart3
 } from "lucide-react";
 
 interface DashboardClientProps {
@@ -422,6 +424,18 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
               <Trash2 className="h-4 w-4" />
               <span>Trash</span>
             </button>
+
+            <button
+              onClick={() => setSelectedTab("analytics")}
+              className={`flex w-full items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                selectedTab === "analytics"
+                  ? "bg-accent/10 text-accent font-bold"
+                  : "text-muted hover:text-foreground hover:bg-border/20"
+              }`}
+            >
+              <BarChart3 className="h-4 w-4" />
+              <span>Analytics</span>
+            </button>
           </div>
 
           {/* Starred Projects Section */}
@@ -628,20 +642,24 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
             onFilterChange={setFilteredFiles}
           />
 
-          {/* Grid Layout of files */}
-          <div className={isSearching ? "opacity-75 transition-opacity" : ""}>
-            <FileGrid
-              files={displayedFiles}
-              onDelete={handleDelete}
-              onDuplicate={handleDuplicate}
-              folders={folders}
-              onMoveToFolder={handleMoveToFolder}
-              fileFolderMap={fileFolderMap}
-              onStar={handleStar}
-              onRestore={handleRestore}
-              isTrashTab={selectedTab === "archived"}
-            />
-          </div>
+          {/* Grid Layout of files or Analytics */}
+          {selectedTab === "analytics" ? (
+            <AnalyticsPanel userId="user_id" />
+          ) : (
+            <div className={isSearching ? "opacity-75 transition-opacity" : ""}>
+              <FileGrid
+                files={displayedFiles}
+                onDelete={handleDelete}
+                onDuplicate={handleDuplicate}
+                folders={folders}
+                onMoveToFolder={handleMoveToFolder}
+                fileFolderMap={fileFolderMap}
+                onStar={handleStar}
+                onRestore={handleRestore}
+                isTrashTab={selectedTab === "archived"}
+              />
+            </div>
+          )}
         </div>
       </main>
     </div>

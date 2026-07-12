@@ -1,21 +1,12 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, lazy, Suspense } from "react";
 import type React from "react";
 import { AssetsPanel } from "./AssetsPanel";
 import { CommentsPanel } from "./CommentsPanel";
 import { EditorCanvas } from "./EditorCanvas";
 import { EditorContext } from "./EditorContext";
 import { EditorErrorBoundary } from "./EditorErrorBoundary";
-import { PropertiesPanel } from "./PropertiesPanel";
-import { PrototypePanel } from "./PrototypePanel";
-import { InspectPanel } from "./InspectPanel";
-import { ActivityLog } from "./ActivityLog";
-import { CollaboratorsPanel } from "./CollaboratorsPanel";
-import { GuidesPanel } from "./GuidesPanel";
-import { ConstraintsPanel } from "./ConstraintsPanel";
-import { ComponentsLibrary } from "./ComponentsLibrary";
-import { TokensPanel } from "./TokensPanel";
 import { TopToolbar } from "./TopToolbar";
 import { VersionHistorySidebar } from "./VersionHistorySidebar";
 import { RoomProvider } from "@/lib/liveblocks";
@@ -23,6 +14,17 @@ import { ClientSideSuspense } from "@liveblocks/react";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import type { DesignFile, SaveStatus, Comment } from "@/types";
 import type { Editor } from "tldraw";
+
+// Lazy load right sidebar panels to reduce initial bundle
+const PropertiesPanel = lazy(() => import("./PropertiesPanel").then(m => ({ default: m.PropertiesPanel })));
+const PrototypePanel = lazy(() => import("./PrototypePanel").then(m => ({ default: m.PrototypePanel })));
+const InspectPanel = lazy(() => import("./InspectPanel").then(m => ({ default: m.InspectPanel })));
+const ActivityLog = lazy(() => import("./ActivityLog").then(m => ({ default: m.ActivityLog })));
+const CollaboratorsPanel = lazy(() => import("./CollaboratorsPanel").then(m => ({ default: m.CollaboratorsPanel })));
+const GuidesPanel = lazy(() => import("./GuidesPanel").then(m => ({ default: m.GuidesPanel })));
+const ConstraintsPanel = lazy(() => import("./ConstraintsPanel").then(m => ({ default: m.ConstraintsPanel })));
+const ComponentsLibrary = lazy(() => import("./ComponentsLibrary").then(m => ({ default: m.ComponentsLibrary })));
+const TokensPanel = lazy(() => import("./TokensPanel").then(m => ({ default: m.TokensPanel })));
 
 interface EditorLayoutProps {
   file: DesignFile;
@@ -278,23 +280,25 @@ export function EditorLayout({
             </div>
             
             <div className="flex-1 overflow-hidden flex flex-col">
-              {activeRightTab === "design" && <PropertiesPanel embedded />}
-              {activeRightTab === "prototype" && <PrototypePanel />}
-              {activeRightTab === "inspect" && <InspectPanel />}
-              {activeRightTab === "activity" && (
-                <div className="flex-1 overflow-y-auto p-3">
-                  <ActivityLog fileId={file.id} />
-                </div>
-              )}
-              {activeRightTab === "collaborators" && (
-                <div className="flex-1 overflow-y-auto p-3">
-                  <CollaboratorsPanel />
-                </div>
-              )}
-              {activeRightTab === "guides" && <GuidesPanel />}
-              {activeRightTab === "constraints" && <ConstraintsPanel />}
-              {activeRightTab === "components" && <ComponentsLibrary />}
-              {activeRightTab === "tokens" && <TokensPanel />}
+              <Suspense fallback={<div className="p-4 text-xs text-muted">Loading...</div>}>
+                {activeRightTab === "design" && <PropertiesPanel embedded />}
+                {activeRightTab === "prototype" && <PrototypePanel />}
+                {activeRightTab === "inspect" && <InspectPanel />}
+                {activeRightTab === "activity" && (
+                  <div className="flex-1 overflow-y-auto p-3">
+                    <ActivityLog fileId={file.id} />
+                  </div>
+                )}
+                {activeRightTab === "collaborators" && (
+                  <div className="flex-1 overflow-y-auto p-3">
+                    <CollaboratorsPanel />
+                  </div>
+                )}
+                {activeRightTab === "guides" && <GuidesPanel />}
+                {activeRightTab === "constraints" && <ConstraintsPanel />}
+                {activeRightTab === "components" && <ComponentsLibrary />}
+                {activeRightTab === "tokens" && <TokensPanel />}
+              </Suspense>
             </div>
           </aside>
           {isVersionHistoryOpen && (

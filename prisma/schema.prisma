@@ -59,9 +59,12 @@ model DesignFile {
   @@index([updatedAt])
   @@index([isDeleted])
   @@index([isStarred])
+  @@index([deletedAt])
   @@index([ownerId, isDeleted], map: "idx_designfile_deleted", where: raw("(\"isDeleted\" = true)"))
   @@index([ownerId], map: "idx_designfile_owner")
   @@index([ownerId, isStarred], map: "idx_designfile_starred", where: raw("(\"isStarred\" = true)"))
+  @@index([ownerId, updatedAt], map: "idx_designfile_owner_updated")
+  @@index([ownerId, isDeleted, deletedAt], map: "idx_designfile_deleted_at")
 }
 
 model Comment {

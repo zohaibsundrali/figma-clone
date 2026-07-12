@@ -66,51 +66,55 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
 
       const storedMap = localStorage.getItem("figma_file_folder_map");
       if (storedMap) setFileFolderMap(JSON.parse(storedMap));
-
-      // Load deleted/starred from cache if available (avoid extra API calls)
-      const cachedDeleted = localStorage.getItem("figma_deleted_cache");
-      const cachedStarred = localStorage.getItem("figma_starred_cache");
-      const cacheTime = localStorage.getItem("figma_cache_time");
-
-      if (cachedDeleted && cachedStarred && cacheTime) {
-        const age = Date.now() - parseInt(cacheTime);
-        // Use cache if less than 1 minute old
-        if (age < 60000) {
-          setDeletedFiles(JSON.parse(cachedDeleted));
-          setStarredFiles(JSON.parse(cachedStarred));
-          return;
-        }
-      }
     } catch (e) {
       console.error("Failed to load local storage dashboard configurations:", e);
     }
+  }, []);
 
-    // Fetch deleted and starred files from API (only if cache expired)
+  // Lazy load deleted and starred files only when needed
+  useEffect(() => {
+    if (selectedTab !== "archived" && selectedTab !== "starred") return;
+
     async function fetchSpecialFiles() {
       try {
-        const [deletedRes, starredRes] = await Promise.all([
-          fetch("/api/files/deleted"),
-          fetch("/api/files/starred"),
-        ]);
-        if (deletedRes.ok && starredRes.ok) {
-          const deleted = await deletedRes.json();
-          const starred = await starredRes.json();
+        const cacheKey = selectedTab === "archived" ? "figma_deleted" : "figma_starred";
+        const endpoint = selectedTab === "archived" ? "/api/files/deleted" : "/api/files/starred";
 
-          setDeletedFiles(deleted);
-          setStarredFiles(starred);
+        const cached = localStorage.getItem(`${cacheKey}_cache`);
+        const cacheTime = localStorage.getItem(`${cacheKey}_cache_time`);
 
-          // Cache for 1 minute
-          localStorage.setItem("figma_deleted_cache", JSON.stringify(deleted));
-          localStorage.setItem("figma_starred_cache", JSON.stringify(starred));
-          localStorage.setItem("figma_cache_time", Date.now().toString());
+        if (cached && cacheTime) {
+          const age = Date.now() - parseInt(cacheTime);
+          if (age < 60000) {
+            const data = JSON.parse(cached);
+            if (selectedTab === "archived") {
+              setDeletedFiles(data);
+            } else {
+              setStarredFiles(data);
+            }
+            return;
+          }
         }
+
+        const res = await fetch(endpoint);
+        if (!res.ok) return;
+
+        const data = await res.json();
+        if (selectedTab === "archived") {
+          setDeletedFiles(data);
+        } else {
+          setStarredFiles(data);
+        }
+
+        localStorage.setItem(`${cacheKey}_cache`, JSON.stringify(data));
+        localStorage.setItem(`${cacheKey}_cache_time`, Date.now().toString());
       } catch (e) {
         console.error("Failed to fetch special files:", e);
       }
     }
 
     void fetchSpecialFiles();
-  }, []);
+  }, [selectedTab]);
 
   // Client-side search — filters the already-loaded list instantly.
   const handleSearchChange = useCallback(

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
-import type { DesignFile } from "@/types";
-import { Mail, UserPlus, Trash2, Globe, Lock } from "lucide-react";
+import type { DesignFile, WorkspaceMember } from "@/types";
+import { Mail, UserPlus, Trash2, Globe, Lock, Loader2 } from "lucide-react";
 import { useOthers, useSelf } from "@/lib/liveblocks";
 
 interface ShareDialogProps {
@@ -12,13 +12,6 @@ interface ShareDialogProps {
   onClose: () => void;
   file: DesignFile;
   onFileChange: (updates: Partial<Pick<DesignFile, "isPublic">>) => void;
-}
-
-interface InvitedMember {
-  id: string;
-  email: string;
-  role: "Can edit" | "Can view";
-  name?: string;
 }
 
 function getInitials(name?: string) {
@@ -35,25 +28,41 @@ export function ShareDialog({ open, onClose, file, onFileChange }: ShareDialogPr
 
   // Invite states
   const [emailInput, setEmailInput] = useState("");
-  const [roleInput, setRoleInput] = useState<"Can edit" | "Can view">("Can edit");
-  const [invitedMembers, setInvitedMembers] = useState<InvitedMember[]>([
-    {
-      id: "demo-1",
-      email: "designer.colleague@gmail.com",
-      role: "Can edit",
-      name: "Alex Rivera",
-    },
-    {
-      id: "demo-2",
-      email: "client.reviewer@gmail.com",
-      role: "Can view",
-      name: "Sarah Chen",
-    },
-  ]);
+  const [roleInput, setRoleInput] = useState<"editor" | "viewer">("editor");
+  const [members, setMembers] = useState<WorkspaceMember[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Liveblocks presence info for online users
   const self = useSelf();
   const others = useOthers();
+
+  // Load workspace members when dialog opens
+  useEffect(() => {
+    if (!open || !file.workspaceId) {
+      setMembers([]);
+      return;
+    }
+
+    async function loadMembers() {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`/api/workspaces/${file.workspaceId}/members`);
+        if (!res.ok) throw new Error("Failed to load members");
+        const data = await res.json();
+        setMembers(data);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "Failed to load members";
+        setError(msg);
+        console.error("Failed to load members:", e);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    void loadMembers();
+  }, [open, file.workspaceId]);
 
   if (file.isPublic !== prevFileIsPublic) {
     setPrevFileIsPublic(file.isPublic);
@@ -88,42 +97,69 @@ export function ShareDialog({ open, onClose, file, onFileChange }: ShareDialogPr
     setTimeout(() => setCopied(false), 2000);
   }
 
-  function handleInvite(e: React.FormEvent) {
+  async function handleInvite(e: React.FormEvent) {
     e.preventDefault();
+    if (!file.workspaceId) {
+      setError("No workspace assigned to this file");
+      return;
+    }
+
     const cleanEmail = emailInput.trim();
     if (!cleanEmail) return;
 
     // Simple email regex validation
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
-      alert("Please enter a valid email address.");
+      setError("Please enter a valid email address.");
       return;
     }
 
     // Check duplicate
-    if (invitedMembers.some((m) => m.email.toLowerCase() === cleanEmail.toLowerCase())) {
-      alert("This member has already been invited.");
+    if (members.some((m) => m.userEmail.toLowerCase() === cleanEmail.toLowerCase())) {
+      setError("This member has already been invited.");
       return;
     }
 
-    // Derive name from email local-part for visual purposes
-    const derivedName = cleanEmail.split("@")[0]
-      ?.split(".")
-      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-      .join(" ") || cleanEmail;
+    setError(null);
+    try {
+      const res = await fetch(`/api/workspaces/${file.workspaceId}/members`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userEmail: cleanEmail,
+          role: roleInput,
+        }),
+      });
 
-    const newMember: InvitedMember = {
-      id: `invited-${Date.now()}`,
-      email: cleanEmail,
-      role: roleInput,
-      name: derivedName,
-    };
+      if (!res.ok) {
+        const body = await res.text();
+        throw new Error(body || `HTTP ${res.status}`);
+      }
 
-    setInvitedMembers((prev) => [...prev, newMember]);
-    setEmailInput("");
+      const newMember = await res.json();
+      setMembers((prev) => [...prev, newMember]);
+      setEmailInput("");
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Failed to invite member";
+      setError(msg);
+    }
   }
 
-  function handleRemoveMember(id: string) {
-    setInvitedMembers((prev) => prev.filter((m) => m.id !== id));
+  async function handleRemoveMember(memberId: string) {
+    if (!file.workspaceId) return;
+
+    try {
+      const res = await fetch(
+        `/api/workspaces/${file.workspaceId}/members/${memberId}`,
+        { method: "DELETE" }
+      );
+
+      if (!res.ok) throw new Error("Failed to remove member");
+
+      setMembers((prev) => prev.filter((m) => m.id !== memberId));
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Failed to remove member";
+      setError(msg);
+    }
   }
 
   // Self (current user) details
@@ -202,11 +238,11 @@ export function ShareDialog({ open, onClose, file, onFileChange }: ShareDialogPr
             />
             <select
               value={roleInput}
-              onChange={(e) => setRoleInput(e.target.value as "Can edit" | "Can view")}
+              onChange={(e) => setRoleInput(e.target.value as "editor" | "viewer")}
               className="bg-surface-elevated text-[11px] border border-border rounded px-2 py-1 outline-none text-muted focus:border-primary cursor-pointer"
             >
-              <option value="Can edit">Can edit</option>
-              <option value="Can view">Can view</option>
+              <option value="editor">Can edit</option>
+              <option value="viewer">Can view</option>
             </select>
             <button
               type="submit"
@@ -218,11 +254,18 @@ export function ShareDialog({ open, onClose, file, onFileChange }: ShareDialogPr
           </div>
         </form>
 
+        {/* Error display */}
+        {error && (
+          <div className="rounded bg-red-500/10 px-3 py-2 text-xs text-red-400">
+            {error}
+          </div>
+        )}
+
         {/* Collaborators List */}
         <div className="space-y-2.5">
           <div className="flex justify-between items-center text-xs font-semibold text-muted">
             <span>Members with access</span>
-            <span>{1 + others.length + invitedMembers.length} people</span>
+            <span>{isLoading ? <Loader2 className="h-3 w-3 animate-spin inline" /> : members.length} people</span>
           </div>
 
           <div className="space-y-2 max-h-[220px] overflow-y-auto divide-y divide-border/40 pr-0.5">
@@ -287,39 +330,51 @@ export function ShareDialog({ open, onClose, file, onFileChange }: ShareDialogPr
               );
             })}
 
-            {/* 3. Invited / Demo Users */}
-            {invitedMembers.map((member) => (
+            {/* 3. Workspace Members */}
+            {isLoading && (
+              <div className="flex justify-center py-4">
+                <Loader2 className="h-4 w-4 animate-spin text-muted" />
+              </div>
+            )}
+            {!isLoading && members.length === 0 && (
+              <div className="py-4 text-center text-xs text-muted">
+                {file.workspaceId ? "No members yet" : "No workspace assigned"}
+              </div>
+            )}
+            {members.map((member) => (
               <div key={member.id} className="flex items-center justify-between py-2">
                 <div className="flex items-center space-x-3 min-w-0">
                   <div className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-white/5 border border-border text-[11px] font-semibold text-muted flex-shrink-0">
-                    <span>{getInitials(member.name || member.email)}</span>
+                    <span>{getInitials(member.userName || member.userEmail)}</span>
                     <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-muted border border-surface" />
                   </div>
                   <div className="text-left min-w-0">
                     <p className="text-xs font-semibold truncate text-foreground">
-                      {member.name || member.email}
+                      {member.userName || member.userEmail}
                     </p>
-                    <p className="text-[10px] text-muted truncate">{member.email}</p>
+                    <p className="text-[10px] text-muted truncate">{member.userEmail}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-2 flex-shrink-0">
                   <span
                     className={`text-[11px] font-semibold px-2 py-0.5 rounded ${
-                      member.role === "Can edit"
+                      member.role === "editor"
                         ? "text-primary bg-primary/10"
                         : "text-muted bg-white/5"
                     }`}
                   >
-                    {member.role}
+                    {member.role === "editor" ? "Can edit" : "Can view"}
                   </span>
-                  <button
-                    onClick={() => handleRemoveMember(member.id)}
-                    className="p-1 hover:text-red-400 text-muted rounded hover:bg-white/5 transition-colors"
-                    title="Remove access"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                  {member.role !== "owner" && (
+                    <button
+                      onClick={() => handleRemoveMember(member.id)}
+                      className="p-1 hover:text-red-400 text-muted rounded hover:bg-white/5 transition-colors"
+                      title="Remove access"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

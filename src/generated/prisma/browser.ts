@@ -18,6 +18,16 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model Workspace
+ * 
+ */
+export type Workspace = Prisma.WorkspaceModel
+/**
+ * Model WorkspaceMember
+ * 
+ */
+export type WorkspaceMember = Prisma.WorkspaceMemberModel
+/**
  * Model DesignFile
  * 
  */
@@ -32,3 +42,8 @@ export type Comment = Prisma.CommentModel
  * 
  */
 export type VersionHistory = Prisma.VersionHistoryModel
+/**
+ * Model Activity
+ * 
+ */
+export type Activity = Prisma.ActivityModel

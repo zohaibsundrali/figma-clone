@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -52,4 +53,89 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 3px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Figma-Style Text Customizations and Overrides for Tldraw
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Wrapper for the text label and editor input */
+.tl-text-shape-label.tl-text-wrapper {
+  letter-spacing: var(--figma-letter-spacing, normal) !important;
+  text-decoration: var(--figma-text-decoration, none) !important;
+  text-transform: var(--figma-text-case, none) !important;
+  font-weight: var(--figma-font-weight, normal) !important;
+  font-style: var(--figma-font-style, normal) !important;
+  background-color: var(--figma-bg-color, transparent) !important;
+  border-radius: var(--figma-bg-radius, 0px) !important;
+  padding: var(--figma-bg-padding-y, 0px) var(--figma-bg-padding-x, 0px) !important;
+  overflow: var(--figma-overflow, visible) !important;
+  direction: var(--figma-direction, ltr) !important;
+  filter: var(--figma-drop-shadow, none) !important;
+}
+
+/* Force all text wrapper children (including paragraphs, spans, rich text, text content) to use custom Figma styles */
+.tl-text-shape-label.tl-text-wrapper *,
+.tl-text-shape-label.tl-text-wrapper textarea,
+.tl-text-shape-label.tl-text-wrapper .tl-text-input,
+.tl-text-shape-label.tl-text-wrapper .tl-text,
+.tl-text-shape-label.tl-text-wrapper .tl-rich-text,
+.tl-text-shape-label.tl-text-wrapper .tl-rich-text p,
+.tl-text-shape-label.tl-text-wrapper p,
+.tl-text-shape-label.tl-text-wrapper span {
+  font-family: var(--figma-font-family, inherit) !important;
+  font-weight: var(--figma-font-weight, inherit) !important;
+  font-style: var(--figma-font-style, inherit) !important;
+  letter-spacing: var(--figma-letter-spacing, inherit) !important;
+  text-decoration: var(--figma-text-decoration, inherit) !important;
+  text-transform: var(--figma-text-case, inherit) !important;
+  text-align: var(--figma-text-align, inherit) !important;
+}
+
+.tl-text-shape-label.tl-text-wrapper p,
+.tl-text-shape-label.tl-text-wrapper .tl-rich-text p {
+  margin-bottom: var(--figma-paragraph-spacing, 0px) !important;
+  text-indent: var(--figma-paragraph-indentation, 0px) !important;
+  margin-top: 0px !important;
+}
+
+/* Align contents vertically */
+.tl-text-shape-label.tl-text-wrapper .tl-text-content__wrapper {
+  display: flex !important;
+  align-items: var(--figma-vertical-align, center) !important;
+}
+
+/* Text outline and shadow filters */
+.tl-text-shape-label.tl-text-wrapper .tl-text-content {
+  -webkit-text-stroke: var(--figma-text-stroke, 0px transparent) !important;
+  text-shadow: var(--figma-text-shadow, none) !important;
+  opacity: var(--figma-opacity, 1) !important;
+}
+
+/* Ellipsis clipping for fixed text size */
+.tl-text-shape-label.tl-text-wrapper[data-overflow="ellipsis"] .tl-text-content {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 100 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Synchronize styles into text editing inputs (textarea / contenteditable) */
+.tl-text-shape-label.tl-text-wrapper textarea,
+.tl-text-shape-label.tl-text-wrapper .tl-text-input,
+.tl-text-shape-label.tl-text-wrapper .tl-text {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  font-style: inherit !important;
+  line-height: inherit !important;
+  letter-spacing: inherit !important;
+  text-transform: inherit !important;
+  text-decoration: inherit !important;
+  color: inherit !important;
+  direction: inherit !important;
+  text-align: inherit !important;
+  -webkit-text-stroke: var(--figma-text-stroke, 0px transparent) !important;
+  text-shadow: var(--figma-text-shadow, none) !important;
 }

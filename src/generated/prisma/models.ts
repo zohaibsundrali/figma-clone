@@ -8,7 +8,10 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/Workspace'
+export type * from './models/WorkspaceMember'
 export type * from './models/DesignFile'
 export type * from './models/Comment'
 export type * from './models/VersionHistory'
+export type * from './models/Activity'
 export type * from './commonInputTypes'

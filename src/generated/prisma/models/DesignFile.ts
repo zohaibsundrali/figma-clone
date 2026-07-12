@@ -33,6 +33,10 @@ export type DesignFileMinAggregateOutputType = {
   thumbnail: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  isDeleted: boolean | null
+  isStarred: boolean | null
+  workspaceId: string | null
 }
 
 export type DesignFileMaxAggregateOutputType = {
@@ -44,6 +48,10 @@ export type DesignFileMaxAggregateOutputType = {
   thumbnail: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  isDeleted: boolean | null
+  isStarred: boolean | null
+  workspaceId: string | null
 }
 
 export type DesignFileCountAggregateOutputType = {
@@ -56,6 +64,10 @@ export type DesignFileCountAggregateOutputType = {
   thumbnail: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
+  isDeleted: number
+  isStarred: number
+  workspaceId: number
   _all: number
 }
 
@@ -69,6 +81,10 @@ export type DesignFileMinAggregateInputType = {
   thumbnail?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  isDeleted?: true
+  isStarred?: true
+  workspaceId?: true
 }
 
 export type DesignFileMaxAggregateInputType = {
@@ -80,6 +96,10 @@ export type DesignFileMaxAggregateInputType = {
   thumbnail?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  isDeleted?: true
+  isStarred?: true
+  workspaceId?: true
 }
 
 export type DesignFileCountAggregateInputType = {
@@ -92,6 +112,10 @@ export type DesignFileCountAggregateInputType = {
   thumbnail?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  isDeleted?: true
+  isStarred?: true
+  workspaceId?: true
   _all?: true
 }
 
@@ -177,6 +201,10 @@ export type DesignFileGroupByOutputType = {
   thumbnail: string | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
+  isDeleted: boolean
+  isStarred: boolean
+  workspaceId: string | null
   _count: DesignFileCountAggregateOutputType | null
   _min: DesignFileMinAggregateOutputType | null
   _max: DesignFileMaxAggregateOutputType | null
@@ -210,7 +238,12 @@ export type DesignFileWhereInput = {
   thumbnail?: Prisma.StringNullableFilter<"DesignFile"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DesignFile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DesignFile"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"DesignFile"> | Date | string | null
+  isDeleted?: Prisma.BoolFilter<"DesignFile"> | boolean
+  isStarred?: Prisma.BoolFilter<"DesignFile"> | boolean
+  workspaceId?: Prisma.StringNullableFilter<"DesignFile"> | string | null
   comments?: Prisma.CommentListRelationFilter
+  workspace?: Prisma.XOR<Prisma.WorkspaceNullableScalarRelationFilter, Prisma.WorkspaceWhereInput> | null
   versions?: Prisma.VersionHistoryListRelationFilter
 }
 
@@ -224,7 +257,12 @@ export type DesignFileOrderByWithRelationInput = {
   thumbnail?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  isStarred?: Prisma.SortOrder
+  workspaceId?: Prisma.SortOrderInput | Prisma.SortOrder
   comments?: Prisma.CommentOrderByRelationAggregateInput
+  workspace?: Prisma.WorkspaceOrderByWithRelationInput
   versions?: Prisma.VersionHistoryOrderByRelationAggregateInput
 }
 
@@ -241,7 +279,12 @@ export type DesignFileWhereUniqueInput = Prisma.AtLeast<{
   thumbnail?: Prisma.StringNullableFilter<"DesignFile"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DesignFile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DesignFile"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"DesignFile"> | Date | string | null
+  isDeleted?: Prisma.BoolFilter<"DesignFile"> | boolean
+  isStarred?: Prisma.BoolFilter<"DesignFile"> | boolean
+  workspaceId?: Prisma.StringNullableFilter<"DesignFile"> | string | null
   comments?: Prisma.CommentListRelationFilter
+  workspace?: Prisma.XOR<Prisma.WorkspaceNullableScalarRelationFilter, Prisma.WorkspaceWhereInput> | null
   versions?: Prisma.VersionHistoryListRelationFilter
 }, "id" | "shareToken">
 
@@ -255,6 +298,10 @@ export type DesignFileOrderByWithAggregationInput = {
   thumbnail?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  isStarred?: Prisma.SortOrder
+  workspaceId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.DesignFileCountOrderByAggregateInput
   _max?: Prisma.DesignFileMaxOrderByAggregateInput
   _min?: Prisma.DesignFileMinOrderByAggregateInput
@@ -273,6 +320,10 @@ export type DesignFileScalarWhereWithAggregatesInput = {
   thumbnail?: Prisma.StringNullableWithAggregatesFilter<"DesignFile"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DesignFile"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"DesignFile"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"DesignFile"> | Date | string | null
+  isDeleted?: Prisma.BoolWithAggregatesFilter<"DesignFile"> | boolean
+  isStarred?: Prisma.BoolWithAggregatesFilter<"DesignFile"> | boolean
+  workspaceId?: Prisma.StringNullableWithAggregatesFilter<"DesignFile"> | string | null
 }
 
 export type DesignFileCreateInput = {
@@ -285,7 +336,11 @@ export type DesignFileCreateInput = {
   thumbnail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  isDeleted?: boolean
+  isStarred?: boolean
   comments?: Prisma.CommentCreateNestedManyWithoutFileInput
+  workspace?: Prisma.WorkspaceCreateNestedOneWithoutFilesInput
   versions?: Prisma.VersionHistoryCreateNestedManyWithoutFileInput
 }
 
@@ -299,6 +354,10 @@ export type DesignFileUncheckedCreateInput = {
   thumbnail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  isDeleted?: boolean
+  isStarred?: boolean
+  workspaceId?: string | null
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutFileInput
   versions?: Prisma.VersionHistoryUncheckedCreateNestedManyWithoutFileInput
 }
@@ -313,7 +372,11 @@ export type DesignFileUpdateInput = {
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
   comments?: Prisma.CommentUpdateManyWithoutFileNestedInput
+  workspace?: Prisma.WorkspaceUpdateOneWithoutFilesNestedInput
   versions?: Prisma.VersionHistoryUpdateManyWithoutFileNestedInput
 }
 
@@ -327,6 +390,10 @@ export type DesignFileUncheckedUpdateInput = {
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comments?: Prisma.CommentUncheckedUpdateManyWithoutFileNestedInput
   versions?: Prisma.VersionHistoryUncheckedUpdateManyWithoutFileNestedInput
 }
@@ -341,6 +408,10 @@ export type DesignFileCreateManyInput = {
   thumbnail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  isDeleted?: boolean
+  isStarred?: boolean
+  workspaceId?: string | null
 }
 
 export type DesignFileUpdateManyMutationInput = {
@@ -353,6 +424,9 @@ export type DesignFileUpdateManyMutationInput = {
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type DesignFileUncheckedUpdateManyInput = {
@@ -365,6 +439,20 @@ export type DesignFileUncheckedUpdateManyInput = {
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type DesignFileListRelationFilter = {
+  every?: Prisma.DesignFileWhereInput
+  some?: Prisma.DesignFileWhereInput
+  none?: Prisma.DesignFileWhereInput
+}
+
+export type DesignFileOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type DesignFileCountOrderByAggregateInput = {
@@ -377,6 +465,10 @@ export type DesignFileCountOrderByAggregateInput = {
   thumbnail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  isStarred?: Prisma.SortOrder
+  workspaceId?: Prisma.SortOrder
 }
 
 export type DesignFileMaxOrderByAggregateInput = {
@@ -388,6 +480,10 @@ export type DesignFileMaxOrderByAggregateInput = {
   thumbnail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  isStarred?: Prisma.SortOrder
+  workspaceId?: Prisma.SortOrder
 }
 
 export type DesignFileMinOrderByAggregateInput = {
@@ -399,6 +495,10 @@ export type DesignFileMinOrderByAggregateInput = {
   thumbnail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  isStarred?: Prisma.SortOrder
+  workspaceId?: Prisma.SortOrder
 }
 
 export type DesignFileScalarRelationFilter = {
@@ -406,20 +506,54 @@ export type DesignFileScalarRelationFilter = {
   isNot?: Prisma.DesignFileWhereInput
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
+export type DesignFileCreateNestedManyWithoutWorkspaceInput = {
+  create?: Prisma.XOR<Prisma.DesignFileCreateWithoutWorkspaceInput, Prisma.DesignFileUncheckedCreateWithoutWorkspaceInput> | Prisma.DesignFileCreateWithoutWorkspaceInput[] | Prisma.DesignFileUncheckedCreateWithoutWorkspaceInput[]
+  connectOrCreate?: Prisma.DesignFileCreateOrConnectWithoutWorkspaceInput | Prisma.DesignFileCreateOrConnectWithoutWorkspaceInput[]
+  createMany?: Prisma.DesignFileCreateManyWorkspaceInputEnvelope
+  connect?: Prisma.DesignFileWhereUniqueInput | Prisma.DesignFileWhereUniqueInput[]
+}
+
+export type DesignFileUncheckedCreateNestedManyWithoutWorkspaceInput = {
+  create?: Prisma.XOR<Prisma.DesignFileCreateWithoutWorkspaceInput, Prisma.DesignFileUncheckedCreateWithoutWorkspaceInput> | Prisma.DesignFileCreateWithoutWorkspaceInput[] | Prisma.DesignFileUncheckedCreateWithoutWorkspaceInput[]
+  connectOrCreate?: Prisma.DesignFileCreateOrConnectWithoutWorkspaceInput | Prisma.DesignFileCreateOrConnectWithoutWorkspaceInput[]
+  createMany?: Prisma.DesignFileCreateManyWorkspaceInputEnvelope
+  connect?: Prisma.DesignFileWhereUniqueInput | Prisma.DesignFileWhereUniqueInput[]
+}
+
+export type DesignFileUpdateManyWithoutWorkspaceNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignFileCreateWithoutWorkspaceInput, Prisma.DesignFileUncheckedCreateWithoutWorkspaceInput> | Prisma.DesignFileCreateWithoutWorkspaceInput[] | Prisma.DesignFileUncheckedCreateWithoutWorkspaceInput[]
+  connectOrCreate?: Prisma.DesignFileCreateOrConnectWithoutWorkspaceInput | Prisma.DesignFileCreateOrConnectWithoutWorkspaceInput[]
+  upsert?: Prisma.DesignFileUpsertWithWhereUniqueWithoutWorkspaceInput | Prisma.DesignFileUpsertWithWhereUniqueWithoutWorkspaceInput[]
+  createMany?: Prisma.DesignFileCreateManyWorkspaceInputEnvelope
+  set?: Prisma.DesignFileWhereUniqueInput | Prisma.DesignFileWhereUniqueInput[]
+  disconnect?: Prisma.DesignFileWhereUniqueInput | Prisma.DesignFileWhereUniqueInput[]
+  delete?: Prisma.DesignFileWhereUniqueInput | Prisma.DesignFileWhereUniqueInput[]
+  connect?: Prisma.DesignFileWhereUniqueInput | Prisma.DesignFileWhereUniqueInput[]
+  update?: Prisma.DesignFileUpdateWithWhereUniqueWithoutWorkspaceInput | Prisma.DesignFileUpdateWithWhereUniqueWithoutWorkspaceInput[]
+  updateMany?: Prisma.DesignFileUpdateManyWithWhereWithoutWorkspaceInput | Prisma.DesignFileUpdateManyWithWhereWithoutWorkspaceInput[]
+  deleteMany?: Prisma.DesignFileScalarWhereInput | Prisma.DesignFileScalarWhereInput[]
+}
+
+export type DesignFileUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignFileCreateWithoutWorkspaceInput, Prisma.DesignFileUncheckedCreateWithoutWorkspaceInput> | Prisma.DesignFileCreateWithoutWorkspaceInput[] | Prisma.DesignFileUncheckedCreateWithoutWorkspaceInput[]
+  connectOrCreate?: Prisma.DesignFileCreateOrConnectWithoutWorkspaceInput | Prisma.DesignFileCreateOrConnectWithoutWorkspaceInput[]
+  upsert?: Prisma.DesignFileUpsertWithWhereUniqueWithoutWorkspaceInput | Prisma.DesignFileUpsertWithWhereUniqueWithoutWorkspaceInput[]
+  createMany?: Prisma.DesignFileCreateManyWorkspaceInputEnvelope
+  set?: Prisma.DesignFileWhereUniqueInput | Prisma.DesignFileWhereUniqueInput[]
+  disconnect?: Prisma.DesignFileWhereUniqueInput | Prisma.DesignFileWhereUniqueInput[]
+  delete?: Prisma.DesignFileWhereUniqueInput | Prisma.DesignFileWhereUniqueInput[]
+  connect?: Prisma.DesignFileWhereUniqueInput | Prisma.DesignFileWhereUniqueInput[]
+  update?: Prisma.DesignFileUpdateWithWhereUniqueWithoutWorkspaceInput | Prisma.DesignFileUpdateWithWhereUniqueWithoutWorkspaceInput[]
+  updateMany?: Prisma.DesignFileUpdateManyWithWhereWithoutWorkspaceInput | Prisma.DesignFileUpdateManyWithWhereWithoutWorkspaceInput[]
+  deleteMany?: Prisma.DesignFileScalarWhereInput | Prisma.DesignFileScalarWhereInput[]
 }
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type DesignFileCreateNestedOneWithoutCommentsInput = {
@@ -450,6 +584,85 @@ export type DesignFileUpdateOneRequiredWithoutVersionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DesignFileUpdateToOneWithWhereWithoutVersionsInput, Prisma.DesignFileUpdateWithoutVersionsInput>, Prisma.DesignFileUncheckedUpdateWithoutVersionsInput>
 }
 
+export type DesignFileCreateWithoutWorkspaceInput = {
+  id?: string
+  title?: string
+  ownerId: string
+  canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isPublic?: boolean
+  shareToken?: string
+  thumbnail?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  isDeleted?: boolean
+  isStarred?: boolean
+  comments?: Prisma.CommentCreateNestedManyWithoutFileInput
+  versions?: Prisma.VersionHistoryCreateNestedManyWithoutFileInput
+}
+
+export type DesignFileUncheckedCreateWithoutWorkspaceInput = {
+  id?: string
+  title?: string
+  ownerId: string
+  canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isPublic?: boolean
+  shareToken?: string
+  thumbnail?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  isDeleted?: boolean
+  isStarred?: boolean
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutFileInput
+  versions?: Prisma.VersionHistoryUncheckedCreateNestedManyWithoutFileInput
+}
+
+export type DesignFileCreateOrConnectWithoutWorkspaceInput = {
+  where: Prisma.DesignFileWhereUniqueInput
+  create: Prisma.XOR<Prisma.DesignFileCreateWithoutWorkspaceInput, Prisma.DesignFileUncheckedCreateWithoutWorkspaceInput>
+}
+
+export type DesignFileCreateManyWorkspaceInputEnvelope = {
+  data: Prisma.DesignFileCreateManyWorkspaceInput | Prisma.DesignFileCreateManyWorkspaceInput[]
+  skipDuplicates?: boolean
+}
+
+export type DesignFileUpsertWithWhereUniqueWithoutWorkspaceInput = {
+  where: Prisma.DesignFileWhereUniqueInput
+  update: Prisma.XOR<Prisma.DesignFileUpdateWithoutWorkspaceInput, Prisma.DesignFileUncheckedUpdateWithoutWorkspaceInput>
+  create: Prisma.XOR<Prisma.DesignFileCreateWithoutWorkspaceInput, Prisma.DesignFileUncheckedCreateWithoutWorkspaceInput>
+}
+
+export type DesignFileUpdateWithWhereUniqueWithoutWorkspaceInput = {
+  where: Prisma.DesignFileWhereUniqueInput
+  data: Prisma.XOR<Prisma.DesignFileUpdateWithoutWorkspaceInput, Prisma.DesignFileUncheckedUpdateWithoutWorkspaceInput>
+}
+
+export type DesignFileUpdateManyWithWhereWithoutWorkspaceInput = {
+  where: Prisma.DesignFileScalarWhereInput
+  data: Prisma.XOR<Prisma.DesignFileUpdateManyMutationInput, Prisma.DesignFileUncheckedUpdateManyWithoutWorkspaceInput>
+}
+
+export type DesignFileScalarWhereInput = {
+  AND?: Prisma.DesignFileScalarWhereInput | Prisma.DesignFileScalarWhereInput[]
+  OR?: Prisma.DesignFileScalarWhereInput[]
+  NOT?: Prisma.DesignFileScalarWhereInput | Prisma.DesignFileScalarWhereInput[]
+  id?: Prisma.StringFilter<"DesignFile"> | string
+  title?: Prisma.StringFilter<"DesignFile"> | string
+  ownerId?: Prisma.StringFilter<"DesignFile"> | string
+  canvasData?: Prisma.JsonNullableFilter<"DesignFile">
+  isPublic?: Prisma.BoolFilter<"DesignFile"> | boolean
+  shareToken?: Prisma.StringFilter<"DesignFile"> | string
+  thumbnail?: Prisma.StringNullableFilter<"DesignFile"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"DesignFile"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"DesignFile"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"DesignFile"> | Date | string | null
+  isDeleted?: Prisma.BoolFilter<"DesignFile"> | boolean
+  isStarred?: Prisma.BoolFilter<"DesignFile"> | boolean
+  workspaceId?: Prisma.StringNullableFilter<"DesignFile"> | string | null
+}
+
 export type DesignFileCreateWithoutCommentsInput = {
   id?: string
   title?: string
@@ -460,6 +673,10 @@ export type DesignFileCreateWithoutCommentsInput = {
   thumbnail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  isDeleted?: boolean
+  isStarred?: boolean
+  workspace?: Prisma.WorkspaceCreateNestedOneWithoutFilesInput
   versions?: Prisma.VersionHistoryCreateNestedManyWithoutFileInput
 }
 
@@ -473,6 +690,10 @@ export type DesignFileUncheckedCreateWithoutCommentsInput = {
   thumbnail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  isDeleted?: boolean
+  isStarred?: boolean
+  workspaceId?: string | null
   versions?: Prisma.VersionHistoryUncheckedCreateNestedManyWithoutFileInput
 }
 
@@ -502,6 +723,10 @@ export type DesignFileUpdateWithoutCommentsInput = {
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workspace?: Prisma.WorkspaceUpdateOneWithoutFilesNestedInput
   versions?: Prisma.VersionHistoryUpdateManyWithoutFileNestedInput
 }
 
@@ -515,6 +740,10 @@ export type DesignFileUncheckedUpdateWithoutCommentsInput = {
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   versions?: Prisma.VersionHistoryUncheckedUpdateManyWithoutFileNestedInput
 }
 
@@ -528,7 +757,11 @@ export type DesignFileCreateWithoutVersionsInput = {
   thumbnail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  isDeleted?: boolean
+  isStarred?: boolean
   comments?: Prisma.CommentCreateNestedManyWithoutFileInput
+  workspace?: Prisma.WorkspaceCreateNestedOneWithoutFilesInput
 }
 
 export type DesignFileUncheckedCreateWithoutVersionsInput = {
@@ -541,6 +774,10 @@ export type DesignFileUncheckedCreateWithoutVersionsInput = {
   thumbnail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  isDeleted?: boolean
+  isStarred?: boolean
+  workspaceId?: string | null
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutFileInput
 }
 
@@ -570,7 +807,11 @@ export type DesignFileUpdateWithoutVersionsInput = {
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
   comments?: Prisma.CommentUpdateManyWithoutFileNestedInput
+  workspace?: Prisma.WorkspaceUpdateOneWithoutFilesNestedInput
 }
 
 export type DesignFileUncheckedUpdateWithoutVersionsInput = {
@@ -583,7 +824,75 @@ export type DesignFileUncheckedUpdateWithoutVersionsInput = {
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comments?: Prisma.CommentUncheckedUpdateManyWithoutFileNestedInput
+}
+
+export type DesignFileCreateManyWorkspaceInput = {
+  id?: string
+  title?: string
+  ownerId: string
+  canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isPublic?: boolean
+  shareToken?: string
+  thumbnail?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  isDeleted?: boolean
+  isStarred?: boolean
+}
+
+export type DesignFileUpdateWithoutWorkspaceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  shareToken?: Prisma.StringFieldUpdateOperationsInput | string
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comments?: Prisma.CommentUpdateManyWithoutFileNestedInput
+  versions?: Prisma.VersionHistoryUpdateManyWithoutFileNestedInput
+}
+
+export type DesignFileUncheckedUpdateWithoutWorkspaceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  shareToken?: Prisma.StringFieldUpdateOperationsInput | string
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutFileNestedInput
+  versions?: Prisma.VersionHistoryUncheckedUpdateManyWithoutFileNestedInput
+}
+
+export type DesignFileUncheckedUpdateManyWithoutWorkspaceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  shareToken?: Prisma.StringFieldUpdateOperationsInput | string
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -636,7 +945,12 @@ export type DesignFileSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   thumbnail?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  isDeleted?: boolean
+  isStarred?: boolean
+  workspaceId?: boolean
   comments?: boolean | Prisma.DesignFile$commentsArgs<ExtArgs>
+  workspace?: boolean | Prisma.DesignFile$workspaceArgs<ExtArgs>
   versions?: boolean | Prisma.DesignFile$versionsArgs<ExtArgs>
   _count?: boolean | Prisma.DesignFileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designFile"]>
@@ -651,6 +965,11 @@ export type DesignFileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   thumbnail?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  isDeleted?: boolean
+  isStarred?: boolean
+  workspaceId?: boolean
+  workspace?: boolean | Prisma.DesignFile$workspaceArgs<ExtArgs>
 }, ExtArgs["result"]["designFile"]>
 
 export type DesignFileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -663,6 +982,11 @@ export type DesignFileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   thumbnail?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  isDeleted?: boolean
+  isStarred?: boolean
+  workspaceId?: boolean
+  workspace?: boolean | Prisma.DesignFile$workspaceArgs<ExtArgs>
 }, ExtArgs["result"]["designFile"]>
 
 export type DesignFileSelectScalar = {
@@ -675,21 +999,31 @@ export type DesignFileSelectScalar = {
   thumbnail?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  isDeleted?: boolean
+  isStarred?: boolean
+  workspaceId?: boolean
 }
 
-export type DesignFileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "ownerId" | "canvasData" | "isPublic" | "shareToken" | "thumbnail" | "createdAt" | "updatedAt", ExtArgs["result"]["designFile"]>
+export type DesignFileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "ownerId" | "canvasData" | "isPublic" | "shareToken" | "thumbnail" | "createdAt" | "updatedAt" | "deletedAt" | "isDeleted" | "isStarred" | "workspaceId", ExtArgs["result"]["designFile"]>
 export type DesignFileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   comments?: boolean | Prisma.DesignFile$commentsArgs<ExtArgs>
+  workspace?: boolean | Prisma.DesignFile$workspaceArgs<ExtArgs>
   versions?: boolean | Prisma.DesignFile$versionsArgs<ExtArgs>
   _count?: boolean | Prisma.DesignFileCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type DesignFileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type DesignFileIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type DesignFileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  workspace?: boolean | Prisma.DesignFile$workspaceArgs<ExtArgs>
+}
+export type DesignFileIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  workspace?: boolean | Prisma.DesignFile$workspaceArgs<ExtArgs>
+}
 
 export type $DesignFilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "DesignFile"
   objects: {
     comments: Prisma.$CommentPayload<ExtArgs>[]
+    workspace: Prisma.$WorkspacePayload<ExtArgs> | null
     versions: Prisma.$VersionHistoryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -702,6 +1036,10 @@ export type $DesignFilePayload<ExtArgs extends runtime.Types.Extensions.Internal
     thumbnail: string | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
+    isDeleted: boolean
+    isStarred: boolean
+    workspaceId: string | null
   }, ExtArgs["result"]["designFile"]>
   composites: {}
 }
@@ -1097,6 +1435,7 @@ readonly fields: DesignFileFieldRefs;
 export interface Prisma__DesignFileClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   comments<T extends Prisma.DesignFile$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignFile$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  workspace<T extends Prisma.DesignFile$workspaceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignFile$workspaceArgs<ExtArgs>>): Prisma.Prisma__WorkspaceClient<runtime.Types.Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   versions<T extends Prisma.DesignFile$versionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignFile$versionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VersionHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1136,6 +1475,10 @@ export interface DesignFileFieldRefs {
   readonly thumbnail: Prisma.FieldRef<"DesignFile", 'String'>
   readonly createdAt: Prisma.FieldRef<"DesignFile", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"DesignFile", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"DesignFile", 'DateTime'>
+  readonly isDeleted: Prisma.FieldRef<"DesignFile", 'Boolean'>
+  readonly isStarred: Prisma.FieldRef<"DesignFile", 'Boolean'>
+  readonly workspaceId: Prisma.FieldRef<"DesignFile", 'String'>
 }
     
 
@@ -1390,6 +1733,10 @@ export type DesignFileCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exte
    */
   data: Prisma.DesignFileCreateManyInput | Prisma.DesignFileCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DesignFileIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1460,6 +1807,10 @@ export type DesignFileUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Exte
    * Limit how many DesignFiles to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DesignFileIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1550,6 +1901,25 @@ export type DesignFile$commentsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.CommentScalarFieldEnum | Prisma.CommentScalarFieldEnum[]
+}
+
+/**
+ * DesignFile.workspace
+ */
+export type DesignFile$workspaceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Workspace
+   */
+  select?: Prisma.WorkspaceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Workspace
+   */
+  omit?: Prisma.WorkspaceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkspaceInclude<ExtArgs> | null
+  where?: Prisma.WorkspaceWhereInput
 }
 
 /**

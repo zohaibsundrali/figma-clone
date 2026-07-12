@@ -10,8 +10,9 @@ interface FileGridProps {
   folders: Array<{ id: string; name: string }>;
   onMoveToFolder: (fileId: string, folderId: string | null) => void;
   fileFolderMap: Record<string, string>;
-  archivedFileIds: string[];
-  onArchiveToggle: (fileId: string) => void;
+  onStar: (id: string) => void;
+  onRestore?: (id: string) => void;
+  isTrashTab?: boolean;
 }
 
 export function FileGrid({
@@ -21,8 +22,9 @@ export function FileGrid({
   folders,
   onMoveToFolder,
   fileFolderMap,
-  archivedFileIds,
-  onArchiveToggle,
+  onStar,
+  onRestore,
+  isTrashTab,
 }: FileGridProps) {
   if (files.length === 0) {
     return (
@@ -46,8 +48,9 @@ export function FileGrid({
           folders={folders}
           onMoveToFolder={onMoveToFolder}
           currentFolderId={fileFolderMap[file.id] || null}
-          isArchived={archivedFileIds.includes(file.id)}
-          onArchiveToggle={onArchiveToggle}
+          onStar={onStar}
+          onRestore={onRestore}
+          isTrashTab={isTrashTab}
         />
       ))}
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, MoreHorizontal, Trash2, FolderOpen, Archive, ArchiveRestore, Layers, Presentation, FileCode } from "lucide-react";
+import { Copy, MoreHorizontal, Trash2, FolderOpen, Star, Undo, Layers, Presentation, FileCode } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
@@ -13,8 +13,9 @@ interface FileCardProps {
   folders: Array<{ id: string; name: string }>;
   onMoveToFolder: (fileId: string, folderId: string | null) => void;
   currentFolderId: string | null;
-  isArchived: boolean;
-  onArchiveToggle: (fileId: string) => void;
+  onStar: (id: string) => void;
+  onRestore?: (id: string) => void;
+  isTrashTab?: boolean;
 }
 
 function getRelativeTimeString(dateString: string): string {
@@ -43,8 +44,9 @@ export function FileCard({
   folders,
   onMoveToFolder,
   currentFolderId,
-  isArchived,
-  onArchiveToggle,
+  onStar,
+  onRestore,
+  isTrashTab,
 }: FileCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
@@ -79,10 +81,19 @@ export function FileCard({
     setMenuOpen(false);
   }
 
-  function handleArchive(e: React.MouseEvent) {
+  function handleStar(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    onArchiveToggle(file.id);
+    onStar(file.id);
+    setMenuOpen(false);
+  }
+
+  function handleRestore(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onRestore) {
+      onRestore(file.id);
+    }
     setMenuOpen(false);
   }
 
@@ -175,23 +186,27 @@ export function FileCard({
               <span>{duplicating ? "Duplicating..." : "Duplicate"}</span>
             </button>
 
-            {/* Archive / Unarchive */}
-            <button
-              className="flex w-full items-center gap-2 px-3 py-2 hover:bg-border/50 text-left"
-              onClick={handleArchive}
-            >
-              {isArchived ? (
-                <>
-                  <ArchiveRestore className="h-3.5 w-3.5 text-muted" />
-                  <span>Unarchive</span>
-                </>
-              ) : (
-                <>
-                  <Archive className="h-3.5 w-3.5 text-muted" />
-                  <span>Archive</span>
-                </>
-              )}
-            </button>
+            {/* Star / Unstar */}
+            {!isTrashTab && (
+              <button
+                className="flex w-full items-center gap-2 px-3 py-2 hover:bg-border/50 text-left"
+                onClick={handleStar}
+              >
+                <Star className={`h-3.5 w-3.5 ${file.isStarred ? "text-amber-400 fill-amber-400" : "text-muted"}`} />
+                <span>{file.isStarred ? "Unstar" : "Star"}</span>
+              </button>
+            )}
+
+            {/* Restore (for trash tab) */}
+            {isTrashTab && onRestore && (
+              <button
+                className="flex w-full items-center gap-2 px-3 py-2 hover:bg-border/50 text-left"
+                onClick={handleRestore}
+              >
+                <Undo className="h-3.5 w-3.5 text-muted" />
+                <span>Restore</span>
+              </button>
+            )}
 
             {/* Move to Folder */}
             <div className="border-t border-border/50 my-1" />

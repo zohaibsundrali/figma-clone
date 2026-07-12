@@ -45,7 +45,8 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
   // Folders and archiving state (frontend-only MVP)
   const [folders, setFolders] = useState<Array<{ id: string; name: string }>>([]);
   const [fileFolderMap, setFileFolderMap] = useState<Record<string, string>>({});
-  const [archivedFileIds, setArchivedFileIds] = useState<string[]>([]);
+  const [deletedFiles, setDeletedFiles] = useState<DesignFileSummary[]>([]);
+  const [starredFiles, setStarredFiles] = useState<DesignFileSummary[]>([]);
   const [selectedTab, setSelectedTab] = useState<string>("recent");
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
@@ -61,11 +62,49 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
       const storedMap = localStorage.getItem("figma_file_folder_map");
       if (storedMap) setFileFolderMap(JSON.parse(storedMap));
 
-      const storedArchived = localStorage.getItem("figma_archived_files");
-      if (storedArchived) setArchivedFileIds(JSON.parse(storedArchived));
+      // Load deleted/starred from cache if available (avoid extra API calls)
+      const cachedDeleted = localStorage.getItem("figma_deleted_cache");
+      const cachedStarred = localStorage.getItem("figma_starred_cache");
+      const cacheTime = localStorage.getItem("figma_cache_time");
+
+      if (cachedDeleted && cachedStarred && cacheTime) {
+        const age = Date.now() - parseInt(cacheTime);
+        // Use cache if less than 1 minute old
+        if (age < 60000) {
+          setDeletedFiles(JSON.parse(cachedDeleted));
+          setStarredFiles(JSON.parse(cachedStarred));
+          return;
+        }
+      }
     } catch (e) {
       console.error("Failed to load local storage dashboard configurations:", e);
     }
+
+    // Fetch deleted and starred files from API (only if cache expired)
+    async function fetchSpecialFiles() {
+      try {
+        const [deletedRes, starredRes] = await Promise.all([
+          fetch("/api/files/deleted"),
+          fetch("/api/files/starred"),
+        ]);
+        if (deletedRes.ok && starredRes.ok) {
+          const deleted = await deletedRes.json();
+          const starred = await starredRes.json();
+
+          setDeletedFiles(deleted);
+          setStarredFiles(starred);
+
+          // Cache for 1 minute
+          localStorage.setItem("figma_deleted_cache", JSON.stringify(deleted));
+          localStorage.setItem("figma_starred_cache", JSON.stringify(starred));
+          localStorage.setItem("figma_cache_time", Date.now().toString());
+        }
+      } catch (e) {
+        console.error("Failed to fetch special files:", e);
+      }
+    }
+
+    void fetchSpecialFiles();
   }, []);
 
   // Client-side search — filters the already-loaded list instantly.
@@ -127,18 +166,18 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
     try {
       const res = await fetch(`/api/files/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Delete failed");
-      
-      setFileFolderMap((prevMap) => {
-        const updated = { ...prevMap };
-        delete updated[id];
-        localStorage.setItem("figma_file_folder_map", JSON.stringify(updated));
-        return updated;
-      });
-      setArchivedFileIds((prevArchived) => {
-        const updated = prevArchived.filter((x) => x !== id);
-        localStorage.setItem("figma_archived_files", JSON.stringify(updated));
-        return updated;
-      });
+
+      // Invalidate cache
+      localStorage.removeItem("figma_deleted_cache");
+      localStorage.removeItem("figma_starred_cache");
+      localStorage.removeItem("figma_cache_time");
+
+      // Refresh deleted files list
+      const deletedRes = await fetch("/api/files/deleted");
+      if (deletedRes.ok) {
+        const deleted = await deletedRes.json();
+        setDeletedFiles(deleted);
+      }
     } catch {
       setFiles(prev);
       setFilteredFiles(prev.filter((f) => f.title.toLowerCase().includes(search.toLowerCase())));
@@ -210,38 +249,66 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
     });
   };
 
-  const handleArchiveToggle = (fileId: string) => {
-    setArchivedFileIds((prevArchived) => {
-      const updated = prevArchived.includes(fileId)
-        ? prevArchived.filter((id) => id !== fileId)
-        : [...prevArchived, fileId];
-      localStorage.setItem("figma_archived_files", JSON.stringify(updated));
-      return updated;
-    });
-  };
+  const handleRestore = useCallback(async (id: string) => {
+    try {
+      const res = await fetch(`/api/files/${id}/restore`, { method: "POST" });
+      if (!res.ok) throw new Error("Restore failed");
+
+      setDeletedFiles((prev) => prev.filter((f) => f.id !== id));
+      setFiles((f) => [...f, deletedFiles.find((d) => d.id === id)!].filter(Boolean));
+    } catch {
+      setError("Failed to restore file. Please try again.");
+    }
+  }, [deletedFiles]);
+
+  const handleStar = useCallback(async (id: string) => {
+    const file = files.find((f) => f.id === id);
+    if (!file) return;
+
+    const newStarred = !file.isStarred;
+    setFiles((f) => f.map((x) => (x.id === id ? { ...x, isStarred: newStarred } : x)));
+
+    try {
+      const res = await fetch(`/api/files/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isStarred: newStarred }),
+      });
+      if (!res.ok) throw new Error("Star toggle failed");
+
+      // Refresh starred files list
+      const starredRes = await fetch("/api/files/starred");
+      if (starredRes.ok) {
+        const starred = await starredRes.json();
+        setStarredFiles(starred);
+      }
+    } catch {
+      // Revert
+      setFiles((f) => f.map((x) => (x.id === id ? { ...x, isStarred: file.isStarred } : x)));
+      setError("Failed to update star status. Please try again.");
+    }
+  }, [files]);
 
   const displayedFiles = useMemo(() => {
     if (!isMounted) return filteredFiles;
 
+    if (selectedTab === "archived") {
+      return deletedFiles;
+    }
+
     return filteredFiles.filter((file) => {
-      const isArchived = archivedFileIds.includes(file.id);
-
-      if (selectedTab === "archived") {
-        return isArchived;
-      }
-      if (isArchived) {
-        return false;
-      }
-
       if (selectedTab === "all" || selectedTab === "recent") {
         return true;
       }
       if (selectedTab === "shared") {
         return file.isPublic;
       }
+      if (selectedTab === "starred") {
+        return file.isStarred;
+      }
       return fileFolderMap[file.id] === selectedTab;
     });
-  }, [filteredFiles, selectedTab, archivedFileIds, fileFolderMap, isMounted]);
+  }, [filteredFiles, selectedTab, deletedFiles, fileFolderMap, isMounted]);
 
   const activeTabTitle = useMemo(() => {
     if (selectedTab === "all") return "All projects";
@@ -357,18 +424,24 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
           </div>
 
           {/* Starred Projects Section */}
-          <div className="space-y-1">
-            <div className="flex items-center justify-between px-2 py-1">
-              <span className="text-[10px] font-bold text-muted uppercase tracking-wider">Starred</span>
+          {starredFiles.length > 0 && (
+            <div className="space-y-1">
+              <div className="flex items-center justify-between px-2 py-1">
+                <span className="text-[10px] font-bold text-muted uppercase tracking-wider">Starred</span>
+              </div>
+              {starredFiles.map((file) => (
+                <button
+                  key={file.id}
+                  onClick={() => {}}
+                  className="flex w-full items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-semibold text-muted hover:text-foreground hover:bg-border/20 truncate"
+                  title={file.title}
+                >
+                  <Star className="h-4 w-4 text-amber-400 flex-shrink-0" />
+                  <span className="truncate">{file.title}</span>
+                </button>
+              ))}
             </div>
-            <button
-              onClick={() => setSelectedTab("all")}
-              className="flex w-full items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-semibold text-muted hover:text-foreground hover:bg-border/20"
-            >
-              <Star className="h-4 w-4 text-amber-400" />
-              <span>Team project</span>
-            </button>
-          </div>
+          )}
 
           {/* Custom Folders Section */}
           <div className="space-y-1">
@@ -557,8 +630,9 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
               folders={folders}
               onMoveToFolder={handleMoveToFolder}
               fileFolderMap={fileFolderMap}
-              archivedFileIds={archivedFileIds}
-              onArchiveToggle={handleArchiveToggle}
+              onStar={handleStar}
+              onRestore={handleRestore}
+              isTrashTab={selectedTab === "archived"}
             />
           </div>
         </div>

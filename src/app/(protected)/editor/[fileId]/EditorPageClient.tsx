@@ -6,7 +6,8 @@ import { PRESENCE_COLORS } from "@/lib/liveblocks";
 import type { DesignFile } from "@/types";
 
 interface EditorPageClientProps {
-  fileId: string;
+  initialFile?: DesignFile;
+  fileId?: string;
   userInfo: {
     name: string;
     avatar: string;
@@ -14,11 +15,20 @@ interface EditorPageClientProps {
   };
 }
 
-export function EditorPageClient({ fileId, userInfo }: EditorPageClientProps) {
-  const [file, setFile] = useState<DesignFile | null>(null);
+export function EditorPageClient({ initialFile, fileId: fileProp, userInfo }: EditorPageClientProps) {
+  const [file, setFile] = useState<DesignFile | null>(initialFile ?? null);
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    // If file is already loaded on server side, skip client fetch
+    if (initialFile) {
+      return;
+    }
+
+    // Fallback to client-side fetch (for backwards compatibility)
+    const fileId = fileProp;
+    if (!fileId) return;
+
     fetch(`/api/files/${fileId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Not found");
@@ -26,7 +36,7 @@ export function EditorPageClient({ fileId, userInfo }: EditorPageClientProps) {
       })
       .then(setFile)
       .catch(() => setError(true));
-  }, [fileId]);
+  }, [initialFile, fileProp]);
 
   if (error) {
     return (

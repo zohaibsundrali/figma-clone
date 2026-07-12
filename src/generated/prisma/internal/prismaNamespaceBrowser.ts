@@ -51,9 +51,12 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Workspace: 'Workspace',
+  WorkspaceMember: 'WorkspaceMember',
   DesignFile: 'DesignFile',
   Comment: 'Comment',
-  VersionHistory: 'VersionHistory'
+  VersionHistory: 'VersionHistory',
+  Activity: 'Activity'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -72,6 +75,30 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const WorkspaceScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  ownerId: 'ownerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WorkspaceScalarFieldEnum = (typeof WorkspaceScalarFieldEnum)[keyof typeof WorkspaceScalarFieldEnum]
+
+
+export const WorkspaceMemberScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  userId: 'userId',
+  userEmail: 'userEmail',
+  userName: 'userName',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type WorkspaceMemberScalarFieldEnum = (typeof WorkspaceMemberScalarFieldEnum)[keyof typeof WorkspaceMemberScalarFieldEnum]
+
+
 export const DesignFileScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -81,7 +108,11 @@ export const DesignFileScalarFieldEnum = {
   shareToken: 'shareToken',
   thumbnail: 'thumbnail',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  isDeleted: 'isDeleted',
+  isStarred: 'isStarred',
+  workspaceId: 'workspaceId'
 } as const
 
 export type DesignFileScalarFieldEnum = (typeof DesignFileScalarFieldEnum)[keyof typeof DesignFileScalarFieldEnum]
@@ -95,7 +126,10 @@ export const CommentScalarFieldEnum = {
   x: 'x',
   y: 'y',
   text: 'text',
-  createdAt: 'createdAt'
+  resolved: 'resolved',
+  parentCommentId: 'parentCommentId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
@@ -112,6 +146,19 @@ export const VersionHistoryScalarFieldEnum = {
 } as const
 
 export type VersionHistoryScalarFieldEnum = (typeof VersionHistoryScalarFieldEnum)[keyof typeof VersionHistoryScalarFieldEnum]
+
+
+export const ActivityScalarFieldEnum = {
+  id: 'id',
+  fileId: 'fileId',
+  authorId: 'authorId',
+  authorName: 'authorName',
+  action: 'action',
+  details: 'details',
+  createdAt: 'createdAt'
+} as const
+
+export type ActivityScalarFieldEnum = (typeof ActivityScalarFieldEnum)[keyof typeof ActivityScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -145,6 +192,14 @@ export const QueryMode = {
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
 export const JsonNullValueFilter = {
   DbNull: DbNull,
   JsonNull: JsonNull,
@@ -152,12 +207,4 @@ export const JsonNullValueFilter = {
 } as const
 
 export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
-
-
-export const NullsOrder = {
-  first: 'first',
-  last: 'last'
-} as const
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

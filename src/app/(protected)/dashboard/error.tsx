@@ -17,6 +17,11 @@ export default function DashboardError({ error, reset }: ErrorProps) {
     console.error("[Dashboard error]", error);
   }, [error]);
 
+  // Next.js redacts `error.message` for server-side errors in production builds
+  // (to avoid leaking internals to the client), but preserves it in dev — so
+  // showing it here only exposes real detail during local development.
+  const isDev = process.env.NODE_ENV === "development";
+
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-red-800/40 bg-red-500/5 py-20 text-center">
       <AlertCircle className="mb-4 h-10 w-10 text-red-400" />
@@ -24,8 +29,18 @@ export default function DashboardError({ error, reset }: ErrorProps) {
         Failed to load your files
       </p>
       <p className="mt-2 max-w-sm text-sm text-muted">
-        There was a problem connecting to the database. Your files are safe.
+        There was a problem loading your data. Your files are safe.
       </p>
+      {isDev && (
+        <div className="mt-4 max-w-lg rounded-lg border border-red-800/40 bg-red-950/30 px-4 py-3 text-left">
+          <p className="text-xs font-mono text-red-300 break-all">
+            {error.message || "Unknown error"}
+          </p>
+          {error.digest && (
+            <p className="mt-1 text-[10px] text-red-400/70">digest: {error.digest}</p>
+          )}
+        </div>
+      )}
       <button
         onClick={reset}
         className="mt-6 rounded-lg bg-accent px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover"

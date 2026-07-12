@@ -26,6 +26,17 @@ interface CanvasInnerProps {
 }
 
 async function captureThumbnail(editor: Editor): Promise<string | null> {
+  // Find all Google Fonts link stylesheets and temporarily disable them to avoid CORS "Failed to fetch" on toImageDataUrl
+  const googleFontLinks = typeof document !== "undefined"
+    ? Array.from(document.querySelectorAll('link[id^="google-font-"], link[href*="fonts.googleapis.com"]')) as HTMLLinkElement[]
+    : [];
+  
+  const originalDisabledStates = googleFontLinks.map((link) => {
+    const original = link.disabled;
+    link.disabled = true;
+    return { link, original };
+  });
+
   try {
     const shapeIds = editor.getCurrentPageShapeIds();
     if (shapeIds.size === 0) return null;
@@ -35,8 +46,14 @@ async function captureThumbnail(editor: Editor): Promise<string | null> {
       background: true,
     });
     return result.url;
-  } catch {
+  } catch (err) {
+    console.warn("Autosave: failed to capture thumbnail:", err);
     return null;
+  } finally {
+    // Restore link states
+    originalDisabledStates.forEach(({ link, original }) => {
+      link.disabled = original;
+    });
   }
 }
 
@@ -68,6 +85,196 @@ function CanvasInner({
     setEditor(editor);
     return () => setEditor(null);
   }, [editor, setEditor]);
+
+  // ── Handle Keyboard Shortcuts ───────────────────────────────────────────
+  useEffect(() => {
+    if (!editor) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeEl = document.activeElement;
+      const isTyping =
+        activeEl &&
+        (activeEl.tagName === "INPUT" ||
+          activeEl.tagName === "TEXTAREA" ||
+          activeEl.getAttribute("contenteditable") === "true" ||
+          editor.getEditingShapeId() !== null);
+
+      const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+      const isShift = e.shiftKey;
+      const key = e.key.toLowerCase();
+
+      // 1. Tool shortcuts (only if NOT typing)
+      if (!isTyping && !isCmdOrCtrl && !isShift && key === "t") {
+        e.preventDefault();
+        editor.setCurrentTool("text");
+        return;
+      }
+
+      // 2. Formatting shortcuts (work when text layers are selected)
+      const selectedShapes = editor.getSelectedShapes();
+      const textShapes = selectedShapes.filter((s) => s.type === "text");
+
+      if (textShapes.length > 0) {
+        if (isCmdOrCtrl) {
+          // Bold (Ctrl+B)
+          if (key === "b" && !isShift) {
+            e.preventDefault();
+            editor.markHistoryStoppingPoint("keyboard-bold");
+            editor.updateShapes(
+              textShapes.map((s) => ({
+                id: s.id,
+                type: s.type,
+                meta: {
+                  ...s.meta,
+                  fontWeight: s.meta?.fontWeight === "bold" ? "normal" : "bold",
+                },
+              }))
+            );
+            return;
+          }
+          // Italic (Ctrl+I)
+          if (key === "i" && !isShift) {
+            e.preventDefault();
+            editor.markHistoryStoppingPoint("keyboard-italic");
+            editor.updateShapes(
+              textShapes.map((s) => ({
+                id: s.id,
+                type: s.type,
+                meta: {
+                  ...s.meta,
+                  fontStyle: s.meta?.fontStyle === "italic" ? "normal" : "italic",
+                },
+              }))
+            );
+            return;
+          }
+          // Underline (Ctrl+U)
+          if (key === "u" && !isShift) {
+            e.preventDefault();
+            editor.markHistoryStoppingPoint("keyboard-underline");
+            editor.updateShapes(
+              textShapes.map((s) => ({
+                id: s.id,
+                type: s.type,
+                meta: {
+                  ...s.meta,
+                  textDecoration: s.meta?.textDecoration === "underline" ? "none" : "underline",
+                },
+              }))
+            );
+            return;
+          }
+          // Strikethrough (Ctrl+Shift+X)
+          if (key === "x" && isShift) {
+            e.preventDefault();
+            editor.markHistoryStoppingPoint("keyboard-strikethrough");
+            editor.updateShapes(
+              textShapes.map((s) => ({
+                id: s.id,
+                type: s.type,
+                meta: {
+                  ...s.meta,
+                  textDecoration: s.meta?.textDecoration === "line-through" ? "none" : "line-through",
+                },
+              }))
+            );
+            return;
+          }
+          // Increase Font Size (Ctrl+Shift+>)
+          if (e.key === ">" && isShift) {
+            e.preventDefault();
+            editor.markHistoryStoppingPoint("keyboard-increase-font-size");
+            editor.updateShapes(
+              textShapes.map((s) => {
+                const currentSize = typeof s.meta?.fontSize === "number" ? s.meta.fontSize : 16;
+                return {
+                  id: s.id,
+                  type: s.type,
+                  meta: {
+                    ...s.meta,
+                    fontSize: Math.max(1, currentSize + 2),
+                  },
+                };
+              })
+            );
+            return;
+          }
+          // Decrease Font Size (Ctrl+Shift+<)
+          if (e.key === "<" && isShift) {
+            e.preventDefault();
+            editor.markHistoryStoppingPoint("keyboard-decrease-font-size");
+            editor.updateShapes(
+              textShapes.map((s) => {
+                const currentSize = typeof s.meta?.fontSize === "number" ? s.meta.fontSize : 16;
+                return {
+                  id: s.id,
+                  type: s.type,
+                  meta: {
+                    ...s.meta,
+                    fontSize: Math.max(1, currentSize - 2),
+                  },
+                };
+              })
+            );
+            return;
+          }
+          // Align Left (Ctrl+Shift+L)
+          if (key === "l" && isShift) {
+            e.preventDefault();
+            editor.markHistoryStoppingPoint("keyboard-align-left");
+            editor.updateShapes(
+              textShapes.map((s) => ({
+                id: s.id,
+                type: s.type,
+                props: {
+                  ...s.props,
+                  textAlign: "start",
+                },
+              }))
+            );
+            return;
+          }
+          // Align Center (Ctrl+Shift+E)
+          if (key === "e" && isShift) {
+            e.preventDefault();
+            editor.markHistoryStoppingPoint("keyboard-align-center");
+            editor.updateShapes(
+              textShapes.map((s) => ({
+                id: s.id,
+                type: s.type,
+                props: {
+                  ...s.props,
+                  textAlign: "middle",
+                },
+              }))
+            );
+            return;
+          }
+          // Align Right (Ctrl+Shift+R)
+          if (key === "r" && isShift) {
+            e.preventDefault();
+            editor.markHistoryStoppingPoint("keyboard-align-right");
+            editor.updateShapes(
+              textShapes.map((s) => ({
+                id: s.id,
+                type: s.type,
+                props: {
+                  ...s.props,
+                  textAlign: "end",
+                },
+              }))
+            );
+            return;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown, true);
+    };
+  }, [editor]);
 
   // ── Load initial snapshot exactly once ───────────────────────────────────
   // Priority: Liveblocks canvasData (if already synced) > DB initialData
@@ -234,6 +441,8 @@ const CommentPins = track(() => {
 
 import { EditorContextMenu } from "./EditorContextMenu";
 
+import { FigmaTextShapeUtil } from "./FigmaTextShapeUtil";
+
 interface EditorCanvasProps {
   initialData: unknown | null;
   readonly?: boolean;
@@ -265,7 +474,7 @@ export function EditorCanvas({
         setContextMenu({ x: e.clientX, y: e.clientY });
       }}
     >
-      <Tldraw hideUi onMount={handleMount}>
+      <Tldraw hideUi onMount={handleMount} shapeUtils={[FigmaTextShapeUtil]}>
         <CanvasInner
           initialData={initialData}
           readonly={readonly}

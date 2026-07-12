@@ -14,6 +14,7 @@ export async function GET(request: Request) {
   const files = await prisma.designFile.findMany({
     where: {
       ownerId: userId,
+      isDeleted: false,
       ...(q ? { title: { contains: q, mode: "insensitive" } } : {}),
     },
     orderBy: { updatedAt: "desc" },
@@ -22,6 +23,9 @@ export async function GET(request: Request) {
       title: true,
       isPublic: true,
       thumbnail: true,
+      isDeleted: true,
+      isStarred: true,
+      workspaceId: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -43,6 +47,16 @@ export async function POST() {
       canvasData: undefined,
     },
   });
+
+  await prisma.activity.create({
+    data: {
+      fileId: file.id,
+      authorId: userId,
+      authorName: "You",
+      action: "file_created",
+      details: "Created new design",
+    },
+  }).catch((err) => console.error("[Activity logging]", err));
 
   return NextResponse.json(file, { status: 201 });
 }

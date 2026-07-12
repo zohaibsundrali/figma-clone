@@ -1,42 +1,87 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["partialIndexes"]
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-model DesignFile {
-  id         String           @id @default(cuid())
-  title      String           @default("Untitled Design")
-  ownerId    String
-  canvasData Json?
-  isPublic   Boolean          @default(false)
-  shareToken String           @unique @default(cuid())
-  thumbnail  String?
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
-  comments   Comment[]
-  versions   VersionHistory[]
+model Workspace {
+  id        String            @id @default(cuid())
+  name      String
+  ownerId   String
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  files     DesignFile[]
+  members   WorkspaceMember[]
 
   @@index([ownerId])
+}
+
+model WorkspaceMember {
+  id          String    @id @default(cuid())
+  workspaceId String
+  userId      String
+  userEmail   String
+  userName    String?
+  role        String    @default("editor")
+  createdAt   DateTime  @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([workspaceId])
+  @@index([userId])
+}
+
+model DesignFile {
+  id          String           @id @default(cuid())
+  title       String           @default("Untitled Design")
+  ownerId     String
+  canvasData  Json?
+  isPublic    Boolean          @default(false)
+  shareToken  String           @unique @default(cuid())
+  thumbnail   String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  deletedAt   DateTime?
+  isDeleted   Boolean          @default(false)
+  isStarred   Boolean          @default(false)
+  workspaceId String?
+  comments    Comment[]
+  workspace   Workspace?       @relation(fields: [workspaceId], references: [id])
+  versions    VersionHistory[]
+
+  @@index([ownerId])
+  @@index([workspaceId])
   @@index([shareToken])
   @@index([updatedAt])
+  @@index([isDeleted])
+  @@index([isStarred])
+  @@index([ownerId, isDeleted], map: "idx_designfile_deleted", where: raw("(\"isDeleted\" = true)"))
+  @@index([ownerId], map: "idx_designfile_owner")
+  @@index([ownerId, isStarred], map: "idx_designfile_starred", where: raw("(\"isStarred\" = true)"))
 }
 
 model Comment {
-  id         String     @id @default(cuid())
-  fileId     String
-  authorId   String
-  authorName String
-  x          Float
-  y          Float
-  text       String
-  createdAt  DateTime   @default(now())
-  file       DesignFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  id              String     @id @default(cuid())
+  fileId          String
+  authorId        String
+  authorName      String
+  x               Float
+  y               Float
+  text            String
+  resolved        Boolean    @default(false)
+  parentCommentId String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @default(now())
+  file            DesignFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  replies         Comment[]  @relation("CommentReplies")
+  parentComment   Comment?   @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
 
   @@index([fileId])
+  @@index([parentCommentId])
 }
 
 model VersionHistory {
@@ -50,4 +95,17 @@ model VersionHistory {
   file       DesignFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
 
   @@index([fileId])
+}
+
+model Activity {
+  id         String   @id @default(cuid())
+  fileId     String
+  authorId   String
+  authorName String
+  action     String
+  details    String?
+  createdAt  DateTime @default(now())
+
+  @@index([fileId])
+  @@index([createdAt])
 }

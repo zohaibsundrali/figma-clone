@@ -56,7 +56,8 @@ export const ModelName = {
   DesignFile: 'DesignFile',
   Comment: 'Comment',
   VersionHistory: 'VersionHistory',
-  Activity: 'Activity'
+  Activity: 'Activity',
+  Template: 'Template'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -159,6 +160,25 @@ export const ActivityScalarFieldEnum = {
 } as const
 
 export type ActivityScalarFieldEnum = (typeof ActivityScalarFieldEnum)[keyof typeof ActivityScalarFieldEnum]
+
+
+export const TemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  creatorId: 'creatorId',
+  creatorName: 'creatorName',
+  canvasData: 'canvasData',
+  thumbnail: 'thumbnail',
+  isPublic: 'isPublic',
+  category: 'category',
+  tags: 'tags',
+  usageCount: 'usageCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TemplateScalarFieldEnum = (typeof TemplateScalarFieldEnum)[keyof typeof TemplateScalarFieldEnum]
 
 
 export const SortOrder = {

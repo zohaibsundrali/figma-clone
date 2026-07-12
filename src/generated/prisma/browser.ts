@@ -47,3 +47,8 @@ export type VersionHistory = Prisma.VersionHistoryModel
  * 
  */
 export type Activity = Prisma.ActivityModel
+/**
+ * Model Template
+ * 
+ */
+export type Template = Prisma.TemplateModel

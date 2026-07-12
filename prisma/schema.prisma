@@ -109,3 +109,24 @@ model Activity {
   @@index([fileId])
   @@index([createdAt])
 }
+
+model Template {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  creatorId   String
+  creatorName String
+  canvasData  Json
+  thumbnail   String?
+  isPublic    Boolean  @default(false)
+  category    String   @default("general")
+  tags        String   @default("")
+  usageCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([creatorId])
+  @@index([isPublic])
+  @@index([category])
+  @@index([createdAt])
+}

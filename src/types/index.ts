@@ -68,6 +68,22 @@ export interface Activity {
   createdAt: string;
 }
 
+export interface Template {
+  id: string;
+  name: string;
+  description: string | null;
+  creatorId: string;
+  creatorName: string;
+  canvasData: unknown;
+  thumbnail: string | null;
+  isPublic: boolean;
+  category: string;
+  tags: string;
+  usageCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 export interface EditorPresence {

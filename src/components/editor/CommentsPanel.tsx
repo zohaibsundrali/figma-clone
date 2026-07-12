@@ -2,19 +2,10 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { MessageSquare, Plus, MoreHorizontal, Filter, Loader2 } from "lucide-react";
+import { CommentsThread } from "./CommentsThread";
 import { useEditorContext } from "./EditorContext";
 import { useUser } from "@clerk/nextjs";
-
-interface Comment {
-  id: string;
-  fileId: string;
-  authorId: string;
-  authorName: string;
-  x: number;
-  y: number;
-  text: string;
-  createdAt: string;
-}
+import type { Comment } from "@/types";
 
 export function CommentsPanel({ fileId }: { fileId: string }) {
   const { editor, isCommentsMode, comments, setComments } = useEditorContext();
@@ -86,7 +77,10 @@ export function CommentsPanel({ fileId }: { fileId: string }) {
       x: center.x,
       y: center.y,
       text: text.trim(),
+      resolved: false,
+      parentCommentId: null,
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     setComments((prev) => [optimisticComment, ...prev]);
@@ -131,7 +125,7 @@ export function CommentsPanel({ fileId }: { fileId: string }) {
 
       try {
         const res = await fetch(
-          `/api/files/${fileId}/comments?commentId=${commentId}`,
+          `/api/files/${fileId}/comments/${commentId}`,
           { method: "DELETE" }
         );
 
@@ -148,6 +142,67 @@ export function CommentsPanel({ fileId }: { fileId: string }) {
       }
     },
     [fileId, comments, setComments]
+  );
+
+  const handleResolve = useCallback(
+    async (commentId: string, resolved: boolean) => {
+      try {
+        const res = await fetch(
+          `/api/files/${fileId}/comments/${commentId}`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ resolved: !resolved }),
+          }
+        );
+
+        if (!res.ok) {
+          const body = await res.text();
+          throw new Error(body || `HTTP ${res.status}`);
+        }
+
+        const updated = await res.json();
+        setComments((prev) =>
+          prev.map((c) => (c.id === commentId ? updated : c))
+        );
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Failed to resolve comment";
+        console.error("[CommentsPanel] resolve error:", err);
+        setError(msg);
+      }
+    },
+    [fileId, setComments]
+  );
+
+  const handleReply = useCallback(
+    async (parentId: string, text: string) => {
+      try {
+        const res = await fetch(`/api/files/${fileId}/comments`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: text.trim(),
+            x: 0,
+            y: 0,
+            parentCommentId: parentId,
+            authorName: user?.fullName ?? user?.username ?? "Anonymous",
+          }),
+        });
+
+        if (!res.ok) {
+          const body = await res.text();
+          throw new Error(body || `HTTP ${res.status}`);
+        }
+
+        const newReply = await res.json();
+        setComments((prev) => [...prev, newReply]);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Failed to add reply";
+        console.error("[CommentsPanel] reply error:", err);
+        setError(msg);
+      }
+    },
+    [fileId, user, setComments]
   );
 
   return (
@@ -169,57 +224,25 @@ export function CommentsPanel({ fileId }: { fileId: string }) {
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto py-1">
+      <div className="flex-1 overflow-y-auto px-3 py-3">
         {error && (
-          <div className="mx-3 mb-2 rounded bg-red-500/10 px-3 py-2 text-xs text-red-400">
+          <div className="mb-2 rounded bg-red-500/10 px-3 py-2 text-xs text-red-400">
             {error}
           </div>
         )}
 
         {isLoading && comments.length === 0 ? (
-          <div className="px-3 py-4 text-center text-xs text-muted">
+          <div className="py-4 text-center text-xs text-muted">
             Loading comments...
           </div>
-        ) : comments.length === 0 ? (
-          <div className="px-3 py-4 text-center text-xs text-muted">
-            <MessageSquare className="mx-auto mb-2 h-5 w-5 opacity-50" />
-            No comments yet
-          </div>
         ) : (
-          comments.map((comment) => (
-            <div
-              key={comment.id}
-              className="border-l-2 border-transparent px-3 py-2 transition-all hover:border-accent hover:bg-surface-elevated"
-            >
-              <div className="mb-1 flex items-start justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-white">
-                    {(comment.authorName ?? "?").charAt(0).toUpperCase()}
-                  </div>
-                  <span className="text-xs font-semibold text-foreground">
-                    {comment.authorName ?? "Anonymous"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-muted">
-                    {new Date(comment.createdAt).toLocaleDateString()}
-                  </span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      void handleDelete(comment.id);
-                    }}
-                    className="text-[10px] text-red-400 hover:text-red-300"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-              <p className="line-clamp-3 text-xs leading-snug text-foreground/80">
-                {comment.text}
-              </p>
-            </div>
-          ))
+          <CommentsThread
+            comments={comments}
+            onResolve={handleResolve}
+            onReply={handleReply}
+            onDelete={handleDelete}
+            currentUserId={user?.id ?? ""}
+          />
         )}
       </div>
 

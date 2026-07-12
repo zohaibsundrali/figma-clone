@@ -11,7 +11,10 @@ export interface Comment {
   x: number;
   y: number;
   text: string;
+  resolved: boolean;
+  parentCommentId: string | null;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface NotificationItem {
@@ -36,8 +39,8 @@ interface EditorContextValue {
   setNotifications: React.Dispatch<React.SetStateAction<NotificationItem[]>>;
   isNotificationsOpen: boolean;
   setIsNotificationsOpen: (open: boolean) => void;
-  activeRightTab: "design" | "prototype" | "inspect";
-  setActiveRightTab: (tab: "design" | "prototype" | "inspect") => void;
+  activeRightTab: "design" | "prototype" | "inspect" | "activity";
+  setActiveRightTab: (tab: "design" | "prototype" | "inspect" | "activity") => void;
 }
 
 export const EditorContext = createContext<EditorContextValue>({

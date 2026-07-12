@@ -10,12 +10,13 @@ import { EditorErrorBoundary } from "./EditorErrorBoundary";
 import { PropertiesPanel } from "./PropertiesPanel";
 import { PrototypePanel } from "./PrototypePanel";
 import { InspectPanel } from "./InspectPanel";
+import { ActivityLog } from "./ActivityLog";
 import { TopToolbar } from "./TopToolbar";
 import { VersionHistorySidebar } from "./VersionHistorySidebar";
 import { RoomProvider } from "@/lib/liveblocks";
 import { ClientSideSuspense } from "@liveblocks/react";
 import { useAutoSave } from "@/hooks/useAutoSave";
-import type { DesignFile, SaveStatus } from "@/types";
+import type { DesignFile, SaveStatus, Comment } from "@/types";
 import type { Editor } from "tldraw";
 
 interface EditorLayoutProps {
@@ -36,7 +37,7 @@ export function EditorLayout({
   const [file, setFile] = useState(initialFile);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [editor, setEditor] = useState<Editor | null>(null);
-  const [activeRightTab, setActiveRightTab] = useState<"design" | "prototype" | "inspect">("design");
+  const [activeRightTab, setActiveRightTab] = useState<"design" | "prototype" | "inspect" | "activity">("design");
   const handleSave = useAutoSave(file.id, setSaveStatus);
 
   const handleFileChange = useCallback(
@@ -59,10 +60,7 @@ export function EditorLayout({
   );
 
   const [isCommentsMode, setIsCommentsMode] = useState(false);
-  const [comments, setComments] = useState<Array<{
-    id: string; fileId: string; authorId: string; authorName: string;
-    x: number; y: number; text: string; createdAt: string;
-  }>>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [isVersionHistoryOpen, setIsVersionHistoryOpen] = useState(false);
 
   // Notifications State
@@ -210,12 +208,27 @@ export function EditorLayout({
               >
                 Inspect
               </button>
+              <button
+                onClick={() => setActiveRightTab("activity")}
+                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
+                  activeRightTab === "activity"
+                    ? "border-accent text-accent"
+                    : "border-transparent text-muted hover:text-foreground"
+                }`}
+              >
+                Activity
+              </button>
             </div>
             
             <div className="flex-1 overflow-hidden flex flex-col">
               {activeRightTab === "design" && <PropertiesPanel embedded />}
               {activeRightTab === "prototype" && <PrototypePanel />}
               {activeRightTab === "inspect" && <InspectPanel />}
+              {activeRightTab === "activity" && (
+                <div className="flex-1 overflow-y-auto p-3">
+                  <ActivityLog fileId={file.id} />
+                </div>
+              )}
             </div>
           </aside>
           {isVersionHistoryOpen && (

@@ -84,6 +84,18 @@ export interface Template {
   updatedAt: string;
 }
 
+export interface Guide {
+  id: string;
+  fileId: string;
+  setName: string;
+  position: number;
+  type: "horizontal" | "vertical";
+  locked: boolean;
+  color: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 export interface EditorPresence {

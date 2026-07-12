@@ -130,3 +130,19 @@ model Template {
   @@index([category])
   @@index([createdAt])
 }
+
+model Guide {
+  id        String   @id @default(cuid())
+  fileId    String
+  setName   String
+  position  Float
+  type      String   @db.VarChar(10)
+  locked    Boolean  @default(false)
+  color     String   @default("#4f46e5")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([fileId])
+  @@index([setName])
+  @@index([type])
+}

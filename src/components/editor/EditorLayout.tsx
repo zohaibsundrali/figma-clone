@@ -12,6 +12,7 @@ import { PrototypePanel } from "./PrototypePanel";
 import { InspectPanel } from "./InspectPanel";
 import { ActivityLog } from "./ActivityLog";
 import { CollaboratorsPanel } from "./CollaboratorsPanel";
+import { GuidesPanel } from "./GuidesPanel";
 import { TopToolbar } from "./TopToolbar";
 import { VersionHistorySidebar } from "./VersionHistorySidebar";
 import { RoomProvider } from "@/lib/liveblocks";
@@ -38,7 +39,7 @@ export function EditorLayout({
   const [file, setFile] = useState(initialFile);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [editor, setEditor] = useState<Editor | null>(null);
-  const [activeRightTab, setActiveRightTab] = useState<"design" | "prototype" | "inspect" | "activity" | "collaborators">("design");
+  const [activeRightTab, setActiveRightTab] = useState<"design" | "prototype" | "inspect" | "activity" | "collaborators" | "guides">("design");
   const handleSave = useAutoSave(file.id, setSaveStatus);
 
   const handleFileChange = useCallback(
@@ -231,6 +232,16 @@ export function EditorLayout({
               >
                 People
               </button>
+              <button
+                onClick={() => setActiveRightTab("guides")}
+                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
+                  activeRightTab === "guides"
+                    ? "border-accent text-accent"
+                    : "border-transparent text-muted hover:text-foreground"
+                }`}
+              >
+                Guides
+              </button>
             </div>
             
             <div className="flex-1 overflow-hidden flex flex-col">
@@ -247,6 +258,7 @@ export function EditorLayout({
                   <CollaboratorsPanel />
                 </div>
               )}
+              {activeRightTab === "guides" && <GuidesPanel />}
             </div>
           </aside>
           {isVersionHistoryOpen && (

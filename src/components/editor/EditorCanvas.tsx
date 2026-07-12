@@ -377,6 +377,7 @@ function CanvasInner({
     <>
       <CursorOverlay readonly={readonly} />
       <CommentPins />
+      <CanvasGuides />
       <SmartGuides />
       <TransformControls />
       <PathOperationsMenu />
@@ -464,6 +465,7 @@ import { SmartGuides } from "./SmartGuides";
 import { TransformControls } from "./TransformControls";
 import { PathOperationsMenu } from "./PathOperationsMenu";
 import { DistributionToolsMenu } from "./DistributionToolsMenu";
+import { CanvasGuides } from "./CanvasGuides";
 
 interface EditorCanvasProps {
   initialData: unknown | null;

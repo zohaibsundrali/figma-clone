@@ -329,6 +329,55 @@ Select 3+ shapes → Distribution button activates
 // Buttons automatically space evenly across canvas
 ```
 
+### 6. Guides Library (`src/components/editor/GuidesPanel.tsx`)
+
+**What:** Create, manage, and organize guide lines for precise alignment
+
+**Features:**
+- Create horizontal and vertical guides at specific pixel positions
+- Organize guides into named sets (e.g., "Typography", "Grid", "Breakpoints")
+- Lock guides to prevent accidental movement
+- Color-coded guides with custom colors
+- Show/hide guides toggle
+- Delete individual guides
+- Full CRUD API with activity logging
+
+**How it works:**
+- Click "Guides" tab in right sidebar
+- Enter set name, position, and type (H/V)
+- Click "Add Guide" to create
+- Guides render on canvas as colored lines
+- Lock icon prevents editing
+- Delete button removes guide
+
+**Keyboard Shortcuts:**
+```
+(None - access via Guides tab)
+Toggle visibility: Button on canvas
+```
+
+**Workflows enabled:**
+- Create grid-based layouts
+- Define typography baseline guides
+- Mark breakpoint positions
+- Align responsive components
+- Document design systems
+- Share guide templates
+
+**Guide Sets Example:**
+```
+"8px Grid"         → Guides every 8px
+"Typography"       → Baselines for text
+"Breakpoints"      → Mobile/tablet/desktop at 480px, 768px, 1024px
+"Safe Area"        → Margins and padding positions
+```
+
+**Database Integration:**
+- Guide model with fileId, setName, position, type, locked, color
+- Indexed by fileId and setName for fast retrieval
+- Activity logging on create/delete
+- Persistent storage across sessions
+
 ---
 
-**Next:** Add guides library and advanced constraint system in Phase 17.
+**Next:** Add constraint-based layout system and component instances in Phase 18.

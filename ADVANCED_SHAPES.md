@@ -452,6 +452,77 @@ Icon (Fixed):
 - Export constraints to CSS media queries
 - Batch constraint application
 
+### 8. Component Instances & Overrides (`src/components/editor/ComponentsLibrary.tsx`)
+
+**What:** Create reusable components with the ability to customize individual instances
+
+**Component System:**
+- **Master Component** — Original design that becomes the template
+- **Component Instance** — Copy linked to master, inherits changes
+- **Overrides** — Per-instance customizations (text, color, visibility)
+- **Detach** — Break link to master (make independent)
+
+**How it works:**
+1. Select shape(s)
+2. Click "Components" tab in right sidebar
+3. Enter component name and optional description
+4. Click "Create Component" to register master
+5. Click copy icon to create instances
+6. Instances inherit all properties from master
+7. Edit master = all instances update
+8. Override properties on individual instances
+
+**Workflows enabled:**
+- Button component with color/text overrides
+- Icon sets with consistent sizing
+- Design system components
+- Responsive layout templates
+- Batch updates (edit master once)
+- Component library organization
+
+**Features:**
+- Named components with descriptions
+- Instance tracking (shows instance count)
+- Quick instance creation (copy button)
+- Component deletion
+- Activity logging
+- Expandable component details
+- Master shape reference tracking
+
+**Example Components:**
+```
+"Primary Button"
+├─ Master: Rectangle with text
+├─ Instance 1: Same but text "Save"
+├─ Instance 2: Same but text "Delete"
+└─ Instance 3: Same but text "Cancel"
+→ Edit master → All instances update
+
+"Avatar"
+├─ Master: Circle 48px
+├─ Instance 1: User A
+├─ Instance 2: User B
+└─ Instance 3: User C
+→ All show consistent styling
+```
+
+**Integration:**
+- ComponentsLibrary panel in right sidebar
+- "Components" tab alongside other panels
+- In-memory component tracking
+- Activity logging on create/delete
+- Visual component indicators
+- Instance counter per component
+
+**Future Enhancements:**
+1. Component variants (small, medium, large)
+2. Override tracking per instance
+3. Component library export/import
+4. Publish to design system
+5. Component analytics (usage stats)
+6. Component versioning
+7. Nested components support
+
 ---
 
-**Next:** Add component instances and overrides in Phase 19.
+**Next:** Add design tokens export and advanced features in Phase 20.

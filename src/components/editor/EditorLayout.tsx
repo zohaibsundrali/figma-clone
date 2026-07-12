@@ -14,6 +14,7 @@ import { ActivityLog } from "./ActivityLog";
 import { CollaboratorsPanel } from "./CollaboratorsPanel";
 import { GuidesPanel } from "./GuidesPanel";
 import { ConstraintsPanel } from "./ConstraintsPanel";
+import { ComponentsLibrary } from "./ComponentsLibrary";
 import { TopToolbar } from "./TopToolbar";
 import { VersionHistorySidebar } from "./VersionHistorySidebar";
 import { RoomProvider } from "@/lib/liveblocks";
@@ -40,7 +41,7 @@ export function EditorLayout({
   const [file, setFile] = useState(initialFile);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [editor, setEditor] = useState<Editor | null>(null);
-  const [activeRightTab, setActiveRightTab] = useState<"design" | "prototype" | "inspect" | "activity" | "collaborators" | "guides" | "constraints">("design");
+  const [activeRightTab, setActiveRightTab] = useState<"design" | "prototype" | "inspect" | "activity" | "collaborators" | "guides" | "constraints" | "components">("design");
   const handleSave = useAutoSave(file.id, setSaveStatus);
 
   const handleFileChange = useCallback(
@@ -253,6 +254,16 @@ export function EditorLayout({
               >
                 Constraints
               </button>
+              <button
+                onClick={() => setActiveRightTab("components")}
+                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
+                  activeRightTab === "components"
+                    ? "border-accent text-accent"
+                    : "border-transparent text-muted hover:text-foreground"
+                }`}
+              >
+                Components
+              </button>
             </div>
             
             <div className="flex-1 overflow-hidden flex flex-col">
@@ -271,6 +282,7 @@ export function EditorLayout({
               )}
               {activeRightTab === "guides" && <GuidesPanel />}
               {activeRightTab === "constraints" && <ConstraintsPanel />}
+              {activeRightTab === "components" && <ComponentsLibrary />}
             </div>
           </aside>
           {isVersionHistoryOpen && (

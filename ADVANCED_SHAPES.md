@@ -523,6 +523,124 @@ Icon (Fixed):
 6. Component versioning
 7. Nested components support
 
+### 9. Design Tokens Export (`src/components/editor/TokensPanel.tsx`)
+
+**What:** Export design system values as code for developers
+
+**Token Categories:**
+- **Color** — Hex, RGB, or color names (#3B82F6, rgba(0,0,0,0.5))
+- **Spacing** — Pixel values (8px, 16px, 24px)
+- **Typography** — Font sizes (14px, 16px, 18px)
+- **Shadow** — Box shadow values (0 2px 4px rgba(...))
+- **Radius** — Border radius values (4px, 8px, rounded)
+
+**Export Formats:**
+- **CSS Variables** — `:root { --color-primary: #3B82F6; }`
+- **JSON** — `{ "color": { "primary": "#3B82F6" } }`
+- **Tailwind Config** — `{ theme: { extend: { colors: { ... } } } }`
+
+**How it works:**
+1. Click "Tokens" tab in right sidebar
+2. Enter token name, value, category, description
+3. Click "Add Token"
+4. Tokens organize by category
+5. Choose export format (CSS/JSON/Tailwind)
+6. Copy to clipboard or download file
+7. Integrate into development workflow
+
+**Workflows enabled:**
+- Consistent color palettes across projects
+- Shared spacing scale documentation
+- Typography system documentation
+- Shadow library organization
+- Developer handoff documentation
+- Design-to-code workflow
+- CSS variable integration
+- Tailwind configuration automation
+
+**Example Tokens:**
+```
+Color:
+- Primary Blue: #3B82F6
+- Primary Dark: #1E40AF
+- Success Green: #10B981
+- Error Red: #EF4444
+
+Spacing:
+- XS: 4px
+- SM: 8px
+- MD: 16px
+- LG: 24px
+- XL: 32px
+
+Typography:
+- Body: 16px
+- Caption: 12px
+- Headline: 24px
+```
+
+**Export Examples:**
+
+CSS Variables:
+```css
+:root {
+  --color-primary-blue: #3B82F6;
+  --spacing-md: 16px;
+  --typography-body: 16px;
+}
+```
+
+JSON:
+```json
+{
+  "color": {
+    "primaryBlue": "#3B82F6"
+  },
+  "spacing": {
+    "md": "16px"
+  }
+}
+```
+
+Tailwind Config:
+```javascript
+module.exports = {
+  theme: {
+    extend: {
+      colors: { primaryBlue: "#3B82F6" },
+      spacing: { md: "16px" }
+    }
+  }
+}
+```
+
+**Integration:**
+- TokensPanel in right sidebar
+- "Tokens" tab alongside other panels
+- In-memory token storage
+- Activity logging on create/delete
+- Copy-to-clipboard functionality
+- One-click download
+- Color preview swatches
+
+**Features:**
+- Per-token descriptions
+- Category organization
+- Three export formats
+- Color swatches for color tokens
+- Instant copy to clipboard
+- Download as file
+- Activity logging
+
+**Future Enhancements:**
+1. Token versioning
+2. Team token sharing
+3. Token usage analytics
+4. Import existing tokens
+5. Token sync to external services
+6. Variable naming conventions
+7. Token preview in canvas
+
 ---
 
-**Next:** Add design tokens export and advanced features in Phase 20.
+**Next:** Advanced features, analytics, and polish in Phase 21-23.

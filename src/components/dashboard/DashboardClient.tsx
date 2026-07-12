@@ -4,6 +4,7 @@ import { useCallback, useState, useTransition, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import { FileGrid } from "./FileGrid";
+import { SearchAndFilters } from "./SearchAndFilters";
 import type { DesignFileSummary } from "@/types";
 import {
   Folder,
@@ -620,6 +621,12 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
               </button>
             </div>
           )}
+
+          {/* Search and Filters */}
+          <SearchAndFilters
+            files={filteredFiles}
+            onFilterChange={setFilteredFiles}
+          />
 
           {/* Grid Layout of files */}
           <div className={isSearching ? "opacity-75 transition-opacity" : ""}>

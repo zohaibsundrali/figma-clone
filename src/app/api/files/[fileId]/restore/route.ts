@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUserId, getOwnedFile } from "@/lib/file-access";
 import { prisma } from "@/lib/prisma";
+import { clearCache } from "@/lib/api-cache";
 
 type RouteParams = { params: Promise<{ fileId: string }> };
 
@@ -32,5 +33,6 @@ export async function POST(_request: Request, { params }: RouteParams) {
     },
   }).catch((err) => console.error("[Activity logging]", err));
 
+  clearCache(userId);
   return NextResponse.json(restored);
 }

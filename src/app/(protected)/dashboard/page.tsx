@@ -17,7 +17,7 @@ export default async function DashboardPage() {
   let rows;
   try {
     rows = await prisma.designFile.findMany({
-      where: { ownerId: userId },
+      where: { ownerId: userId, isDeleted: false },
       orderBy: { updatedAt: "desc" },
       take: 100, // Limit to 100 recent files for speed
       select: {

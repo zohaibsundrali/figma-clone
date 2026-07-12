@@ -20,6 +20,7 @@ import {
   Bell,
   Search,
   Frame,
+  Layers,
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -32,6 +33,7 @@ import { ShareDialog } from "./ShareDialog";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { NotificationsPanel } from "./NotificationsPanel";
 import { CommandPalette } from "./CommandPalette";
+import { AlignmentToolsMenu } from "./AlignmentToolsMenu";
 import { Button } from "@/components/ui/Button";
 import type { DesignFile, SaveStatus } from "@/types";
 
@@ -82,6 +84,7 @@ export const TopToolbar = track(function TopToolbar({
   const [exportOpen, setExportOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [alignmentOpen, setAlignmentOpen] = useState(false);
   const [gridVisible, setGridVisible] = useState(true);
   const [snapEnabled, setSnapEnabled] = useState(true);
 
@@ -92,10 +95,17 @@ export const TopToolbar = track(function TopToolbar({
 
       const key = e.key.toLowerCase();
 
-      // Command Palette
+      // Command Palette (Ctrl+K)
       if ((e.ctrlKey || e.metaKey) && key === "k") {
         e.preventDefault();
         setCommandPaletteOpen((open) => !open);
+        return;
+      }
+
+      // Alignment Menu (Ctrl+Shift+A)
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && key === "a") {
+        e.preventDefault();
+        setAlignmentOpen((open) => !open);
         return;
       }
 
@@ -506,6 +516,14 @@ export const TopToolbar = track(function TopToolbar({
             <Button
               variant="secondary"
               size="sm"
+              onClick={() => setAlignmentOpen(true)}
+              title="Arrange & Align (Ctrl+Shift+A)"
+            >
+              <Layers className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => setIsVersionHistoryOpen(!isVersionHistoryOpen)}
               title="Version History"
             >
@@ -589,6 +607,10 @@ export const TopToolbar = track(function TopToolbar({
           <CommandPalette
             isOpen={commandPaletteOpen}
             onClose={() => setCommandPaletteOpen(false)}
+          />
+          <AlignmentToolsMenu
+            isOpen={alignmentOpen}
+            onClose={() => setAlignmentOpen(false)}
           />
         </>
       )}

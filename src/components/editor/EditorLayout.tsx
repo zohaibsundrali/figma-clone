@@ -11,6 +11,7 @@ import { PropertiesPanel } from "./PropertiesPanel";
 import { PrototypePanel } from "./PrototypePanel";
 import { InspectPanel } from "./InspectPanel";
 import { ActivityLog } from "./ActivityLog";
+import { CollaboratorsPanel } from "./CollaboratorsPanel";
 import { TopToolbar } from "./TopToolbar";
 import { VersionHistorySidebar } from "./VersionHistorySidebar";
 import { RoomProvider } from "@/lib/liveblocks";
@@ -37,7 +38,7 @@ export function EditorLayout({
   const [file, setFile] = useState(initialFile);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [editor, setEditor] = useState<Editor | null>(null);
-  const [activeRightTab, setActiveRightTab] = useState<"design" | "prototype" | "inspect" | "activity">("design");
+  const [activeRightTab, setActiveRightTab] = useState<"design" | "prototype" | "inspect" | "activity" | "collaborators">("design");
   const handleSave = useAutoSave(file.id, setSaveStatus);
 
   const handleFileChange = useCallback(
@@ -218,6 +219,16 @@ export function EditorLayout({
               >
                 Activity
               </button>
+              <button
+                onClick={() => setActiveRightTab("collaborators")}
+                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
+                  activeRightTab === "collaborators"
+                    ? "border-accent text-accent"
+                    : "border-transparent text-muted hover:text-foreground"
+                }`}
+              >
+                People
+              </button>
             </div>
             
             <div className="flex-1 overflow-hidden flex flex-col">
@@ -227,6 +238,11 @@ export function EditorLayout({
               {activeRightTab === "activity" && (
                 <div className="flex-1 overflow-y-auto p-3">
                   <ActivityLog fileId={file.id} />
+                </div>
+              )}
+              {activeRightTab === "collaborators" && (
+                <div className="flex-1 overflow-y-auto p-3">
+                  <CollaboratorsPanel />
                 </div>
               )}
             </div>

@@ -601,7 +601,7 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
               </button>
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* <div className="flex items-center gap-3">
               <div className="text-[11px] text-muted font-bold bg-surface-elevated/40 border border-border px-2.5 py-1 rounded cursor-pointer hover:bg-border/20 transition-all flex items-center gap-1">
                 <span>All organizations</span>
                 <ChevronDown className="h-3 w-3" />
@@ -610,7 +610,7 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
                 <span>All files</span>
                 <ChevronDown className="h-3 w-3" />
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Error Alert bar */}

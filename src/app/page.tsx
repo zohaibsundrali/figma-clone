@@ -607,6 +607,7 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Folder Structure section — temporarily disabled, keep for easy restore
       <section id="folder-structure" className="border-t border-white/10 bg-[#0d1117] py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading title="Folder Structure" subtitle="How the codebase is organized, top to bottom." />
@@ -628,6 +629,7 @@ export default async function Home() {
           </div>
         </div>
       </section>
+      */}
 
       <section id="performance" className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

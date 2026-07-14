@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "./prisma";
 import type { DesignFileSummary } from "@/types";
@@ -6,6 +6,34 @@ import type { DesignFileSummary } from "@/types";
 export async function getCurrentUserId(): Promise<string | null> {
   const { userId } = await auth();
   return userId;
+}
+
+export interface CurrentUserContext {
+  userId: string;
+  email: string | null;
+  name: string;
+  avatar: string | null;
+}
+
+/**
+ * Full identity for the signed-in user. `email` is important for permission
+ * checks because WorkspaceMember rows store the email in their `userId` column.
+ * Returns null when unauthenticated.
+ */
+export async function getCurrentUserContext(): Promise<CurrentUserContext | null> {
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  const user = await currentUser();
+  const email = user?.primaryEmailAddress?.emailAddress ?? null;
+  const name =
+    user?.fullName ??
+    user?.firstName ??
+    user?.username ??
+    email ??
+    "Anonymous";
+
+  return { userId, email, name, avatar: user?.imageUrl ?? null };
 }
 
 type RawFileSummary = {
@@ -78,14 +106,25 @@ export async function getPublicFileByToken(token: string) {
 
 export async function getFileForCollaboration(
   fileId: string,
-  userId: string | null
+  userId: string | null,
+  userEmail?: string | null
 ) {
+  const identities = [userId, userEmail].filter((v): v is string => Boolean(v));
+
   return prisma.designFile.findFirst({
     where: {
       id: fileId,
       OR: [
         ...(userId ? [{ ownerId: userId }] : []),
         { isPublic: true },
+        // Any member of the file's workspace may collaborate. Membership rows
+        // may key on either the Clerk id or the email, so match both.
+        ...(identities.length > 0
+          ? [
+              { workspace: { ownerId: userId ?? undefined } },
+              { workspace: { members: { some: { userId: { in: identities } } } } },
+            ]
+          : []),
       ],
     },
   });

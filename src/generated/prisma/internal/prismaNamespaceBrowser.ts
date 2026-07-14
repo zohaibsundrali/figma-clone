@@ -55,6 +55,8 @@ export const ModelName = {
   WorkspaceMember: 'WorkspaceMember',
   DesignFile: 'DesignFile',
   Comment: 'Comment',
+  CommentReaction: 'CommentReaction',
+  Notification: 'Notification',
   VersionHistory: 'VersionHistory',
   Activity: 'Activity',
   Template: 'Template',
@@ -125,9 +127,13 @@ export const CommentScalarFieldEnum = {
   fileId: 'fileId',
   authorId: 'authorId',
   authorName: 'authorName',
+  authorAvatar: 'authorAvatar',
   x: 'x',
   y: 'y',
   text: 'text',
+  shapeId: 'shapeId',
+  mentions: 'mentions',
+  edited: 'edited',
   resolved: 'resolved',
   parentCommentId: 'parentCommentId',
   createdAt: 'createdAt',
@@ -135,6 +141,34 @@ export const CommentScalarFieldEnum = {
 } as const
 
 export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
+
+
+export const CommentReactionScalarFieldEnum = {
+  id: 'id',
+  commentId: 'commentId',
+  userId: 'userId',
+  userName: 'userName',
+  emoji: 'emoji',
+  createdAt: 'createdAt'
+} as const
+
+export type CommentReactionScalarFieldEnum = (typeof CommentReactionScalarFieldEnum)[keyof typeof CommentReactionScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  fileId: 'fileId',
+  commentId: 'commentId',
+  actorId: 'actorId',
+  actorName: 'actorName',
+  message: 'message',
+  read: 'read',
+  createdAt: 'createdAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
 export const VersionHistoryScalarFieldEnum = {

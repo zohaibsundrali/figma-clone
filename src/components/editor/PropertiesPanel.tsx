@@ -32,8 +32,23 @@ import {
   ArrowUp,
   ArrowDown,
   ChevronRight,
-  Upload
+  Upload,
+  LayoutGrid,
+  ArrowRight,
+  Minus,
+  X,
 } from "lucide-react";
+import {
+  isAutoLayoutContainer,
+  getAutoLayoutConfig,
+  applyAutoLayout,
+  removeAutoLayout,
+  updateAutoLayoutConfig,
+  type LayoutDirection,
+  type LayoutAlignment,
+  type LayoutDistribution,
+  type SizingMode,
+} from "@/lib/auto-layout-engine";
 
 // Standard Figma Colors
 const COLOR_MAP: Record<string, string> = {
@@ -470,6 +485,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
   // Collapsible panels state
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({
     layout: false,
+    autoLayout: true,
     content: false,
     typography: false,
     fill: false,
@@ -884,6 +900,236 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
           </div>
         )}
       </div>
+
+      {/* AUTO LAYOUT SECTION */}
+      {(() => {
+        // Show auto layout controls if a group is selected
+        const groupShapes = selectedShapes.filter((s) => s.type === "group");
+        const hasGroup = groupShapes.length > 0;
+        const firstGroup = groupShapes[0];
+        const isAutoLayout = firstGroup ? isAutoLayoutContainer(firstGroup) : false;
+        const autoConfig = firstGroup ? getAutoLayoutConfig(firstGroup) : null;
+
+        if (!hasGroup) return null;
+
+        return (
+          <div className="p-3.5 space-y-3.5">
+            <button
+              onClick={() => toggleCollapse("autoLayout")}
+              className="flex w-full items-center justify-between text-xs font-bold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
+              aria-label="Toggle Auto Layout Section"
+            >
+              <span className="flex items-center gap-1.5">
+                <LayoutGrid className="h-3.5 w-3.5 text-blue-400" />
+                <span>Auto Layout</span>
+              </span>
+              {collapsed.autoLayout ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            </button>
+
+            {!collapsed.autoLayout && (
+              <div className="space-y-3">
+                {/* Toggle Auto Layout */}
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-muted font-semibold">Enable Auto Layout</span>
+                  <input
+                    type="checkbox"
+                    checked={isAutoLayout}
+                    onChange={(e) => {
+                      if (!editor || !firstGroup) return;
+                      if (e.target.checked) {
+                        applyAutoLayout(editor, firstGroup.id);
+                      } else {
+                        removeAutoLayout(editor, firstGroup.id);
+                      }
+                    }}
+                    className="rounded border-border bg-surface-elevated text-accent focus:ring-accent accent-accent"
+                  />
+                </div>
+
+                {isAutoLayout && autoConfig && (
+                  <>
+                    {/* Direction */}
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-muted font-semibold">Direction</span>
+                      <div className="flex items-center gap-1 bg-surface-elevated p-0.5 border border-border rounded">
+                        <button
+                          onClick={() => updateAutoLayoutConfig(editor, firstGroup.id, { direction: "horizontal" })}
+                          className={`flex-1 py-1.5 rounded flex justify-center items-center gap-1 text-[10px] font-medium hover:bg-border/40 transition-colors ${
+                            autoConfig.direction === "horizontal" ? "bg-accent text-white" : "text-muted"
+                          }`}
+                        >
+                          <ArrowRight className="h-3 w-3" />
+                          Horizontal
+                        </button>
+                        <button
+                          onClick={() => updateAutoLayoutConfig(editor, firstGroup.id, { direction: "vertical" })}
+                          className={`flex-1 py-1.5 rounded flex justify-center items-center gap-1 text-[10px] font-medium hover:bg-border/40 transition-colors ${
+                            autoConfig.direction === "vertical" ? "bg-accent text-white" : "text-muted"
+                          }`}
+                        >
+                          <ArrowDown className="h-3 w-3" />
+                          Vertical
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Gap */}
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-muted font-semibold">Gap</span>
+                      <input
+                        type="number"
+                        min={0}
+                        value={autoConfig.gap}
+                        onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { gap: Math.max(0, Number(e.target.value)) })}
+                        className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2.5 py-1 focus:border-accent outline-none"
+                      />
+                    </div>
+
+                    {/* Padding */}
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-muted font-semibold">Padding</span>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="flex items-center gap-1">
+                          <span className="text-[9px] text-muted w-4">Top</span>
+                          <input
+                            type="number"
+                            min={0}
+                            value={autoConfig.paddingTop}
+                            onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { paddingTop: Math.max(0, Number(e.target.value)) })}
+                            className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2 py-1 focus:border-accent outline-none"
+                          />
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[9px] text-muted w-4">Rt</span>
+                          <input
+                            type="number"
+                            min={0}
+                            value={autoConfig.paddingRight}
+                            onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { paddingRight: Math.max(0, Number(e.target.value)) })}
+                            className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2 py-1 focus:border-accent outline-none"
+                          />
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[9px] text-muted w-4">Bot</span>
+                          <input
+                            type="number"
+                            min={0}
+                            value={autoConfig.paddingBottom}
+                            onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { paddingBottom: Math.max(0, Number(e.target.value)) })}
+                            className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2 py-1 focus:border-accent outline-none"
+                          />
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[9px] text-muted w-4">Lt</span>
+                          <input
+                            type="number"
+                            min={0}
+                            value={autoConfig.paddingLeft}
+                            onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { paddingLeft: Math.max(0, Number(e.target.value)) })}
+                            className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2 py-1 focus:border-accent outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Alignment */}
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-muted font-semibold">Alignment</span>
+                      <div className="flex items-center gap-0.5 bg-surface-elevated p-0.5 border border-border rounded">
+                        {(["start", "center", "end", "stretch"] as const).map((align) => (
+                          <button
+                            key={align}
+                            onClick={() => updateAutoLayoutConfig(editor, firstGroup.id, { alignment: align })}
+                            className={`flex-1 py-1 text-[9px] font-bold rounded hover:bg-border/40 transition-colors capitalize ${
+                              autoConfig.alignment === align ? "bg-accent text-white" : "text-muted"
+                            }`}
+                          >
+                            {align}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Distribution */}
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-muted font-semibold">Distribution</span>
+                      <div className="flex items-center gap-1 bg-surface-elevated p-0.5 border border-border rounded">
+                        <button
+                          onClick={() => updateAutoLayoutConfig(editor, firstGroup.id, { distribution: "packed" })}
+                          className={`flex-1 py-1.5 text-[10px] font-medium rounded hover:bg-border/40 transition-colors ${
+                            autoConfig.distribution === "packed" ? "bg-accent text-white" : "text-muted"
+                          }`}
+                        >
+                          Packed
+                        </button>
+                        <button
+                          onClick={() => updateAutoLayoutConfig(editor, firstGroup.id, { distribution: "space-between" })}
+                          className={`flex-1 py-1.5 text-[10px] font-medium rounded hover:bg-border/40 transition-colors ${
+                            autoConfig.distribution === "space-between" ? "bg-accent text-white" : "text-muted"
+                          }`}
+                        >
+                          Space Between
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Wrap */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] text-muted font-semibold">Wrap</span>
+                      <input
+                        type="checkbox"
+                        checked={autoConfig.wrap}
+                        onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { wrap: e.target.checked })}
+                        className="rounded border-border bg-surface-elevated text-accent focus:ring-accent accent-accent"
+                      />
+                    </div>
+
+                    {/* Sizing Modes */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <span className="text-[10px] text-muted font-semibold">Width</span>
+                        <select
+                          value={autoConfig.widthMode}
+                          onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { widthMode: e.target.value as SizingMode })}
+                          className="w-full bg-surface-elevated text-xs border border-border rounded px-2 py-1 outline-none text-foreground focus:border-accent cursor-pointer"
+                        >
+                          <option value="hug">Hug Contents</option>
+                          <option value="fixed">Fixed</option>
+                          <option value="fill">Fill Container</option>
+                        </select>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[10px] text-muted font-semibold">Height</span>
+                        <select
+                          value={autoConfig.heightMode}
+                          onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { heightMode: e.target.value as SizingMode })}
+                          className="w-full bg-surface-elevated text-xs border border-border rounded px-2 py-1 outline-none text-foreground focus:border-accent cursor-pointer"
+                        >
+                          <option value="hug">Hug Contents</option>
+                          <option value="fixed">Fixed</option>
+                          <option value="fill">Fill Container</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Remove Auto Layout */}
+                    <button
+                      onClick={() => {
+                        if (!editor || !firstGroup) return;
+                        removeAutoLayout(editor, firstGroup.id);
+                      }}
+                      className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 text-[10px] font-medium rounded hover:bg-red-500/10 text-red-400 transition-colors border border-border/40"
+                    >
+                      <X className="h-3 w-3" />
+                      Remove Auto Layout
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* 2. CONTENT SECTION */}
       <div className="p-3.5 space-y-3.5">

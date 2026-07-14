@@ -9,8 +9,10 @@ import {
   useEditor,
   track,
   type Editor,
+  type TLShapeId,
 } from "tldraw";
 import "tldraw/tldraw.css";
+import { MessageSquarePlus } from "lucide-react";
 import { useEditorContext } from "./EditorContext";
 import { MiniMapViewer } from "./MiniMapViewer";
 import {
@@ -19,6 +21,14 @@ import {
   useStorage,
   useUpdateMyPresence,
 } from "@/lib/liveblocks";
+import {
+  findComponentMasterAncestor,
+  propagateMasterToInstances,
+} from "@/lib/component-system";
+import {
+  isAutoLayoutContainer,
+  recalculateLayout,
+} from "@/lib/auto-layout-engine";
 
 interface CanvasInnerProps {
   initialData: unknown | null;
@@ -64,7 +74,13 @@ function CanvasInner({
   onSave,
 }: CanvasInnerProps) {
   const editor = useEditor();
-  const { setEditor } = useEditorContext();
+  const {
+    setEditor,
+    isCommentsMode,
+    draftComment,
+    setDraftComment,
+    commentAccess,
+  } = useEditorContext();
   const updatePresence = useUpdateMyPresence();
   const [showMiniMap, setShowMiniMap] = useState(true);
 
@@ -373,6 +389,120 @@ function CanvasInner({
     };
   }, [editor, readonly, updatePresence]);
 
+  // ── Click-to-place comment (comments mode) ───────────────────────────────
+  // Non-blocking: hooks into tldraw's own event stream so pan/zoom/select keep
+  // working. A clean click (not a drag) on empty canvas or a shape opens the
+  // composer with the page coordinates, attaching the shape id when present.
+  const draftRef = useRef<boolean>(false);
+  draftRef.current = draftComment !== null;
+  const canComment = commentAccess?.canComment ?? true;
+  useEffect(() => {
+    if (!editor || readonly || !isCommentsMode || !canComment) return;
+
+    const handleEvent = (info: import("tldraw").TLEventInfo) => {
+      if (info.type !== "pointer" || info.name !== "pointer_up") return;
+      if (info.button !== 0) return; // primary button only
+      if (editor.inputs.isDragging) return; // ignore pans/drags
+      if (draftRef.current) return; // a draft is already open
+      if (info.target !== "canvas" && info.target !== "shape") return;
+
+      const page = editor.screenToPage(info.point);
+      const shapeId =
+        info.target === "shape" && info.shape ? info.shape.id : null;
+      setDraftComment({ x: page.x, y: page.y, shapeId });
+    };
+
+    editor.on("event", handleEvent);
+    return () => {
+      editor.off("event", handleEvent);
+    };
+  }, [editor, readonly, isCommentsMode, canComment, setDraftComment]);
+
+  // ── Side effects: Component propagation & Auto Layout recalculation ──────
+  useEffect(() => {
+    if (!editor || readonly) return;
+
+    // Debounce timer refs
+    let propagationTimer: ReturnType<typeof setTimeout> | null = null;
+    let layoutTimer: ReturnType<typeof setTimeout> | null = null;
+
+    // Track which master definitions need propagation
+    const dirtyMasters = new Set<string>();
+    // Track which auto-layout containers need recalculation
+    const dirtyLayouts = new Set<TLShapeId>();
+
+    const cleanup = editor.store.listen(
+      () => {
+        // Check all shapes in the current page for changes
+        const allShapes = [...editor.getCurrentPageShapes()];
+
+        for (const shape of allShapes) {
+          const meta = shape.meta as Record<string, unknown>;
+
+          // If a shape inside a component master changed, queue propagation
+          if (meta?.isComponentMaster) {
+            dirtyMasters.add(meta.componentDefinitionId as string);
+          } else {
+            // Check if this shape's ancestor is a master
+            const masterAncestor = findComponentMasterAncestor(editor, shape.id);
+            if (masterAncestor) {
+              const masterMeta = masterAncestor.meta as Record<string, unknown>;
+              dirtyMasters.add(masterMeta.componentDefinitionId as string);
+            }
+          }
+
+          // If a shape's parent is an auto-layout container, queue recalculation
+          if (
+            shape.parentId &&
+            shape.parentId !== editor.getCurrentPageId()
+          ) {
+            const parent = editor.getShape(shape.parentId as TLShapeId);
+            if (parent && isAutoLayoutContainer(parent)) {
+              dirtyLayouts.add(parent.id);
+            }
+          }
+        }
+
+        // Debounced auto-layout recalculation (runs quickly)
+        if (dirtyLayouts.size > 0 && !layoutTimer) {
+          layoutTimer = setTimeout(() => {
+            for (const layoutId of dirtyLayouts) {
+              try {
+                recalculateLayout(editor, layoutId);
+              } catch {
+                // ignore errors during recalculation
+              }
+            }
+            dirtyLayouts.clear();
+            layoutTimer = null;
+          }, 100);
+        }
+
+        // Debounced component propagation (slower to avoid infinite loops)
+        if (dirtyMasters.size > 0 && !propagationTimer) {
+          propagationTimer = setTimeout(() => {
+            for (const defId of dirtyMasters) {
+              try {
+                propagateMasterToInstances(editor, defId);
+              } catch {
+                // ignore errors during propagation
+              }
+            }
+            dirtyMasters.clear();
+            propagationTimer = null;
+          }, 500);
+        }
+      },
+      { source: "user", scope: "document" }
+    );
+
+    return () => {
+      cleanup();
+      if (propagationTimer) clearTimeout(propagationTimer);
+      if (layoutTimer) clearTimeout(layoutTimer);
+    };
+  }, [editor, readonly]);
+
   return (
     <>
       <CursorOverlay readonly={readonly} />
@@ -434,26 +564,62 @@ function CursorOverlay({ readonly }: { readonly: boolean }) {
 }
 
 const CommentPins = track(() => {
-  const { editor, comments, isCommentsMode } = useEditorContext();
+  const {
+    editor,
+    comments,
+    isCommentsMode,
+    activeCommentId,
+    setActiveCommentId,
+    draftComment,
+  } = useEditorContext();
 
-  if (!editor || !isCommentsMode || !comments) return null;
+  if (!editor || !isCommentsMode) return null;
+
+  // Only root comments get a pin; replies live inside the thread. Reading the
+  // camera via pageToViewport inside this track() component keeps pins anchored
+  // through zoom and pan automatically.
+  const rootComments = comments.filter((c) => !c.parentCommentId);
 
   return (
     <>
-      {comments.map((comment) => {
+      {rootComments.map((comment) => {
         const screenPos = editor.pageToViewport({ x: comment.x, y: comment.y });
+        const isActive = comment.id === activeCommentId;
         return (
-          <div
+          <button
             key={comment.id}
-            className="pointer-events-none absolute z-[60] flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-primary bg-white shadow-lg transition-transform hover:scale-110"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveCommentId(comment.id);
+            }}
+            title={`${comment.authorName}: ${comment.text.replace(/@\[([^\]]+)\]\([^)]+\)/g, "@$1")}`}
+            className={`absolute z-[60] flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full rounded-bl-none border-2 bg-white shadow-lg transition-transform hover:scale-110 ${
+              isActive ? "border-accent ring-2 ring-accent/50" : "border-primary"
+            } ${comment.resolved ? "opacity-50" : ""}`}
             style={{ left: screenPos.x, top: screenPos.y }}
           >
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-[12px] font-bold text-white">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full rounded-bl-none bg-accent text-[12px] font-bold text-white">
               {comment.authorName.charAt(0).toUpperCase()}
             </div>
-          </div>
+          </button>
         );
       })}
+
+      {/* Draft placement marker while composing a new comment. */}
+      {draftComment && (
+        (() => {
+          const pos = editor.pageToViewport({ x: draftComment.x, y: draftComment.y });
+          return (
+            <div
+              className="pointer-events-none absolute z-[60] flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full rounded-bl-none border-2 border-dashed border-accent bg-white/90 shadow-lg"
+              style={{ left: pos.x, top: pos.y }}
+            >
+              <MessageSquarePlus className="h-4 w-4 text-accent" />
+            </div>
+          );
+        })()
+      )}
     </>
   );
 });

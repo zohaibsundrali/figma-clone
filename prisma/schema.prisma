@@ -68,23 +68,61 @@ model DesignFile {
 }
 
 model Comment {
-  id              String     @id @default(cuid())
+  id              String            @id @default(cuid())
   fileId          String
   authorId        String
   authorName      String
+  authorAvatar    String?
   x               Float
   y               Float
   text            String
-  resolved        Boolean    @default(false)
+  shapeId         String?
+  mentions        String[]          @default([])
+  edited          Boolean           @default(false)
+  resolved        Boolean           @default(false)
   parentCommentId String?
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @default(now())
-  file            DesignFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
-  replies         Comment[]  @relation("CommentReplies")
-  parentComment   Comment?   @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  file            DesignFile        @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  replies         Comment[]         @relation("CommentReplies")
+  parentComment   Comment?          @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  reactions       CommentReaction[]
+  notifications   Notification[]
 
   @@index([fileId])
   @@index([parentCommentId])
+}
+
+model CommentReaction {
+  id        String   @id @default(cuid())
+  commentId String
+  userId    String
+  userName  String
+  emoji     String
+  createdAt DateTime @default(now())
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId, emoji])
+  @@index([commentId])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  type      String
+  fileId    String
+  commentId String?
+  actorId   String
+  actorName String
+  message   String
+  read      Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  comment   Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId, type])
+  @@index([userId])
+  @@index([userId, read])
+  @@index([createdAt])
 }
 
 model VersionHistory {

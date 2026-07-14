@@ -1,6 +1,5 @@
 import { Liveblocks } from "@liveblocks/node";
-import { auth } from "@clerk/nextjs/server";
-import { getFileForCollaboration } from "@/lib/file-access";
+import { getCurrentUserContext, getFileForCollaboration } from "@/lib/file-access";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -41,19 +40,21 @@ export async function POST(request: Request) {
     }
 
     console.time("[liveblocks-auth] clerk-auth");
-    const { userId } = await auth();
+    const me = await getCurrentUserContext();
     console.timeEnd("[liveblocks-auth] clerk-auth");
     console.log("[liveblocks-auth] auth completed");
 
-    if (!userId) {
+    if (!me) {
       return Response.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
+    const userId = me.userId;
 
     console.time("[liveblocks-auth] file-access");
-    const file = await getFileForCollaboration(room, userId);
+    // Owner, workspace member, or public file may join the collaboration room.
+    const file = await getFileForCollaboration(room, userId, me.email);
     console.timeEnd("[liveblocks-auth] file-access");
     console.log("[liveblocks-auth] file-access check completed");
 

@@ -1,16 +1,26 @@
 "use client";
 
-import { useCallback, useState, lazy, Suspense } from "react";
+import { useCallback, useEffect, useRef, useState, lazy, Suspense } from "react";
 import type React from "react";
 import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
 import { EditorCanvas } from "./EditorCanvas";
 import { EditorContext } from "./EditorContext";
+import { NotificationsController } from "./NotificationsController";
 import { EditorErrorBoundary } from "./EditorErrorBoundary";
 import { TopToolbar } from "./TopToolbar";
 import { RoomProvider } from "@/lib/liveblocks";
 import { ClientSideSuspense } from "@liveblocks/react";
 import { useAutoSave } from "@/hooks/useAutoSave";
-import type { DesignFile, SaveStatus, Comment } from "@/types";
+import type {
+  DesignFile,
+  SaveStatus,
+  Comment,
+  DraftComment,
+  MentionMember,
+  CommentAccess,
+  NotificationRecord,
+} from "@/types";
 import type { Editor } from "tldraw";
 
 // Left panel — only one is ever visible at a time
@@ -76,7 +86,27 @@ export function EditorLayout({
 
   const [isCommentsMode, setIsCommentsMode] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [draftComment, setDraftComment] = useState<DraftComment | null>(null);
+  const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
+  const [mentionMembers, setMentionMembers] = useState<MentionMember[]>([]);
+  const [commentAccess, setCommentAccess] = useState<CommentAccess | null>(null);
   const [isVersionHistoryOpen, setIsVersionHistoryOpen] = useState(false);
+
+  // DB-backed notifications (mentions/replies). The controller (mounted inside
+  // the room) fetches these; refreshRef lets any component force a refetch.
+  const [dbNotifications, setDbNotifications] = useState<NotificationRecord[]>([]);
+  const refreshRef = useRef<() => void>(() => {});
+  const refreshNotifications = useCallback(() => refreshRef.current(), []);
+
+  // Deep-link: /editor/[id]?comment=<id> opens comments mode + focuses the pin.
+  const searchParams = useSearchParams();
+  const focusCommentId = searchParams.get("comment");
+  useEffect(() => {
+    if (focusCommentId) {
+      setIsCommentsMode(true);
+      setActiveCommentId(focusCommentId);
+    }
+  }, [focusCommentId]);
 
   // Notifications State
   const [notifications, setNotifications] = useState<import("./EditorContext").NotificationItem[]>([
@@ -126,26 +156,6 @@ export function EditorLayout({
     handleSaveStatusChange(saveStatus);
   }
 
-  // Listen to comment additions
-  const [prevCommentsCount, setPrevCommentsCount] = useState(0);
-  if (comments.length > prevCommentsCount) {
-    const newComment = comments[comments.length - 1];
-    setNotifications((prev) => [
-      {
-        id: `comment-${Date.now()}`,
-        type: "comment",
-        title: "New comment added",
-        message: `"${newComment.text}" by ${newComment.authorName}`,
-        timestamp: "Just now",
-        read: false,
-      },
-      ...prev,
-    ]);
-    setPrevCommentsCount(comments.length);
-  } else if (comments.length < prevCommentsCount) {
-    setPrevCommentsCount(comments.length);
-  }
-
   // Stable setter passed through context — useCallback ensures referential stability
   // even though useState setters are already stable; this makes the intent explicit.
   const stableSetComments = useCallback<React.Dispatch<React.SetStateAction<typeof comments>>>(
@@ -163,10 +173,21 @@ export function EditorLayout({
       setIsCommentsMode,
       comments,
       setComments: stableSetComments,
+      draftComment,
+      setDraftComment,
+      activeCommentId,
+      setActiveCommentId,
+      mentionMembers,
+      setMentionMembers,
+      commentAccess,
+      setCommentAccess,
       isVersionHistoryOpen,
       setIsVersionHistoryOpen,
       notifications,
       setNotifications,
+      dbNotifications,
+      setDbNotifications,
+      refreshNotifications,
       isNotificationsOpen,
       setIsNotificationsOpen,
       activeRightTab,
@@ -182,7 +203,7 @@ export function EditorLayout({
         />
         <div className="flex flex-1 overflow-hidden relative">
           {isCommentsMode ? (
-            <CommentsPanel fileId={file.id} />
+            <CommentsPanel fileId={file.id} readonly={readonly} />
           ) : (
             <AssetsPanel />
           )}
@@ -336,6 +357,10 @@ export function EditorLayout({
       }}
     >
       <ClientSideSuspense fallback={<div className="flex h-screen w-screen items-center justify-center bg-background text-muted text-sm">Connecting to canvas...</div>}>
+        <NotificationsController
+          setDbNotifications={setDbNotifications}
+          bindRefresh={(fn) => (refreshRef.current = fn)}
+        />
         {content}
       </ClientSideSuspense>
     </RoomProvider>

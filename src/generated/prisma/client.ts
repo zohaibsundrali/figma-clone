@@ -62,6 +62,16 @@ export type DesignFile = Prisma.DesignFileModel
  */
 export type Comment = Prisma.CommentModel
 /**
+ * Model CommentReaction
+ * 
+ */
+export type CommentReaction = Prisma.CommentReactionModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
  * Model VersionHistory
  * 
  */

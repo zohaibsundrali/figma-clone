@@ -81,9 +81,13 @@ export const TopToolbar = track(function TopToolbar({
     setIsVersionHistoryOpen,
     notifications,
     setNotifications,
+    dbNotifications,
     isNotificationsOpen,
     setIsNotificationsOpen,
   } = useEditorContext();
+  const unreadNotifications =
+    notifications.filter((n) => !n.read).length +
+    dbNotifications.filter((n) => !n.read).length;
   const [shareOpen, setShareOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -566,9 +570,9 @@ export const TopToolbar = track(function TopToolbar({
                 className="notification-trigger relative"
               >
                 <Bell className="h-4 w-4" />
-                {notifications.filter((n) => !n.read).length > 0 && (
+                {unreadNotifications > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-bold text-white ring-1 ring-background animate-pulse">
-                    {notifications.filter((n) => !n.read).length}
+                    {unreadNotifications}
                   </span>
                 )}
               </Button>

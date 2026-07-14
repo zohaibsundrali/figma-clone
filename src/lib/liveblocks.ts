@@ -18,6 +18,14 @@ type Storage = {
   canvasData: JsonObject | null;
 };
 
+// Realtime room events. Comments/replies/reactions/resolution live in Postgres;
+// after a successful mutation the mutating client broadcasts one of these so
+// every other client in the room re-syncs. The server stays authoritative, so
+// optimistic UI + broadcast can never create duplicate records.
+export type RoomEvent =
+  | { type: "comments-updated" }
+  | { type: "comment-thread"; commentId: string };
+
 const client = createClient({
   authEndpoint: "/api/liveblocks-auth",
 });
@@ -30,6 +38,8 @@ export const {
   useMyPresence,
   useUpdateMyPresence,
   useSelf,
-} = createRoomContext<EditorPresence, Storage, UserMeta>(client);
+  useBroadcastEvent,
+  useEventListener,
+} = createRoomContext<EditorPresence, Storage, UserMeta, RoomEvent>(client);
 
 export { PRESENCE_COLORS } from "./presence-colors";

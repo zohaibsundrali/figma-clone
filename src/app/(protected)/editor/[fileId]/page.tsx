@@ -1,6 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getFileAccess } from "@/lib/comment-access";
 import { EditorPageClient } from "./EditorPageClient";
 
 type PageProps = {
@@ -16,11 +17,13 @@ export default async function EditorPage({ params }: PageProps) {
 
   if (!userId) redirect("/sign-in");
 
-  // Fetch user profile and file in parallel — saves another ~100-300ms
+  // Fetch user profile and file in parallel — saves another ~100-300ms.
+  // The file query allows the owner OR any member of its workspace; the
+  // fine-grained role is resolved below to decide read-only vs. edit access.
   const [user, file] = await Promise.all([
     currentUser(),
     prisma.designFile.findFirst({
-      where: { id: fileId, ownerId: userId },
+      where: { id: fileId },
       select: {
         id: true,
         title: true,
@@ -43,8 +46,21 @@ export default async function EditorPage({ params }: PageProps) {
     redirect("/dashboard");
   }
 
+  // Role-based gating: owners and workspace editors/admins get full edit;
+  // commenters/viewers open the file read-only (they can still comment).
+  const access = await getFileAccess(
+    fileId,
+    userId,
+    user?.primaryEmailAddress?.emailAddress ?? null
+  );
+  if (!access.canView) {
+    redirect("/dashboard");
+  }
+  const readonly = !(access.role === "admin" || access.role === "editor");
+
   return (
     <EditorPageClient
+      readonly={readonly}
       initialFile={{
         id: file.id,
         title: file.title,

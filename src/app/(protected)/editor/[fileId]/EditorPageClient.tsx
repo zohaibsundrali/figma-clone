@@ -6,6 +6,7 @@ import { PRESENCE_COLORS } from "@/lib/liveblocks";
 
 interface EditorPageClientProps {
   initialFile: DesignFile;
+  readonly?: boolean;
   userInfo: {
     name: string;
     avatar: string;
@@ -104,7 +105,7 @@ function EditorSkeleton() {
   );
 }
 
-export function EditorPageClient({ initialFile, userInfo }: EditorPageClientProps) {
+export function EditorPageClient({ initialFile, userInfo, readonly = false }: EditorPageClientProps) {
   const colorIndex =
     Math.abs(userInfo.userId.split("").reduce((a, c) => a + c.charCodeAt(0), 0)) %
     PRESENCE_COLORS.length;
@@ -112,6 +113,7 @@ export function EditorPageClient({ initialFile, userInfo }: EditorPageClientProp
   return (
     <EditorLayout
       file={initialFile}
+      readonly={readonly}
       userInfo={{
         name: userInfo.name,
         avatar: userInfo.avatar,

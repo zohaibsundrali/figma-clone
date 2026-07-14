@@ -388,6 +388,8 @@ export const ModelName = {
   WorkspaceMember: 'WorkspaceMember',
   DesignFile: 'DesignFile',
   Comment: 'Comment',
+  CommentReaction: 'CommentReaction',
+  Notification: 'Notification',
   VersionHistory: 'VersionHistory',
   Activity: 'Activity',
   Template: 'Template',
@@ -407,7 +409,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "workspace" | "workspaceMember" | "designFile" | "comment" | "versionHistory" | "activity" | "template" | "guide"
+    modelProps: "workspace" | "workspaceMember" | "designFile" | "comment" | "commentReaction" | "notification" | "versionHistory" | "activity" | "template" | "guide"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -704,6 +706,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CommentCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CommentCountAggregateOutputType> | number
+        }
+      }
+    }
+    CommentReaction: {
+      payload: Prisma.$CommentReactionPayload<ExtArgs>
+      fields: Prisma.CommentReactionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommentReactionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentReactionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommentReactionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentReactionPayload>
+        }
+        findFirst: {
+          args: Prisma.CommentReactionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentReactionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommentReactionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentReactionPayload>
+        }
+        findMany: {
+          args: Prisma.CommentReactionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentReactionPayload>[]
+        }
+        create: {
+          args: Prisma.CommentReactionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentReactionPayload>
+        }
+        createMany: {
+          args: Prisma.CommentReactionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommentReactionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentReactionPayload>[]
+        }
+        delete: {
+          args: Prisma.CommentReactionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentReactionPayload>
+        }
+        update: {
+          args: Prisma.CommentReactionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentReactionPayload>
+        }
+        deleteMany: {
+          args: Prisma.CommentReactionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommentReactionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommentReactionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentReactionPayload>[]
+        }
+        upsert: {
+          args: Prisma.CommentReactionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentReactionPayload>
+        }
+        aggregate: {
+          args: Prisma.CommentReactionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommentReaction>
+        }
+        groupBy: {
+          args: Prisma.CommentReactionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommentReactionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommentReactionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommentReactionCountAggregateOutputType> | number
+        }
+      }
+    }
+    Notification: {
+      payload: Prisma.$NotificationPayload<ExtArgs>
+      fields: Prisma.NotificationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NotificationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NotificationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>
+        }
+        findFirst: {
+          args: Prisma.NotificationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NotificationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>
+        }
+        findMany: {
+          args: Prisma.NotificationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>[]
+        }
+        create: {
+          args: Prisma.NotificationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>
+        }
+        createMany: {
+          args: Prisma.NotificationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NotificationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>[]
+        }
+        delete: {
+          args: Prisma.NotificationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>
+        }
+        update: {
+          args: Prisma.NotificationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>
+        }
+        deleteMany: {
+          args: Prisma.NotificationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NotificationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NotificationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>[]
+        }
+        upsert: {
+          args: Prisma.NotificationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>
+        }
+        aggregate: {
+          args: Prisma.NotificationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNotification>
+        }
+        groupBy: {
+          args: Prisma.NotificationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NotificationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificationCountAggregateOutputType> | number
         }
       }
     }
@@ -1090,9 +1240,13 @@ export const CommentScalarFieldEnum = {
   fileId: 'fileId',
   authorId: 'authorId',
   authorName: 'authorName',
+  authorAvatar: 'authorAvatar',
   x: 'x',
   y: 'y',
   text: 'text',
+  shapeId: 'shapeId',
+  mentions: 'mentions',
+  edited: 'edited',
   resolved: 'resolved',
   parentCommentId: 'parentCommentId',
   createdAt: 'createdAt',
@@ -1100,6 +1254,34 @@ export const CommentScalarFieldEnum = {
 } as const
 
 export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
+
+
+export const CommentReactionScalarFieldEnum = {
+  id: 'id',
+  commentId: 'commentId',
+  userId: 'userId',
+  userName: 'userName',
+  emoji: 'emoji',
+  createdAt: 'createdAt'
+} as const
+
+export type CommentReactionScalarFieldEnum = (typeof CommentReactionScalarFieldEnum)[keyof typeof CommentReactionScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  fileId: 'fileId',
+  commentId: 'commentId',
+  actorId: 'actorId',
+  actorName: 'actorName',
+  message: 'message',
+  read: 'read',
+  createdAt: 'createdAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
 export const VersionHistoryScalarFieldEnum = {
@@ -1406,6 +1588,8 @@ export type GlobalOmitConfig = {
   workspaceMember?: Prisma.WorkspaceMemberOmit
   designFile?: Prisma.DesignFileOmit
   comment?: Prisma.CommentOmit
+  commentReaction?: Prisma.CommentReactionOmit
+  notification?: Prisma.NotificationOmit
   versionHistory?: Prisma.VersionHistoryOmit
   activity?: Prisma.ActivityOmit
   template?: Prisma.TemplateOmit

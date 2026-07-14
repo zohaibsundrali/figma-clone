@@ -110,7 +110,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   }
 
   clearCache(updated.ownerId);
-  revalidateTag(`user-files-${updated.ownerId}`);
+  revalidateTag(`user-files-${updated.ownerId}`, "max");
   return NextResponse.json(updated);
 }
 
@@ -144,6 +144,6 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
   }).catch((err) => console.error("[Activity logging]", err));
 
   clearCache(userId);
-  revalidateTag(`user-files-${userId}`);
+  revalidateTag(`user-files-${userId}`, "max");
   return NextResponse.json({ success: true });
 }

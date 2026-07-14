@@ -35,6 +35,6 @@ export async function POST(_request: Request, { params }: RouteParams) {
   }).catch((err) => console.error("[Activity logging]", err));
 
   clearCache(userId);
-  revalidateTag(`user-files-${userId}`);
+  revalidateTag(`user-files-${userId}`, "max");
   return NextResponse.json(restored);
 }

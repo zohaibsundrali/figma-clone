@@ -61,7 +61,7 @@ export async function POST() {
 
   // Clear both in-memory cache and Next.js server cache
   clearCache(userId);
-  revalidateTag(`user-files-${userId}`);
+  revalidateTag(`user-files-${userId}`, "max");
 
   // Fire-and-forget: activity log doesn't need to block the response
   void prisma.activity.create({

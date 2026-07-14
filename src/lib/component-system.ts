@@ -396,7 +396,7 @@ export function detachInstance(
         type: s.type,
         meta: updatedMeta,
       };
-    })
+    }) as Parameters<typeof editor.updateShapes>[0]
   );
 
   return true;
@@ -541,7 +541,7 @@ export function setInstanceOverride(
       ...meta,
       overrides,
     },
-  });
+  } as Parameters<typeof editor.updateShape>[0]);
 
   // Also update the actual child shape immediately
   const childShape = editor.getShape(childShapeId);
@@ -750,7 +750,7 @@ export function switchInstanceVariant(
       componentDefinitionId: targetDefinitionId,
       overrides: instanceMeta.overrides || {},
     },
-  });
+  } as unknown as Parameters<typeof editor.updateShape>[0]);
 
   // Re-propagate the new master's content into this instance
   // Remove existing children

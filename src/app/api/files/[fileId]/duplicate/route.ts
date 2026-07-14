@@ -29,7 +29,7 @@ export async function POST(_request: Request, { params }: RouteParams) {
   });
 
   clearCache(userId);
-  revalidateTag(`user-files-${userId}`);
+  revalidateTag(`user-files-${userId}`, "max");
 
   // Return a DesignFileSummary shape (a new duplicate has no thumbnail yet).
   const summary = {

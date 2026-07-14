@@ -161,7 +161,7 @@ export function removeAutoLayout(
     id: shape.id,
     type: shape.type,
     meta,
-  });
+  } as Parameters<typeof editor.updateShape>[0]);
 }
 
 /**
@@ -398,7 +398,7 @@ export function recalculateLayout(
 
   // Apply position updates
   if (updates.length > 0) {
-    editor.updateShapes(updates);
+    editor.updateShapes(updates as Parameters<typeof editor.updateShapes>[0]);
   }
 
   // Resize the container if in "hug" mode
@@ -430,7 +430,7 @@ export function recalculateLayout(
 
     if (widthMode === "hug" && "w" in props) {
       (containerUpdate as Record<string, unknown>).props = {
-        ...(containerUpdate as Record<string, unknown>).props,
+        ...((containerUpdate as Record<string, unknown>).props as Record<string, unknown> ?? {}),
         ...props,
         w: newWidth,
       };

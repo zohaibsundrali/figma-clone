@@ -505,7 +505,7 @@ export default async function Home() {
                 </ul>
                 <div className="mt-8">
                   <Link
-                    href={plan.name === "Starter" ? "/sign-up" : `/pricing#${plan.name.toLowerCase()}`}
+                    href={`/sign-up?plan=${plan.name === "Starter" ? "free" : plan.name.toLowerCase()}`}
                     className={`flex h-11 w-full items-center justify-center rounded-lg text-sm font-semibold transition-colors ${plan.highlighted ? "bg-sky-500 text-white hover:bg-sky-400" : "border border-white/10 bg-white/5 text-white hover:bg-white/10"}`}
                   >
                     {plan.cta}

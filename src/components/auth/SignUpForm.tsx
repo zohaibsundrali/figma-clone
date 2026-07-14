@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSignUp } from "@clerk/nextjs";
 import { ArrowLeft, ArrowRight, Loader2, ShieldCheck } from "lucide-react";
@@ -16,7 +16,17 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function SignUpForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { signUp } = useSignUp();
+
+  // Plan the user picked on the pricing page before signing up (e.g. /sign-up?plan=professional).
+  // Free/absent → land on the dashboard as usual; a paid plan → drop them straight into
+  // checkout for it after their account is created, instead of the dashboard.
+  const intendedPlan = searchParams.get("plan");
+  const postSignUpDestination =
+    intendedPlan === "professional" || intendedPlan === "organization"
+      ? `/pricing?plan=${intendedPlan}`
+      : "/dashboard";
 
   const [step, setStep] = useState<Step>("form");
 
@@ -73,6 +83,14 @@ export function SignUpForm() {
     if (!signUp || googleLoading || submitting) return;
     setFormError(null);
     setGoogleLoading(true);
+
+    // The OAuth round-trip loses query params, so stash the intended plan and
+    // let the callback page read it back to pick the right destination.
+    if (intendedPlan) {
+      sessionStorage.setItem("intended_plan", intendedPlan);
+    } else {
+      sessionStorage.removeItem("intended_plan");
+    }
 
     const { error } = await signUp.sso({
       strategy: "oauth_google",
@@ -157,8 +175,10 @@ export function SignUpForm() {
       return;
     }
 
-    // Successful verification + account creation — always land on the dashboard, never sign-in.
-    router.push("/dashboard");
+    // Successful verification + account creation — land on the dashboard, unless
+    // the user picked a paid plan before signing up, in which case go straight
+    // into checkout for it.
+    router.push(postSignUpDestination);
   };
 
   if (step === "verify") {

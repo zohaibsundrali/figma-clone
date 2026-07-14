@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Check, Loader2 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/Button";
@@ -20,8 +21,9 @@ const statusNotices: Record<string, string> = {
   canceled: "Your subscription was canceled and your account is back on Free.",
 };
 
-export default function PricingPage() {
+function PricingContent() {
   const { isSignedIn, isLoaded } = useUser();
+  const searchParams = useSearchParams();
   const [status, setStatus] = useState<SubscriptionStatus | null>(null);
   const [checkingOut, setCheckingOut] = useState<PlanId | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +57,23 @@ export default function PricingPage() {
     }
   }
 
+  // Arrived here via /sign-up?plan=X after picking a paid plan pre-signup —
+  // once we know their plan status, drop them straight into checkout instead
+  // of making them click "Upgrade" again.
+  const autoCheckoutPlan = searchParams.get("plan");
+  const hasAutoCheckedOut = useRef(false);
+  useEffect(() => {
+    if (hasAutoCheckedOut.current) return;
+    if (!isLoaded || !isSignedIn || !status) return;
+    if (autoCheckoutPlan !== "professional" && autoCheckoutPlan !== "organization") return;
+    // Already on that plan, or already awaiting review — don't re-trigger checkout.
+    if (status.plan === autoCheckoutPlan || status.requestedPlan) return;
+
+    hasAutoCheckedOut.current = true;
+    void handleUpgrade(autoCheckoutPlan);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, isSignedIn, status, autoCheckoutPlan]);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border">
@@ -83,6 +102,12 @@ export default function PricingPage() {
         {!error && status && !status.requestedPlan && statusNotices[status.status] && (
           <div className="mx-auto mt-8 max-w-md rounded-lg border border-red-600/30 bg-red-600/10 px-4 py-3 text-center text-sm text-red-400">
             {statusNotices[status.status]}
+          </div>
+        )}
+
+        {checkingOut && (
+          <div className="mx-auto mt-8 max-w-md rounded-lg border border-accent/30 bg-accent/10 px-4 py-3 text-center text-sm text-accent">
+            Redirecting you to checkout…
           </div>
         )}
 
@@ -120,7 +145,7 @@ export default function PricingPage() {
 
                 <div className="mt-6">
                   {!isSignedIn ? (
-                    <Link href="/sign-up">
+                    <Link href={`/sign-up?plan=${plan.id}`}>
                       <Button variant={plan.id === "professional" ? "primary" : "secondary"} className="w-full">
                         Get started
                       </Button>
@@ -164,5 +189,13 @@ export default function PricingPage() {
         </p>
       </main>
     </div>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense fallback={null}>
+      <PricingContent />
+    </Suspense>
   );
 }

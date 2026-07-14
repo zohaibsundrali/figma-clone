@@ -94,7 +94,29 @@ export interface CommentAccess {
   canView: boolean;
   canComment: boolean;
   canResolve: boolean;
+  canEdit: boolean;
   isAdmin: boolean;
+}
+
+export type ShareRole = "viewer" | "commenter" | "editor";
+export type MemberStatus = "pending" | "accepted" | "expired" | "revoked";
+
+export interface ShareSettings {
+  isPublic: boolean;
+  shareUrl: string | null;
+  shareRole: ShareRole;
+  hasPassword: boolean;
+  expiresAt: string | null;
+  expired: boolean;
+}
+
+export interface FileMemberSummary {
+  id: string;
+  email: string;
+  userId: string | null;
+  role: "admin" | "editor" | "commenter" | "viewer";
+  status: MemberStatus;
+  createdAt: string;
 }
 
 /** A comment being composed at a specific canvas location before it is saved. */

@@ -48,6 +48,16 @@ export type CommentReaction = Prisma.CommentReactionModel
  */
 export type Notification = Prisma.NotificationModel
 /**
+ * Model FileMember
+ * 
+ */
+export type FileMember = Prisma.FileMemberModel
+/**
+ * Model ShareAuditLog
+ * 
+ */
+export type ShareAuditLog = Prisma.ShareAuditLogModel
+/**
  * Model VersionHistory
  * 
  */

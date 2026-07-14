@@ -19,6 +19,7 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
       canView: access.canView,
       canComment: access.canComment,
       canResolve: access.canResolve,
+      canEdit: access.canEdit,
       isAdmin: access.isAdmin,
     };
     return NextResponse.json(payload);

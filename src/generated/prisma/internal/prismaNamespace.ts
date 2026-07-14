@@ -390,6 +390,8 @@ export const ModelName = {
   Comment: 'Comment',
   CommentReaction: 'CommentReaction',
   Notification: 'Notification',
+  FileMember: 'FileMember',
+  ShareAuditLog: 'ShareAuditLog',
   VersionHistory: 'VersionHistory',
   Activity: 'Activity',
   Template: 'Template',
@@ -409,7 +411,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "workspace" | "workspaceMember" | "designFile" | "comment" | "commentReaction" | "notification" | "versionHistory" | "activity" | "template" | "guide"
+    modelProps: "workspace" | "workspaceMember" | "designFile" | "comment" | "commentReaction" | "notification" | "fileMember" | "shareAuditLog" | "versionHistory" | "activity" | "template" | "guide"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -857,6 +859,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FileMember: {
+      payload: Prisma.$FileMemberPayload<ExtArgs>
+      fields: Prisma.FileMemberFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FileMemberFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileMemberPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FileMemberFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileMemberPayload>
+        }
+        findFirst: {
+          args: Prisma.FileMemberFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileMemberPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FileMemberFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileMemberPayload>
+        }
+        findMany: {
+          args: Prisma.FileMemberFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileMemberPayload>[]
+        }
+        create: {
+          args: Prisma.FileMemberCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileMemberPayload>
+        }
+        createMany: {
+          args: Prisma.FileMemberCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FileMemberCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileMemberPayload>[]
+        }
+        delete: {
+          args: Prisma.FileMemberDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileMemberPayload>
+        }
+        update: {
+          args: Prisma.FileMemberUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileMemberPayload>
+        }
+        deleteMany: {
+          args: Prisma.FileMemberDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FileMemberUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FileMemberUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileMemberPayload>[]
+        }
+        upsert: {
+          args: Prisma.FileMemberUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileMemberPayload>
+        }
+        aggregate: {
+          args: Prisma.FileMemberAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFileMember>
+        }
+        groupBy: {
+          args: Prisma.FileMemberGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FileMemberGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FileMemberCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FileMemberCountAggregateOutputType> | number
+        }
+      }
+    }
+    ShareAuditLog: {
+      payload: Prisma.$ShareAuditLogPayload<ExtArgs>
+      fields: Prisma.ShareAuditLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ShareAuditLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShareAuditLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ShareAuditLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShareAuditLogPayload>
+        }
+        findFirst: {
+          args: Prisma.ShareAuditLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShareAuditLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ShareAuditLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShareAuditLogPayload>
+        }
+        findMany: {
+          args: Prisma.ShareAuditLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShareAuditLogPayload>[]
+        }
+        create: {
+          args: Prisma.ShareAuditLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShareAuditLogPayload>
+        }
+        createMany: {
+          args: Prisma.ShareAuditLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ShareAuditLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShareAuditLogPayload>[]
+        }
+        delete: {
+          args: Prisma.ShareAuditLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShareAuditLogPayload>
+        }
+        update: {
+          args: Prisma.ShareAuditLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShareAuditLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.ShareAuditLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ShareAuditLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ShareAuditLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShareAuditLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.ShareAuditLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShareAuditLogPayload>
+        }
+        aggregate: {
+          args: Prisma.ShareAuditLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateShareAuditLog>
+        }
+        groupBy: {
+          args: Prisma.ShareAuditLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShareAuditLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ShareAuditLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShareAuditLogCountAggregateOutputType> | number
+        }
+      }
+    }
     VersionHistory: {
       payload: Prisma.$VersionHistoryPayload<ExtArgs>
       fields: Prisma.VersionHistoryFieldRefs
@@ -1229,7 +1379,10 @@ export const DesignFileScalarFieldEnum = {
   deletedAt: 'deletedAt',
   isDeleted: 'isDeleted',
   isStarred: 'isStarred',
-  workspaceId: 'workspaceId'
+  workspaceId: 'workspaceId',
+  shareRole: 'shareRole',
+  sharePasswordHash: 'sharePasswordHash',
+  shareExpiresAt: 'shareExpiresAt'
 } as const
 
 export type DesignFileScalarFieldEnum = (typeof DesignFileScalarFieldEnum)[keyof typeof DesignFileScalarFieldEnum]
@@ -1282,6 +1435,37 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const FileMemberScalarFieldEnum = {
+  id: 'id',
+  fileId: 'fileId',
+  email: 'email',
+  userId: 'userId',
+  role: 'role',
+  status: 'status',
+  invitedById: 'invitedById',
+  inviteToken: 'inviteToken',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FileMemberScalarFieldEnum = (typeof FileMemberScalarFieldEnum)[keyof typeof FileMemberScalarFieldEnum]
+
+
+export const ShareAuditLogScalarFieldEnum = {
+  id: 'id',
+  fileId: 'fileId',
+  actorId: 'actorId',
+  actorName: 'actorName',
+  action: 'action',
+  target: 'target',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type ShareAuditLogScalarFieldEnum = (typeof ShareAuditLogScalarFieldEnum)[keyof typeof ShareAuditLogScalarFieldEnum]
 
 
 export const VersionHistoryScalarFieldEnum = {
@@ -1590,6 +1774,8 @@ export type GlobalOmitConfig = {
   comment?: Prisma.CommentOmit
   commentReaction?: Prisma.CommentReactionOmit
   notification?: Prisma.NotificationOmit
+  fileMember?: Prisma.FileMemberOmit
+  shareAuditLog?: Prisma.ShareAuditLogOmit
   versionHistory?: Prisma.VersionHistoryOmit
   activity?: Prisma.ActivityOmit
   template?: Prisma.TemplateOmit

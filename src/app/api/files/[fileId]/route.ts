@@ -1,21 +1,29 @@
 import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
-import { getCurrentUserId, getOwnedFile } from "@/lib/file-access";
+import { getCurrentUserContext, getCurrentUserId, getOwnedFile } from "@/lib/file-access";
+import { getFileAccess } from "@/lib/comment-access";
+import { filePatchSchema } from "@/lib/share-validation";
 import { prisma } from "@/lib/prisma";
 import { clearCache } from "@/lib/api-cache";
 
 type RouteParams = { params: Promise<{ fileId: string }> };
 
 export async function GET(_request: Request, { params }: RouteParams) {
-  const userId = await getCurrentUserId();
-  if (!userId) {
+  const me = await getCurrentUserContext();
+  if (!me) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { fileId } = await params;
 
-  const file = await prisma.designFile.findFirst({
-    where: { id: fileId, ownerId: userId },
+  // IDOR-safe: only return the file if this user actually has view access.
+  const access = await getFileAccess(fileId, me.userId, me.email);
+  if (!access.canView) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const file = await prisma.designFile.findUnique({
+    where: { id: fileId },
     select: {
       id: true,
       title: true,
@@ -41,32 +49,48 @@ export async function GET(_request: Request, { params }: RouteParams) {
 }
 
 export async function PATCH(request: Request, { params }: RouteParams) {
-  const userId = await getCurrentUserId();
-  if (!userId) {
+  const me = await getCurrentUserContext();
+  if (!me) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { fileId } = await params;
-  const file = await getOwnedFile(fileId, userId);
 
-  if (!file) {
+  // Canvas/content edits require edit rights (editors, admins, owner).
+  // Sharing settings (isPublic, password, expiry, role) are NOT accepted here —
+  // they live on the dedicated /share route and require owner/admin.
+  const access = await getFileAccess(fileId, me.userId, me.email);
+  if (!access.canView) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+  if (!access.canEdit) {
+    return NextResponse.json(
+      { error: "You have read-only access to this file." },
+      { status: 403 }
+    );
+  }
 
-  let body;
+  let raw: unknown;
   try {
-    body = await request.json();
-  } catch (err) {
+    raw = await request.json();
+  } catch {
     return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
   }
-  const { title, canvasData, isPublic, thumbnail, isStarred } = body;
+
+  const parsed = filePatchSchema.safeParse(raw);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { title, canvasData, thumbnail, isStarred } = parsed.data;
 
   const updated = await prisma.designFile.update({
     where: { id: fileId },
     data: {
       ...(title !== undefined ? { title } : {}),
-      ...(canvasData !== undefined ? { canvasData } : {}),
-      ...(isPublic !== undefined ? { isPublic } : {}),
+      ...(canvasData !== undefined ? { canvasData: canvasData as object } : {}),
       ...(thumbnail !== undefined ? { thumbnail } : {}),
       ...(isStarred !== undefined ? { isStarred } : {}),
     },
@@ -77,16 +101,16 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     await prisma.activity.create({
       data: {
         fileId,
-        authorId: userId,
-        authorName: "You",
+        authorId: me.userId,
+        authorName: me.name,
         action: "file_updated",
         details: "Canvas changes saved",
       },
     }).catch((err) => console.error("[Activity logging]", err));
   }
 
-  clearCache(userId);
-  revalidateTag(`user-files-${userId}`);
+  clearCache(updated.ownerId);
+  revalidateTag(`user-files-${updated.ownerId}`);
   return NextResponse.json(updated);
 }
 
@@ -97,6 +121,7 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
   }
 
   const { fileId } = await params;
+  // Deletion remains owner-only.
   const file = await getOwnedFile(fileId, userId);
 
   if (!file) {

@@ -49,7 +49,12 @@ model DesignFile {
   isDeleted   Boolean          @default(false)
   isStarred   Boolean          @default(false)
   workspaceId String?
+  // Public-link sharing controls
+  shareRole         String    @default("viewer") // role granted by the public link: viewer | commenter | editor
+  sharePasswordHash String? // bcrypt hash; null = no password
+  shareExpiresAt    DateTime? // null = never expires
   comments    Comment[]
+  members     FileMember[]
   workspace   Workspace?       @relation(fields: [workspaceId], references: [id])
   versions    VersionHistory[]
 
@@ -122,6 +127,41 @@ model Notification {
   @@unique([userId, commentId, type])
   @@index([userId])
   @@index([userId, read])
+  @@index([createdAt])
+}
+
+model FileMember {
+  id          String     @id @default(cuid())
+  fileId      String
+  email       String // lowercased invitee email
+  userId      String? // Clerk id, populated once the invite is accepted / user known
+  role        String     @default("viewer") // admin | editor | commenter | viewer
+  status      String     @default("pending") // pending | accepted | expired | revoked
+  invitedById String
+  inviteToken String     @unique
+  expiresAt   DateTime? // invitation expiry (not the same as link expiry)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  file        DesignFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([fileId, email])
+  @@index([fileId])
+  @@index([userId])
+  @@index([inviteToken])
+  @@index([email])
+}
+
+model ShareAuditLog {
+  id        String   @id @default(cuid())
+  fileId    String
+  actorId   String
+  actorName String?
+  action    String // e.g. link_enabled, link_regenerated, password_set, invite_sent, role_changed, access_revoked
+  target    String? // affected email / member id / token
+  metadata  String? // small JSON blob of extra context
+  createdAt DateTime @default(now())
+
+  @@index([fileId])
   @@index([createdAt])
 }
 

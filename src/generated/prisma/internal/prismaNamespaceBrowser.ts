@@ -57,6 +57,8 @@ export const ModelName = {
   Comment: 'Comment',
   CommentReaction: 'CommentReaction',
   Notification: 'Notification',
+  FileMember: 'FileMember',
+  ShareAuditLog: 'ShareAuditLog',
   VersionHistory: 'VersionHistory',
   Activity: 'Activity',
   Template: 'Template',
@@ -116,7 +118,10 @@ export const DesignFileScalarFieldEnum = {
   deletedAt: 'deletedAt',
   isDeleted: 'isDeleted',
   isStarred: 'isStarred',
-  workspaceId: 'workspaceId'
+  workspaceId: 'workspaceId',
+  shareRole: 'shareRole',
+  sharePasswordHash: 'sharePasswordHash',
+  shareExpiresAt: 'shareExpiresAt'
 } as const
 
 export type DesignFileScalarFieldEnum = (typeof DesignFileScalarFieldEnum)[keyof typeof DesignFileScalarFieldEnum]
@@ -169,6 +174,37 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const FileMemberScalarFieldEnum = {
+  id: 'id',
+  fileId: 'fileId',
+  email: 'email',
+  userId: 'userId',
+  role: 'role',
+  status: 'status',
+  invitedById: 'invitedById',
+  inviteToken: 'inviteToken',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FileMemberScalarFieldEnum = (typeof FileMemberScalarFieldEnum)[keyof typeof FileMemberScalarFieldEnum]
+
+
+export const ShareAuditLogScalarFieldEnum = {
+  id: 'id',
+  fileId: 'fileId',
+  actorId: 'actorId',
+  actorName: 'actorName',
+  action: 'action',
+  target: 'target',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type ShareAuditLogScalarFieldEnum = (typeof ShareAuditLogScalarFieldEnum)[keyof typeof ShareAuditLogScalarFieldEnum]
 
 
 export const VersionHistoryScalarFieldEnum = {

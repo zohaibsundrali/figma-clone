@@ -1,5 +1,6 @@
 import { Liveblocks } from "@liveblocks/node";
-import { getCurrentUserContext, getFileForCollaboration } from "@/lib/file-access";
+import { getCurrentUserContext } from "@/lib/file-access";
+import { getFileAccess } from "@/lib/comment-access";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -53,20 +54,27 @@ export async function POST(request: Request) {
     const userId = me.userId;
 
     console.time("[liveblocks-auth] file-access");
-    // Owner, workspace member, or public file may join the collaboration room.
-    const file = await getFileForCollaboration(room, userId, me.email);
+    // Resolve the caller's role for THIS file. Never trust any client-sent role.
+    // Expired links / revoked access resolve to canView=false → denied.
+    const access = await getFileAccess(room, userId, me.email);
     console.timeEnd("[liveblocks-auth] file-access");
-    console.log("[liveblocks-auth] file-access check completed");
+    console.log(
+      "[liveblocks-auth] access resolved:",
+      access.role,
+      "canEdit:",
+      access.canEdit
+    );
 
-    if (!file) {
-      return Response.json(
-        { error: "Forbidden" },
-        { status: 403 }
-      );
+    if (!access.canView) {
+      return Response.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const session = liveblocks.prepareSession(userId);
-    session.allow(room, session.FULL_ACCESS);
+    // Editors and above may write to the room; everyone else is read-only.
+    session.allow(
+      room,
+      access.canEdit ? session.FULL_ACCESS : session.READ_ACCESS
+    );
 
     console.time("[liveblocks-auth] authorize");
     const { status, body } = await session.authorize();

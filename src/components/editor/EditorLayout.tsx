@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { EditorCanvas } from "./EditorCanvas";
 import { EditorContext } from "./EditorContext";
 import { NotificationsController } from "./NotificationsController";
+import { AccessWatcher } from "./AccessWatcher";
 import { EditorErrorBoundary } from "./EditorErrorBoundary";
 import { TopToolbar } from "./TopToolbar";
 import { RoomProvider } from "@/lib/liveblocks";
@@ -202,6 +203,7 @@ export function EditorLayout({
           readonly={readonly}
         />
         <div className="flex flex-1 overflow-hidden relative">
+          {!readonly && <AccessWatcher fileId={file.id} />}
           {isCommentsMode ? (
             <CommentsPanel fileId={file.id} readonly={readonly} />
           ) : (

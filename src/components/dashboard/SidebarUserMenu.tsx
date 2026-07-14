@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { ChevronDown, LogOut, Settings } from "lucide-react";
 
@@ -9,7 +8,6 @@ import { ChevronDown, LogOut, Settings } from "lucide-react";
 // the entire account surface (avatar, name/email, manage account, sign out).
 // The top-right header intentionally does not render a second profile control.
 export function SidebarUserMenu() {
-  const router = useRouter();
   const { user, isLoaded } = useUser();
   const { openUserProfile, signOut } = useClerk();
   const [isOpen, setIsOpen] = useState(false);
@@ -63,10 +61,22 @@ export function SidebarUserMenu() {
     openUserProfile();
   };
 
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
   const handleSignOut = async () => {
+    if (isSigningOut) return;
+    setIsSigningOut(true);
     closeMenu();
-    await signOut({ redirectUrl: "/" });
-    router.push("/");
+    try {
+      // Clear the Clerk session. We pass a no-op redirectUrl callback target so
+      // Clerk doesn't also fire its own navigation and race with ours.
+      await signOut();
+    } finally {
+      // Hard navigation (not router.push): forces the server to re-evaluate auth
+      // with the now-cleared cookies, so we never bounce off a stale RSC render
+      // of "/" that still thinks we're signed in.
+      window.location.href = "/";
+    }
   };
 
   return (
@@ -134,10 +144,11 @@ export function SidebarUserMenu() {
             <button
               role="menuitem"
               onClick={handleSignOut}
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-semibold text-red-400 transition-colors hover:bg-red-500/10"
+              disabled={isSigningOut}
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-semibold text-red-400 transition-colors hover:bg-red-500/10 disabled:opacity-60"
             >
               <LogOut className="h-4 w-4" />
-              Sign Out
+              {isSigningOut ? "Signing out…" : "Sign Out"}
             </button>
           </div>
         </div>

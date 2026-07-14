@@ -71,7 +71,7 @@ export class FigmaTextShapeUtil extends TextShapeUtil {
           fontFamily: (meta.fontFamily as string) || "Inter",
           fontSize,
           lineHeight,
-          color: (meta.color as string) || "#FFFFFF",
+          color: (meta.color as string) || "#000000",
           fontWeight: (meta.fontWeight as string) || "normal",
           fontStyle: (meta.fontStyle as string) || "normal",
         };
@@ -90,7 +90,7 @@ export class FigmaTextShapeUtil extends TextShapeUtil {
     const fontStyle = (meta.fontStyle as string) || "normal";
     const textDecoration = (meta.textDecoration as string) || "none";
     const textCase = (meta.textCase as string) || "none";
-    const textColor = (meta.color as string) || "#FFFFFF";
+    const textColor = (meta.color as string) || "#000000";
     const lineHeight = parseLineHeight(meta.lineHeight as string | number, fontSize);
     
     // Load font dynamically if it's not a default font

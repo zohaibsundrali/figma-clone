@@ -64,7 +64,30 @@ export function EditorLayout({
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [editor, setEditor] = useState<Editor | null>(null);
   const [activeRightTab, setActiveRightTab] = useState<"design" | "prototype" | "inspect" | "activity" | "collaborators" | "guides" | "constraints" | "components" | "tokens">("design");
+  const [isPresenting, setIsPresenting] = useState(false);
   const handleSave = useAutoSave(file.id, setSaveStatus);
+
+  // Whenever a text shape is selected or created, jump the right sidebar to
+  // the Design tab so its text properties are visible without an extra click.
+  // Only reacts to the *selection actually changing* — not to every document
+  // edit — so it doesn't yank the user back while they're on another tab
+  // with the same text shape still selected.
+  const lastSelectionKeyRef = useRef<string>("");
+  useEffect(() => {
+    if (!editor) return;
+    const checkSelectionForText = () => {
+      const selected = editor.getSelectedShapes();
+      const key = selected.map((s) => s.id).join(",");
+      if (key === lastSelectionKeyRef.current) return;
+      lastSelectionKeyRef.current = key;
+      if (selected.some((s) => s.type === "text")) {
+        setActiveRightTab("design");
+      }
+    };
+    checkSelectionForText();
+    const cleanup = editor.store.listen(checkSelectionForText, { scope: "document" });
+    return cleanup;
+  }, [editor]);
 
   const handleFileChange = useCallback(
     (updates: Partial<Pick<DesignFile, "isPublic">>) => {
@@ -192,7 +215,9 @@ export function EditorLayout({
       isNotificationsOpen,
       setIsNotificationsOpen,
       activeRightTab,
-      setActiveRightTab
+      setActiveRightTab,
+      isPresenting,
+      setIsPresenting,
     }}>
       <div className="flex h-screen flex-col overflow-hidden bg-background">
         <TopToolbar
@@ -204,72 +229,74 @@ export function EditorLayout({
         />
         <div className="flex flex-1 overflow-hidden relative">
           {!readonly && <AccessWatcher fileId={file.id} />}
-          {isCommentsMode ? (
+          {!isPresenting && (isCommentsMode ? (
             <CommentsPanel fileId={file.id} readonly={readonly} />
           ) : (
             <AssetsPanel />
-          )}
+          ))}
           <EditorErrorBoundary>
             <EditorCanvas
               initialData={file.canvasData}
-              readonly={readonly}
+              readonly={readonly || isPresenting}
               onSave={handleSave}
             />
           </EditorErrorBoundary>
-          <aside className="flex w-[280px] flex-col border-l border-border bg-surface h-full">
-            {/* ── Figma-style tab bar ── */}
-            <div className="flex items-end border-b border-border bg-surface flex-shrink-0 overflow-x-auto hide-scrollbar">
-              {([
-                { id: "design",        label: "Design" },
-                { id: "prototype",     label: "Prototype" },
-                { id: "inspect",       label: "Inspect" },
-                { id: "activity",      label: "Activity" },
-                { id: "collaborators", label: "People" },
-                { id: "guides",        label: "Guides" },
-                { id: "constraints",   label: "Constraints" },
-                { id: "components",    label: "Components" },
-                { id: "tokens",        label: "Tokens" },
-              ] as const).map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveRightTab(tab.id)}
-                  className={`whitespace-nowrap px-2.5 py-2 text-[11px] font-semibold border-b-2 transition-colors flex-shrink-0 ${
-                    activeRightTab === tab.id
-                      ? "border-accent text-accent"
-                      : "border-transparent text-muted hover:text-foreground"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-            
-            <div className="flex-1 overflow-hidden flex flex-col">
-              <Suspense fallback={<div className="p-4 text-xs text-muted">Loading...</div>}>
-                {activeRightTab === "design" && <PropertiesPanel embedded />}
-                {activeRightTab === "prototype" && <PrototypePanel />}
-                {activeRightTab === "inspect" && <InspectPanel />}
-                {activeRightTab === "activity" && (
-                  <div className="flex-1 overflow-y-auto p-3">
-                    <ActivityLog fileId={file.id} />
-                  </div>
-                )}
-                {activeRightTab === "collaborators" && (
-                  <div className="flex-1 overflow-y-auto p-3">
-                    <CollaboratorsPanel />
-                  </div>
-                )}
-                {activeRightTab === "guides" && <GuidesPanel />}
-                {activeRightTab === "constraints" && <ConstraintsPanel />}
-                {activeRightTab === "components" && <ComponentsLibrary />}
-                {activeRightTab === "tokens" && <TokensPanel />}
-              </Suspense>
-            </div>
-          </aside>
-          {isVersionHistoryOpen && (
-            <VersionHistorySidebar 
-              fileId={file.id} 
-              onClose={() => setIsVersionHistoryOpen(false)} 
+          {!isPresenting && (
+            <aside className="flex w-[280px] flex-col border-l border-border bg-surface h-full">
+              {/* ── Figma-style tab bar ── */}
+              <div className="flex items-end border-b border-border bg-surface flex-shrink-0 overflow-x-auto hide-scrollbar">
+                {([
+                  { id: "design",        label: "Design" },
+                  { id: "prototype",     label: "Prototype" },
+                  { id: "inspect",       label: "Inspect" },
+                  { id: "activity",      label: "Activity" },
+                  { id: "collaborators", label: "People" },
+                  { id: "guides",        label: "Guides" },
+                  { id: "constraints",   label: "Constraints" },
+                  { id: "components",    label: "Components" },
+                  { id: "tokens",        label: "Tokens" },
+                ] as const).map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveRightTab(tab.id)}
+                    className={`whitespace-nowrap px-2.5 py-2 text-[11px] font-semibold border-b-2 transition-colors flex-shrink-0 ${
+                      activeRightTab === tab.id
+                        ? "border-accent text-accent"
+                        : "border-transparent text-muted hover:text-foreground"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex-1 overflow-hidden flex flex-col">
+                <Suspense fallback={<div className="p-4 text-xs text-muted">Loading...</div>}>
+                  {activeRightTab === "design" && <PropertiesPanel embedded />}
+                  {activeRightTab === "prototype" && <PrototypePanel />}
+                  {activeRightTab === "inspect" && <InspectPanel />}
+                  {activeRightTab === "activity" && (
+                    <div className="flex-1 overflow-y-auto p-3">
+                      <ActivityLog fileId={file.id} />
+                    </div>
+                  )}
+                  {activeRightTab === "collaborators" && (
+                    <div className="flex-1 overflow-y-auto p-3">
+                      <CollaboratorsPanel />
+                    </div>
+                  )}
+                  {activeRightTab === "guides" && <GuidesPanel />}
+                  {activeRightTab === "constraints" && <ConstraintsPanel />}
+                  {activeRightTab === "components" && <ComponentsLibrary />}
+                  {activeRightTab === "tokens" && <TokensPanel />}
+                </Suspense>
+              </div>
+            </aside>
+          )}
+          {isVersionHistoryOpen && !isPresenting && (
+            <VersionHistorySidebar
+              fileId={file.id}
+              onClose={() => setIsVersionHistoryOpen(false)}
             />
           )}
         </div>

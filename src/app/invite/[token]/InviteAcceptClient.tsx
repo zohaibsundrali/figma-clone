@@ -44,27 +44,27 @@ export function InviteAcceptClient({ token }: { token: string }) {
   }, [token, router]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#0f0f12] px-6 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-center">
       {state.kind === "accepting" && (
         <>
-          <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
-          <p className="mt-4 text-sm text-zinc-400">Accepting your invitation…</p>
+          <Loader2 className="h-8 w-8 animate-spin text-accent" />
+          <p className="mt-4 text-sm text-muted">Accepting your invitation…</p>
         </>
       )}
       {state.kind === "success" && (
         <>
           <CheckCircle2 className="h-10 w-10 text-emerald-400" />
-          <p className="mt-4 text-sm text-zinc-300">Access granted. Opening the file…</p>
+          <p className="mt-4 text-sm text-muted">Access granted. Opening the file…</p>
         </>
       )}
       {state.kind === "error" && (
         <>
-          <XCircle className="h-10 w-10 text-red-400" />
-          <h1 className="mt-4 text-lg font-semibold text-white">Invitation unavailable</h1>
-          <p className="mt-1 max-w-sm text-sm text-zinc-400">{state.message}</p>
+          <XCircle className="h-10 w-10 text-danger" />
+          <h1 className="mt-4 text-lg font-semibold text-foreground">Invitation unavailable</h1>
+          <p className="mt-1 max-w-sm text-sm text-muted">{state.message}</p>
           <Link
             href="/dashboard"
-            className="mt-6 rounded-lg bg-zinc-800 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700"
+            className="mt-6 rounded-lg bg-surface-elevated px-4 py-2 text-sm font-medium text-foreground hover:bg-border"
           >
             Go to dashboard
           </Link>

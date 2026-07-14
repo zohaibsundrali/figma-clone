@@ -104,6 +104,13 @@ function CanvasInner({
     return () => setEditor(null);
   }, [editor, setEditor]);
 
+  // ── Keep tldraw's own readonly flag in sync (covers Present mode toggling
+  // readonly on/off after mount, not just the shared-link readonly case) ──
+  useEffect(() => {
+    if (!editor) return;
+    editor.updateInstanceState({ isReadonly: readonly });
+  }, [editor, readonly]);
+
   // ── Handle Keyboard Shortcuts ───────────────────────────────────────────
   useEffect(() => {
     if (!editor) return;
@@ -512,6 +519,8 @@ function CanvasInner({
       <TransformControls />
       <PathOperationsMenu />
       <DistributionToolsMenu />
+      <BottomToolbar readonly={readonly} />
+      <ZoomControl />
       {showMiniMap && (
         <div className="absolute top-3 right-3 z-40 rounded border border-border bg-surface/80 p-2 shadow-lg backdrop-blur">
           <MiniMapViewer />
@@ -546,13 +555,13 @@ function CursorOverlay({ readonly }: { readonly: boolean }) {
             <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
               <path
                 d="M0 0L0 16L4 12L7 19L9 18L6 11L11 11L0 0Z"
-                fill={info?.color ?? "#7c3aed"}
+                fill={info?.color ?? "#0d99ff"}
               />
             </svg>
             <div className="ml-3 -mt-1 inline-flex items-center gap-1 rounded-full border border-white/10 bg-[#0f141a]/90 px-2 py-1 text-[10px] text-white shadow-lg backdrop-blur-sm">
               <span
                 className="h-1.5 w-1.5 rounded-full"
-                style={{ backgroundColor: info?.color ?? "#7c3aed" }}
+                style={{ backgroundColor: info?.color ?? "#0d99ff" }}
               />
               <span>{info?.name ?? "Anonymous"}</span>
             </div>
@@ -595,7 +604,7 @@ const CommentPins = track(() => {
             }}
             title={`${comment.authorName}: ${comment.text.replace(/@\[([^\]]+)\]\([^)]+\)/g, "@$1")}`}
             className={`absolute z-[60] flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full rounded-bl-none border-2 bg-white shadow-lg transition-transform hover:scale-110 ${
-              isActive ? "border-accent ring-2 ring-accent/50" : "border-primary"
+              isActive ? "border-accent ring-2 ring-accent/50" : "border-border"
             } ${comment.resolved ? "opacity-50" : ""}`}
             style={{ left: screenPos.x, top: screenPos.y }}
           >
@@ -632,6 +641,8 @@ import { TransformControls } from "./TransformControls";
 import { PathOperationsMenu } from "./PathOperationsMenu";
 import { DistributionToolsMenu } from "./DistributionToolsMenu";
 import { CanvasGuides } from "./CanvasGuides";
+import { BottomToolbar } from "./BottomToolbar";
+import { ZoomControl } from "./ZoomControl";
 
 interface EditorCanvasProps {
   initialData: unknown | null;
@@ -646,14 +657,10 @@ export function EditorCanvas({
 }: EditorCanvasProps) {
   const [contextMenu, setContextMenu] = useState<{ x: number, y: number } | null>(null);
 
-  const handleMount = useCallback(
-    (editor: Editor) => {
-      if (readonly) {
-        editor.updateInstanceState({ isReadonly: true });
-      }
-    },
-    [readonly]
-  );
+  const handleMount = useCallback((editor: Editor) => {
+    editor.updateInstanceState({ isReadonly: readonly });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div 

@@ -52,6 +52,8 @@ interface EditorContextValue {
   setIsNotificationsOpen: (open: boolean) => void;
   activeRightTab: "design" | "prototype" | "inspect" | "activity" | "collaborators" | "guides" | "constraints" | "components" | "tokens";
   setActiveRightTab: (tab: "design" | "prototype" | "inspect" | "activity" | "collaborators" | "guides" | "constraints" | "components" | "tokens") => void;
+  isPresenting: boolean;
+  setIsPresenting: (presenting: boolean) => void;
 }
 
 export const EditorContext = createContext<EditorContextValue>({
@@ -82,6 +84,8 @@ export const EditorContext = createContext<EditorContextValue>({
   setIsNotificationsOpen: () => {},
   activeRightTab: "design",
   setActiveRightTab: () => {},
+  isPresenting: false,
+  setIsPresenting: () => {},
 });
 
 export function useEditorContext() {

@@ -47,16 +47,16 @@ export function PasswordGate({
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#0f0f12] px-6">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded-2xl border border-zinc-800 bg-[#18181b] p-8 text-center shadow-xl"
+        className="w-full max-w-sm rounded-2xl border border-border bg-surface p-8 text-center shadow-xl"
       >
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-violet-500/10">
-          <Lock className="h-7 w-7 text-violet-400" />
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/10">
+          <Lock className="h-7 w-7 text-accent" />
         </div>
-        <h1 className="mt-5 text-lg font-semibold text-white">Password required</h1>
-        <p className="mt-1 truncate text-sm text-zinc-400">
+        <h1 className="mt-5 text-lg font-semibold text-foreground">Password required</h1>
+        <p className="mt-1 truncate text-sm text-muted">
           "{fileTitle}" is protected
         </p>
 
@@ -66,15 +66,15 @@ export function PasswordGate({
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Enter password"
-          className="mt-6 w-full rounded-lg border border-zinc-700 bg-[#0f0f12] px-3 py-2 text-sm text-white outline-none focus:border-violet-500"
+          className="mt-6 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
         />
 
-        {error && <p className="mt-3 text-xs text-red-400">{error}</p>}
+        {error && <p className="mt-3 text-xs text-danger">{error}</p>}
 
         <button
           type="submit"
           disabled={loading || !password}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-violet-600 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-accent py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
         >
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
           Unlock

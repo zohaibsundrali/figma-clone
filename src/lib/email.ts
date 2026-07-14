@@ -68,7 +68,7 @@ export function buildInviteEmail(opts: {
       </p>
       <p style="margin:24px 0">
         <a href="${opts.acceptUrl}"
-           style="background:#7c3aed;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600">
+           style="background:#0d99ff;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600">
           Accept invitation
         </a>
       </p>

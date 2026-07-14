@@ -715,7 +715,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
   const sharedTextOverflow = getSharedMetaProp("overflow", "visible");
 
   // 4. Fill values (Text color / general color)
-  const sharedColor = getSharedMetaProp("color", "#FFFFFF");
+  const sharedColor = getSharedMetaProp("color", "#000000");
   const sharedOpacity = getSharedProp((s) => s.opacity, 1);
 
   // 5. Background values
@@ -726,7 +726,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
 
   // 6. Stroke values
   const sharedStrokeEnabled = getSharedMetaProp("strokeEnabled", false);
-  const sharedStrokeColor = getSharedMetaProp("strokeColor", "#7c3aed");
+  const sharedStrokeColor = getSharedMetaProp("strokeColor", "#000000");
   const sharedStrokeWidth = getSharedMetaProp("strokeWidth", 1);
 
   // 7. Effects values
@@ -1579,7 +1579,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     type="text"
                     aria-label="Custom Hex Color"
                     value={sharedColor === "Mixed" ? "" : sharedColor}
-                    placeholder={sharedColor === "Mixed" ? "Mixed" : "#FFFFFF"}
+                    placeholder={sharedColor === "Mixed" ? "Mixed" : "#000000"}
                     onChange={(e) => {
                       const val = e.target.value;
                       if (val.startsWith("#") && (val.length === 4 || val.length === 7)) {
@@ -1987,7 +1987,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
             aria-label="Toggle Advanced Text Section"
           >
             <span className="flex items-center gap-1.5">
-              <Settings2 className="h-3.5 w-3.5 text-purple-400" />
+              <Settings2 className="h-3.5 w-3.5 text-muted" />
               <span>Advanced Text</span>
             </span>
             {collapsed.advanced ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}

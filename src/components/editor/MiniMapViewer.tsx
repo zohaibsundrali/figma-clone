@@ -62,7 +62,7 @@ export const MiniMapViewer = track(function MiniMapViewer() {
       ctx!.globalAlpha = 1;
 
       // Draw shapes as rectangles
-      ctx!.fillStyle = "#7c3aed";
+      ctx!.fillStyle = "#0d99ff";
       shapes.forEach((shape: any) => {
         if (typeof shape.x === "number" && typeof shape.y === "number" &&
             typeof shape.w === "number" && typeof shape.h === "number") {
@@ -73,7 +73,7 @@ export const MiniMapViewer = track(function MiniMapViewer() {
           ctx!.globalAlpha = 0.4;
           ctx!.fillRect(x, y, w, h);
           ctx!.globalAlpha = 1;
-          ctx!.strokeStyle = "#7c3aed";
+          ctx!.strokeStyle = "#0d99ff";
           ctx!.lineWidth = 0.5;
           ctx!.strokeRect(x, y, w, h);
         }

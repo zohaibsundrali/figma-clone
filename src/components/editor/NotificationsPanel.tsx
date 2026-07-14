@@ -108,15 +108,15 @@ export function NotificationsPanel({ onClose }: NotificationsPanelProps) {
   const getLocalIcon = (type: NotificationItem["type"]) => {
     switch (type) {
       case "save":
-        return <Save className="h-4 w-4 text-emerald-400" />;
+        return <Save className="h-4 w-4 text-muted" />;
       case "comment":
-        return <MessageSquare className="h-4 w-4 text-blue-400" />;
+        return <MessageSquare className="h-4 w-4 text-muted" />;
       case "version":
-        return <History className="h-4 w-4 text-violet-400" />;
+        return <History className="h-4 w-4 text-muted" />;
       case "share":
-        return <Share2 className="h-4 w-4 text-amber-400" />;
+        return <Share2 className="h-4 w-4 text-muted" />;
       case "image":
-        return <ImageIcon className="h-4 w-4 text-pink-400" />;
+        return <ImageIcon className="h-4 w-4 text-muted" />;
       default:
         return <Bell className="h-4 w-4 text-muted" />;
     }
@@ -126,7 +126,7 @@ export function NotificationsPanel({ onClose }: NotificationsPanelProps) {
     type === "mention" ? (
       <AtSign className="h-4 w-4 text-accent" />
     ) : (
-      <Reply className="h-4 w-4 text-blue-400" />
+      <Reply className="h-4 w-4 text-muted" />
     );
 
   const unreadCount =

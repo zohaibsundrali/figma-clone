@@ -1,14 +1,17 @@
 @import "tailwindcss";
 
+/* Figma's real dark-theme palette (Design > Settings > Theme: Dark). */
 :root {
-  --background: #0f0f12;
-  --foreground: #f4f4f5;
-  --surface: #18181b;
-  --surface-elevated: #27272a;
-  --border: #3f3f46;
-  --accent: #7c3aed;
-  --accent-hover: #6d28d9;
-  --muted: #a1a1aa;
+  --background: #1e1e1e;
+  --foreground: #ffffff;
+  --surface: #2c2c2c;
+  --surface-elevated: #383838;
+  --border: #444444;
+  --accent: #0d99ff;
+  --accent-hover: #0c8ce9;
+  --muted: #b3b3b3;
+  --danger: #f24822;
+  --danger-hover: #d93d1a;
 }
 
 @theme inline {
@@ -20,9 +23,11 @@
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-muted: var(--muted);
-  --color-primary-container: #7c3aed33;
-  --color-on-primary-container: #c4b5fd;
-  --font-sans: var(--font-geist-sans);
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-primary-container: #0d99ff26;
+  --color-on-primary-container: #4db8ff;
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -39,7 +44,8 @@ body {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 12px;
 }
 
 ::-webkit-scrollbar {

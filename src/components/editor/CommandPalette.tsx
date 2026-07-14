@@ -79,7 +79,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       title: "Select Tool",
       subtitle: "Switch to pointer tool",
       shortcut: "V",
-      icon: <MousePointer className="h-4 w-4 text-sky-400" />,
+      icon: <MousePointer className="h-4 w-4 text-muted" />,
       action: (editor) => editor.setCurrentTool("select"),
     },
     {
@@ -88,7 +88,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       title: "Hand Tool",
       subtitle: "Pan the canvas",
       shortcut: "H",
-      icon: <Hand className="h-4 w-4 text-emerald-400" />,
+      icon: <Hand className="h-4 w-4 text-muted" />,
       action: (editor) => editor.setCurrentTool("hand"),
     },
     {
@@ -97,7 +97,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       title: "Rectangle Tool",
       subtitle: "Draw a rectangle shape",
       shortcut: "R",
-      icon: <Square className="h-4 w-4 text-violet-400" />,
+      icon: <Square className="h-4 w-4 text-muted" />,
       action: (editor) => {
         editor.setStyleForNextShapes(GeoShapeGeoStyle, "rectangle");
         editor.setCurrentTool("geo");
@@ -109,7 +109,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       title: "Ellipse Tool",
       subtitle: "Draw an ellipse/circle shape",
       shortcut: "O",
-      icon: <Circle className="h-4 w-4 text-pink-400" />,
+      icon: <Circle className="h-4 w-4 text-muted" />,
       action: (editor) => {
         editor.setStyleForNextShapes(GeoShapeGeoStyle, "ellipse");
         editor.setCurrentTool("geo");
@@ -121,7 +121,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       title: "Text Tool",
       subtitle: "Add text labels",
       shortcut: "T",
-      icon: <Type className="h-4 w-4 text-amber-400" />,
+      icon: <Type className="h-4 w-4 text-muted" />,
       action: (editor) => editor.setCurrentTool("text"),
     },
     {
@@ -130,7 +130,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       title: "Draw Tool",
       subtitle: "Freehand drawing brush",
       shortcut: "D",
-      icon: <Pencil className="h-4 w-4 text-orange-400" />,
+      icon: <Pencil className="h-4 w-4 text-muted" />,
       action: (editor) => editor.setCurrentTool("draw"),
     },
     {
@@ -138,7 +138,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       category: "Actions",
       title: "Export as PNG",
       subtitle: "Download page elements as PNG image",
-      icon: <Download className="h-4 w-4 text-lime-400" />,
+      icon: <Download className="h-4 w-4 text-muted" />,
       action: async (editor) => {
         const shapeIds = editor.getCurrentPageShapeIds();
         if (shapeIds.size === 0) {
@@ -162,7 +162,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       category: "Actions",
       title: "Export as JSON",
       subtitle: "Download design store raw state",
-      icon: <Download className="h-4 w-4 text-teal-400" />,
+      icon: <Download className="h-4 w-4 text-muted" />,
       action: (editor) => {
         const snapshot = getSnapshot(editor.store);
         const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
@@ -181,7 +181,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       category: "Actions",
       title: "Open Comments Mode",
       subtitle: "Toggle feedback and comment pins",
-      icon: <MessageSquare className="h-4 w-4 text-indigo-400" />,
+      icon: <MessageSquare className="h-4 w-4 text-muted" />,
       action: (_, ctx) => ctx.setIsCommentsMode(true),
     },
     {
@@ -189,7 +189,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       category: "Actions",
       title: "Open Version History",
       subtitle: "View design snapshots and restore checkpoints",
-      icon: <History className="h-4 w-4 text-fuchsia-400" />,
+      icon: <History className="h-4 w-4 text-muted" />,
       action: (_, ctx) => ctx.setIsVersionHistoryOpen(true),
     },
     {
@@ -197,7 +197,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       category: "Actions",
       title: "Open Prototype Panel",
       subtitle: "Configure interactions and navigation flows",
-      icon: <Sliders className="h-4 w-4 text-rose-400" />,
+      icon: <Sliders className="h-4 w-4 text-muted" />,
       action: (_, ctx) => ctx.setActiveRightTab("prototype"),
     },
     {
@@ -205,7 +205,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       category: "Actions",
       title: "Open Inspect Panel",
       subtitle: "Access developer parameters and CSS styles",
-      icon: <Eye className="h-4 w-4 text-yellow-400" />,
+      icon: <Eye className="h-4 w-4 text-muted" />,
       action: (_, ctx) => ctx.setActiveRightTab("inspect"),
     },
     {

@@ -1,30 +1,20 @@
 "use client";
 
 import {
-  ArrowUpRight,
-  Circle,
   Download,
-  Hand,
-  ImageIcon,
-  Minus,
-  MousePointer2,
-  Pencil,
   Redo2,
-  Share2,
-  Square,
-  Type,
   Undo2,
-  MessageSquare,
   Keyboard,
   History,
   Bell,
   Search,
-  Frame,
   Layers,
+  Menu,
+  Play,
+  X,
 } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { GeoShapeGeoStyle } from "@tldraw/tlschema";
+import { useState, useEffect, useRef } from "react";
 import { track } from "tldraw";
 import { useEditorContext } from "./EditorContext";
 import { PresenceBar } from "./PresenceBar";
@@ -49,23 +39,6 @@ interface TopToolbarProps {
   readonly?: boolean;
 }
 
-// Tool bar entries. `id` is our internal key; actual tldraw tool
-// activation is handled by setSafeTool() below.
-const tools = [
-  { id: "select",    icon: MousePointer2, label: "Select"    },
-  { id: "hand",      icon: Hand,          label: "Hand"      },
-  { id: "frame",     icon: Frame,         label: "Frame"     },
-  { id: "rectangle", icon: Square,        label: "Rectangle" },
-  { id: "ellipse",   icon: Circle,        label: "Ellipse"   },
-  { id: "arrow",     icon: ArrowUpRight,  label: "Arrow"     },
-  { id: "line",      icon: Minus,         label: "Line"      },
-  { id: "text",      icon: Type,          label: "Text"      },
-  { id: "draw",      icon: Pencil,        label: "Draw"      },
-  { id: "image",     icon: ImageIcon,     label: "Image"     },
-] as const;
-
-type ToolId = (typeof tools)[number]["id"];
-
 export const TopToolbar = track(function TopToolbar({
   file,
   saveStatus,
@@ -75,8 +48,6 @@ export const TopToolbar = track(function TopToolbar({
 }: TopToolbarProps) {
   const {
     editor,
-    isCommentsMode,
-    setIsCommentsMode,
     isVersionHistoryOpen,
     setIsVersionHistoryOpen,
     notifications,
@@ -84,6 +55,8 @@ export const TopToolbar = track(function TopToolbar({
     dbNotifications,
     isNotificationsOpen,
     setIsNotificationsOpen,
+    isPresenting,
+    setIsPresenting,
   } = useEditorContext();
   const unreadNotifications =
     notifications.filter((n) => !n.read).length +
@@ -93,8 +66,10 @@ export const TopToolbar = track(function TopToolbar({
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [alignmentOpen, setAlignmentOpen] = useState(false);
-  const [gridVisible, setGridVisible] = useState(true);
-  const [snapEnabled, setSnapEnabled] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const gridVisible = editor?.getInstanceState().isGridMode ?? false;
+  const snapEnabled = editor?.user.getIsSnapMode() ?? false;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -117,65 +92,29 @@ export const TopToolbar = track(function TopToolbar({
         return;
       }
 
-      // Tool shortcuts (only if not readonly)
-      if (!readonly) {
-        switch (key) {
-          case "v": // Select
-            setSafeTool("select");
-            e.preventDefault();
-            break;
-          case "h": // Hand
-            setSafeTool("hand");
-            e.preventDefault();
-            break;
-          case "f": // Frame
-            setSafeTool("frame");
-            e.preventDefault();
-            break;
-          case "r": // Rectangle
-            setSafeTool("rectangle");
-            e.preventDefault();
-            break;
-          case "o": // Ellipse (O = circle)
-            setSafeTool("ellipse");
-            e.preventDefault();
-            break;
-          case "a": // Arrow
-            setSafeTool("arrow");
-            e.preventDefault();
-            break;
-          case "l": // Line
-            setSafeTool("line");
-            e.preventDefault();
-            break;
-          case "t": // Text
-            setSafeTool("text");
-            e.preventDefault();
-            break;
-          case "p": // Pencil (Draw)
-            setSafeTool("draw");
-            e.preventDefault();
-            break;
-          case "i": // Image
-            setSafeTool("image");
-            e.preventDefault();
-            break;
-          case "g": // Grid toggle
-            toggleGrid();
-            e.preventDefault();
-            break;
-          case "s": // Snap toggle
-            toggleSnap();
-            e.preventDefault();
-            break;
-        }
+      // Exit Present mode
+      if (key === "escape" && isPresenting) {
+        setIsPresenting(false);
+        return;
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [readonly]);
+  }, [isPresenting, setIsPresenting]);
+
+  // Close the main menu on outside click
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [menuOpen]);
 
   const handleFileChangeWrapper = (updates: Partial<Pick<DesignFile, "isPublic">>) => {
     onFileChange(updates);
@@ -196,203 +135,15 @@ export const TopToolbar = track(function TopToolbar({
     }
   };
 
-  // Compute activeTool dynamically from the tldraw editor state
-  let activeTool: ToolId = "select";
-  if (editor) {
-    const currentToolId = editor.getCurrentToolId();
-    if (currentToolId === "geo") {
-      const geoStyle = editor.getStyleForNextShape(GeoShapeGeoStyle);
-      if (geoStyle === "ellipse") {
-        activeTool = "ellipse";
-      } else {
-        activeTool = "rectangle";
-      }
-    } else if (currentToolId === "select") {
-      activeTool = "select";
-    } else if (currentToolId === "hand") {
-      activeTool = "hand";
-    } else if (currentToolId === "arrow") {
-      activeTool = "arrow";
-    } else if (currentToolId === "line") {
-      activeTool = "line";
-    } else if (currentToolId === "text") {
-      activeTool = "text";
-    } else if (currentToolId === "draw") {
-      activeTool = "draw";
-    }
-  }
+  const toggleGrid = () => editor?.updateInstanceState({ isGridMode: !gridVisible });
+  const toggleSnap = () => editor?.user.updateUserPreferences({ isSnapMode: !snapEnabled });
 
-  const toggleGrid = () => {
-    if (!editor) return;
-    setGridVisible(!gridVisible);
-    // Toggle grid size in tldraw
-    try {
-      const page = editor.getCurrentPage();
-      if (page) {
-        editor.updatePage({
-          ...page,
-          // Grid toggle - just visual, tldraw handles internally
-        });
-      }
-    } catch (e) {
-      console.log("Grid toggle (visual only)");
-    }
+  const handlePresent = () => {
+    setIsPresenting(true);
+    setMenuOpen(false);
+    // Fit the whole design in frame, like Figma's Present view does on entry.
+    requestAnimationFrame(() => editor?.zoomToFit());
   };
-
-  const toggleSnap = () => {
-    if (!editor) return;
-    setSnapEnabled(!snapEnabled);
-    // Snap toggle - tldraw handles internally
-    try {
-      // Just toggle the state, tldraw's internal snap works automatically
-    } catch (e) {
-      console.log("Snap toggle (visual only)");
-    }
-  };
-
-  /**
-   * Maps our toolbar IDs to safe tldraw API calls.
-   * Never calls setCurrentTool() with an invalid state machine ID.
-   */
-  function setSafeTool(toolId: ToolId) {
-    if (!editor || readonly) return;
-
-    switch (toolId) {
-      case "select":
-        editor.setCurrentTool("select");
-        break;
-
-      case "hand":
-        editor.setCurrentTool("hand");
-        break;
-
-      case "frame":
-        editor.setCurrentTool("frame");
-        break;
-
-      case "rectangle":
-        // "geo" tool covers all geometric shapes; the variant is set via style
-        editor.setStyleForNextShapes(GeoShapeGeoStyle, "rectangle");
-        editor.setCurrentTool("geo");
-        break;
-
-      case "ellipse":
-        editor.setStyleForNextShapes(GeoShapeGeoStyle, "ellipse");
-        editor.setCurrentTool("geo");
-        break;
-
-      case "arrow":
-        editor.setCurrentTool("arrow");
-        break;
-
-      case "line":
-        // tldraw has a dedicated "line" tool (polyline, not straight arrow)
-        editor.setCurrentTool("line");
-        break;
-
-      case "text":
-        editor.setCurrentTool("text");
-        break;
-
-      case "draw":
-        editor.setCurrentTool("draw");
-        break;
-
-      case "image": {
-        // Image is not a tldraw tool state; open a file picker and insert directly
-        const input = document.createElement("input");
-        input.type = "file";
-        input.accept = "image/png, image/jpeg, image/jpg, image/webp, image/gif";
-        input.onchange = async (e) => {
-          const picked = (e.target as HTMLInputElement).files?.[0];
-          if (!picked) return;
-
-          const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif"];
-          if (!validTypes.includes(picked.type)) {
-            alert("Unsupported file type. Please upload a png, jpg, jpeg, webp, or gif.");
-            return;
-          }
-
-          if (picked.size > 3 * 1024 * 1024) {
-            alert("Image is too large. Please upload an image under 3MB.");
-            return;
-          }
-
-          const reader = new FileReader();
-          reader.readAsDataURL(picked);
-          reader.onload = async () => {
-            const src = reader.result as string;
-            const { AssetRecordType } = await import("tldraw");
-            const assetId = AssetRecordType.createId();
-
-            const image = new Image();
-            image.src = src;
-
-            const size = await new Promise<{ w: number; h: number }>((resolve) => {
-              image.onload = () => resolve({ w: image.naturalWidth || 400, h: image.naturalHeight || 300 });
-              image.onerror = () => resolve({ w: 400, h: 300 });
-            });
-
-            editor.createAssets([
-              {
-                id: assetId,
-                type: "image",
-                typeName: "asset",
-                props: {
-                  name: picked.name,
-                  src,
-                  w: size.w,
-                  h: size.h,
-                  mimeType: picked.type,
-                  isAnimated: false,
-                },
-                meta: {},
-              } as import("tldraw").TLAsset,
-            ]);
-            
-            const center = editor.getViewportPageBounds().center;
-            editor.createShape({
-              type: "image",
-              x: center.x - size.w / 2,
-              y: center.y - size.h / 2,
-              props: { assetId, w: size.w, h: size.h },
-            });
-
-            if (setNotifications) {
-              setNotifications((prev) => [
-                {
-                  id: `image-${Date.now()}`,
-                  type: "image",
-                  title: "Image uploaded",
-                  message: `"${picked.name}" successfully added to the canvas.`,
-                  timestamp: "Just now",
-                  read: false,
-                },
-                ...prev,
-              ]);
-            }
-
-            // Return to select after inserting the image
-            editor.setCurrentTool("select");
-          };
-          reader.onerror = () => {
-            alert("Failed to read image file.");
-          };
-        };
-        input.click();
-        // Don't change activeTool — image picker is transient
-        return;
-      }
-
-      default: {
-        // Future-proof: unknown tool → warn and stay on select
-        const _exhaustive: never = toolId;
-        console.warn("Unsupported tool:", _exhaustive);
-        editor.setCurrentTool("select");
-        return;
-      }
-    }
-  }
 
   const saveLabel =
     saveStatus === "saving"
@@ -403,15 +154,84 @@ export const TopToolbar = track(function TopToolbar({
           ? "Error saving"
           : "";
 
+  // ── Present mode: a stripped-down chrome, just an exit control up top ──
+  if (isPresenting) {
+    return (
+      <div className="pointer-events-none absolute top-3 right-3 z-50 flex items-center gap-2">
+        <button
+          onClick={() => setIsPresenting(false)}
+          title="Exit present mode (Esc)"
+          className="pointer-events-auto flex h-9 items-center gap-1.5 rounded-lg border border-border bg-surface px-3 text-xs font-medium text-foreground shadow-lg hover:bg-surface-elevated"
+        >
+          <X className="h-3.5 w-3.5" />
+          Exit
+        </button>
+      </div>
+    );
+  }
+
   return (
     <>
-      <header className="flex h-12 items-center gap-3 border-b border-border bg-surface px-3">
-        <Link
-          href="/dashboard"
-          className="text-sm text-muted hover:text-foreground"
-        >
-          ← Dashboard
-        </Link>
+      <header className="flex h-12 items-center gap-2 border-b border-border bg-surface px-2">
+        <div ref={menuRef} className="relative">
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            title="Main menu"
+            className={`flex h-8 w-8 items-center justify-center rounded-md transition-colors ${
+              menuOpen ? "bg-surface-elevated text-foreground" : "text-muted hover:bg-surface-elevated hover:text-foreground"
+            }`}
+          >
+            <Menu className="h-4 w-4" />
+          </button>
+          {menuOpen && (
+            <div className="absolute left-0 top-full mt-1 w-56 rounded-lg border border-border bg-surface p-1 shadow-2xl z-50">
+              <Link
+                href="/dashboard"
+                className="flex items-center rounded px-2 py-1.5 text-xs text-foreground hover:bg-surface-elevated"
+              >
+                Back to dashboard
+              </Link>
+              <div className="my-1 h-px bg-border" />
+              {!readonly && (
+                <>
+                  <button
+                    onClick={toggleGrid}
+                    className="flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-xs text-foreground hover:bg-surface-elevated"
+                  >
+                    Show grid
+                    {gridVisible && <span className="text-accent">✓</span>}
+                  </button>
+                  <button
+                    onClick={toggleSnap}
+                    className="flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-xs text-foreground hover:bg-surface-elevated"
+                  >
+                    Snap to grid
+                    {snapEnabled && <span className="text-accent">✓</span>}
+                  </button>
+                  <div className="my-1 h-px bg-border" />
+                  <button
+                    onClick={() => { setExportOpen(true); setMenuOpen(false); }}
+                    className="flex w-full items-center rounded px-2 py-1.5 text-left text-xs text-foreground hover:bg-surface-elevated"
+                  >
+                    Export…
+                  </button>
+                  <button
+                    onClick={() => { setIsVersionHistoryOpen(true); setMenuOpen(false); }}
+                    className="flex w-full items-center rounded px-2 py-1.5 text-left text-xs text-foreground hover:bg-surface-elevated"
+                  >
+                    Show version history
+                  </button>
+                  <button
+                    onClick={() => { setShortcutsOpen(true); setMenuOpen(false); }}
+                    className="flex w-full items-center rounded px-2 py-1.5 text-left text-xs text-foreground hover:bg-surface-elevated"
+                  >
+                    Keyboard shortcuts
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
 
         <div className="h-5 w-px bg-border" />
 
@@ -419,7 +239,7 @@ export const TopToolbar = track(function TopToolbar({
           <input
             value={file.title}
             onChange={(e) => onTitleChange(e.target.value)}
-            className="max-w-50 bg-transparent text-sm font-medium outline-none focus:underline"
+            className="max-w-50 rounded bg-transparent px-1.5 py-0.5 text-sm font-medium outline-none hover:bg-surface-elevated focus:bg-surface-elevated"
           />
         ) : (
           <span className="text-sm font-medium">{file.title}</span>
@@ -427,48 +247,10 @@ export const TopToolbar = track(function TopToolbar({
 
         {saveLabel && (
           <span
-            className={`text-xs ${saveStatus === "error" ? "text-red-400" : "text-muted"}`}
+            className={`text-xs ${saveStatus === "error" ? "text-danger" : "text-muted"}`}
           >
             {saveLabel}
           </span>
-        )}
-
-        <div className="flex-1" />
-
-        {!readonly && (
-          <div className="flex items-center gap-0.5 rounded-lg border border-border bg-surface-elevated p-0.5">
-            {tools.map((tool) => (
-              <button
-                key={tool.id}
-                onClick={() => {
-                  setSafeTool(tool.id);
-                  if (isCommentsMode) setIsCommentsMode(false);
-                }}
-                title={tool.label}
-                className={`flex h-8 w-8 items-center justify-center rounded-md transition-colors ${
-                  activeTool === tool.id && !isCommentsMode
-                    ? "bg-accent text-white"
-                    : "text-muted hover:bg-border hover:text-foreground"
-                }`}
-              >
-                <tool.icon className="h-4 w-4" />
-              </button>
-            ))}
-            <div className="mx-0.5 w-px bg-border h-5" />
-            <button
-              onClick={() => {
-                setIsCommentsMode(!isCommentsMode);
-              }}
-              title="Comments Mode"
-              className={`flex h-8 w-8 items-center justify-center rounded-md transition-colors ${
-                isCommentsMode
-                  ? "bg-primary-container text-on-primary-container"
-                  : "text-muted hover:bg-border hover:text-foreground"
-              }`}
-            >
-              <MessageSquare className="h-4 w-4" />
-            </button>
-          </div>
         )}
 
         <div className="flex-1" />
@@ -491,38 +273,8 @@ export const TopToolbar = track(function TopToolbar({
             >
               <Redo2 className="h-4 w-4" />
             </Button>
-          </>
-        )}
-
-        <div className="w-px h-5 bg-border mx-1" />
-
-        {!readonly && (
-          <>
             <Button
-              variant={gridVisible ? "primary" : "ghost"}
-              size="sm"
-              onClick={toggleGrid}
-              title="Grid (G)"
-            >
-              <span className="text-xs font-semibold">⊞</span>
-            </Button>
-            <Button
-              variant={snapEnabled ? "primary" : "ghost"}
-              size="sm"
-              onClick={toggleSnap}
-              title="Snap (S)"
-            >
-              <span className="text-xs font-semibold">⊕</span>
-            </Button>
-          </>
-        )}
-
-        <PresenceBar />
-
-        {!readonly && (
-          <>
-            <Button
-              variant="secondary"
+              variant="ghost"
               size="sm"
               onClick={() => setAlignmentOpen(true)}
               title="Arrange & Align (Ctrl+Shift+A)"
@@ -530,31 +282,46 @@ export const TopToolbar = track(function TopToolbar({
               <Layers className="h-4 w-4" />
             </Button>
             <Button
-              variant="secondary"
+              variant="ghost"
               size="sm"
               onClick={() => setIsVersionHistoryOpen(!isVersionHistoryOpen)}
               title="Version History"
             >
               <History className="h-4 w-4" />
             </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setShareOpen(true)}
-            >
-              <Share2 className="h-4 w-4" />
+
+            <div className="w-px h-5 bg-border mx-1" />
+          </>
+        )}
+
+        <PresenceBar />
+
+        {!readonly && (
+          <>
+            <Button variant="primary" size="sm" onClick={() => setShareOpen(true)}>
               Share
             </Button>
             <Button
-              variant="secondary"
+              variant="ghost"
+              size="sm"
+              onClick={handlePresent}
+              title="Present"
+            >
+              <Play className="h-4 w-4" />
+            </Button>
+
+            <div className="w-px h-5 bg-border mx-1" />
+
+            <Button
+              variant="ghost"
               size="sm"
               onClick={() => setExportOpen(true)}
+              title="Export"
             >
               <Download className="h-4 w-4" />
-              Export
             </Button>
             <Button
-              variant="secondary"
+              variant="ghost"
               size="sm"
               onClick={() => setShortcutsOpen(true)}
               title="Keyboard Shortcuts"
@@ -563,7 +330,7 @@ export const TopToolbar = track(function TopToolbar({
             </Button>
             <div className="relative">
               <Button
-                variant="secondary"
+                variant="ghost"
                 size="sm"
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
                 title="Notifications"
@@ -581,7 +348,7 @@ export const TopToolbar = track(function TopToolbar({
               )}
             </div>
             <Button
-              variant="secondary"
+              variant="ghost"
               size="sm"
               onClick={() => setCommandPaletteOpen(true)}
               title="Command Palette (Ctrl+K)"

@@ -53,7 +53,14 @@ export const BottomToolbar = track(function BottomToolbar({
     if (readonly) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.target as HTMLElement).tagName === "INPUT") return;
+      const activeEl = document.activeElement;
+      const isTyping =
+        (activeEl &&
+          (activeEl.tagName === "INPUT" ||
+            activeEl.tagName === "TEXTAREA" ||
+            activeEl.getAttribute("contenteditable") === "true")) ||
+        (!!editor && editor.getEditingShapeId() !== null);
+      if (isTyping) return;
       if (e.ctrlKey || e.metaKey) return;
 
       switch (e.key.toLowerCase()) {

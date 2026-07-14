@@ -1,6 +1,43 @@
 import { auth } from "@clerk/nextjs/server";
+import type { ComponentType } from "react";
 import Link from "next/link";
-import { ArrowRight, Check, CirclePlay, Grid2x2, Layers3, LayoutDashboard, ShieldCheck, Sparkles, Users } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowRight,
+  Boxes,
+  Building2,
+  Check,
+  CirclePlay,
+  Component,
+  CreditCard,
+  Database,
+  Download,
+  FileCode,
+  Gauge,
+  Grid2x2,
+  History,
+  Keyboard,
+  KeyRound,
+  Layers,
+  Layers3,
+  LayoutDashboard,
+  Mail,
+  MessageSquare,
+  MonitorSmartphone,
+  Move,
+  Palette,
+  PenTool,
+  Radio,
+  Rocket,
+  Rows3,
+  ServerCog,
+  Share2,
+  ShieldCheck,
+  Sparkles,
+  Table2,
+  Users,
+  Zap,
+} from "lucide-react";
 import { redirect } from "next/navigation";
 
 const features = [
@@ -38,7 +75,7 @@ const plans = [
     price: "$0",
     subtitle: "/ forever",
     description: "Perfect for individuals and small teams starting out.",
-    items: ["3 Figma files", "3 FigJam files", "Unlimited personal files"],
+    items: ["Up to 3 projects", "Core design tools", "Community support"],
     cta: "Start Free",
     highlighted: false,
   },
@@ -47,7 +84,7 @@ const plans = [
     price: "$12",
     subtitle: "/ editor / month",
     description: "For teams that need a shared workspace and advanced features.",
-    items: ["Unlimited Figma files", "Unlimited version history", "Shared and private projects", "Team libraries"],
+    items: ["Up to 10 projects", "Unlimited version history", "Shared and private projects", "Priority support"],
     cta: "Choose Professional",
     highlighted: true,
   },
@@ -57,10 +94,179 @@ const plans = [
     subtitle: "/ editor / month",
     description: "For scaling organizations needing advanced security and control.",
     items: ["Everything in Pro", "Org-wide libraries", "Design system analytics", "SSO and advanced security"],
-    cta: "Contact Sales",
+    cta: "Get Organization",
     highlighted: false,
   },
 ];
+
+const architectureServices = [
+  { icon: Database, title: "PostgreSQL (Neon)", description: "Files, workspaces, comments — via Prisma ORM" },
+  { icon: ShieldCheck, title: "Clerk", description: "Authentication & session management" },
+  { icon: Zap, title: "Liveblocks", description: "Realtime presence & canvas sync" },
+  { icon: CreditCard, title: "Stripe", description: "Subscription billing & payments" },
+  { icon: Mail, title: "Resend", description: "Transactional email & invites" },
+];
+
+const techStack = [
+  { icon: Layers3, name: "Next.js 16", role: "App Router framework" },
+  { icon: Component, name: "React 19", role: "UI library" },
+  { icon: FileCode, name: "TypeScript", role: "Type safety" },
+  { icon: Palette, name: "Tailwind CSS", role: "Styling" },
+  { icon: PenTool, name: "tldraw", role: "Canvas & shape engine" },
+  { icon: ShieldCheck, name: "Clerk", role: "Authentication" },
+  { icon: Zap, name: "Liveblocks", role: "Realtime collaboration" },
+  { icon: Boxes, name: "Prisma", role: "Database ORM" },
+  { icon: Database, name: "PostgreSQL (Neon)", role: "Primary database" },
+  { icon: CreditCard, name: "Stripe", role: "Billing & payments" },
+  { icon: Mail, name: "Resend", role: "Transactional email" },
+];
+
+const dataModels = [
+  { name: "DesignFile", description: "Canvas data, sharing settings, thumbnails" },
+  { name: "Workspace", description: "Team containers that group design files" },
+  { name: "Comment", description: "Threaded canvas comments & reactions" },
+  { name: "VersionHistory", description: "Named snapshots for restore" },
+  { name: "Notification", description: "Mentions, replies & activity alerts" },
+  { name: "Template", description: "Reusable starter designs" },
+  { name: "Subscription", description: "Plan tier, billing & review status" },
+];
+
+// Detailed feature breakdown — every item here maps to a real, working part
+// of this app (verified against the actual components/API routes), not
+// aspirational copy.
+const featureDetails = [
+  {
+    icon: KeyRound,
+    title: "Users & Authentication",
+    items: ["Email & password sign-in", "Google OAuth via Clerk", "Email verification", "Session management"],
+  },
+  {
+    icon: Rows3,
+    title: "Dashboard",
+    items: ["Recent, shared & starred files", "Trash with restore", "File search", "Duplicate & delete"],
+  },
+  {
+    icon: Radio,
+    title: "Real-time Collaboration",
+    items: ["Multiplayer editing", "Live cursors & presence", "Undo/redo for all", "Lock / unlock objects"],
+  },
+  {
+    icon: Move,
+    title: "Canvas & View",
+    items: ["Infinite canvas", "Zoom & pan", "Mini map", "Grid, snap & smart guides"],
+  },
+  {
+    icon: PenTool,
+    title: "Drawing Tools",
+    items: ["Select, Frame, Rectangle, Ellipse", "Line & Arrow", "Pen / freehand draw", "Text & Image"],
+  },
+  {
+    icon: Palette,
+    title: "Styling & Design",
+    items: ["Fill color & stroke", "Corner radius & opacity", "Drop shadow effects", "Custom color picker"],
+  },
+  {
+    icon: Layers,
+    title: "Layers Panel",
+    items: ["Reorder, lock & hide", "Bring to front / send to back", "Group / ungroup", "Nested pages"],
+  },
+  {
+    icon: Component,
+    title: "Components & Auto Layout",
+    items: ["Master components & instances", "Auto layout containers", "Responsive constraints", "Design tokens"],
+  },
+  {
+    icon: MessageSquare,
+    title: "Comments & Chat",
+    items: ["Pinned canvas comments", "@mentions", "Emoji reactions", "Resolve threads"],
+  },
+  {
+    icon: History,
+    title: "Version History",
+    items: ["Auto & manual snapshots", "Named versions", "One-click restore", "Full audit trail"],
+  },
+  {
+    icon: Building2,
+    title: "Team Workspaces & Permissions",
+    items: ["Shared workspaces", "Owner / editor / viewer roles", "Invite by email", "Per-file access control"],
+  },
+  {
+    icon: Share2,
+    title: "File Sharing",
+    items: ["Public or private links", "Password-protected links", "Expiring links", "Role-based share access"],
+  },
+];
+
+const perfAndSecurity = [
+  "Route-level code splitting & lazy loading",
+  "Server-side response caching",
+  "Clerk-verified authentication on every request",
+  "Bcrypt-hashed share-link passwords",
+  "Zod-validated API inputs",
+];
+
+const keyboardShortcuts = [
+  { keys: "V / H / F", action: "Select, hand, frame tools" },
+  { keys: "R / O / L / A", action: "Rectangle, ellipse, line, arrow" },
+  { keys: "T / P / I", action: "Text, pen, image" },
+  { keys: "Ctrl + K", action: "Command palette" },
+  { keys: "Ctrl + D", action: "Duplicate selection" },
+  { keys: "Ctrl + Shift + A", action: "Arrange & align" },
+];
+
+const exportFormats = ["PNG", "SVG", "PDF", "JSON"];
+
+const roadmap = [
+  "Offline editing with background sync",
+  "AI-assisted layout suggestions",
+  "Design system analytics",
+];
+
+const folderStructure = [
+  { path: "src/app/", note: "Routes, pages & API endpoints (App Router)" },
+  { path: "src/components/", note: "editor/, dashboard/, auth/, ui/" },
+  { path: "src/lib/", note: "Server helpers — auth, prisma, plans, stripe" },
+  { path: "src/hooks/", note: "Shared React hooks" },
+  { path: "src/types/", note: "Shared TypeScript types" },
+  { path: "src/generated/", note: "Prisma client (auto-generated, not hand-written)" },
+];
+
+function Connector({ label }: { label: string }) {
+  return (
+    <div className="flex flex-col items-center gap-1 py-2">
+      <div className="h-6 w-px bg-linear-to-b from-sky-500/60 to-sky-500/10" />
+      <ArrowDown className="h-4 w-4 text-sky-400" />
+      <span className="text-[11px] font-medium uppercase tracking-wider text-white/45">{label}</span>
+    </div>
+  );
+}
+
+function FeatureBox({
+  icon: Icon,
+  title,
+  items,
+}: {
+  icon: ComponentType<{ className?: string }>;
+  title: string;
+  items: string[];
+}) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] p-4">
+      <div className="flex items-center gap-2">
+        <Icon className="h-4 w-4 text-sky-400" />
+        <h4 className="text-xs font-semibold text-white">{title}</h4>
+      </div>
+      <ul className="mt-3 space-y-1.5">
+        {items.map((item) => (
+          <li key={item} className="flex items-start gap-1.5 text-[11px] leading-4 text-white/60">
+            <Check className="mt-0.5 h-3 w-3 shrink-0 text-sky-500/70" />
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 function SectionHeading({ title, subtitle }: { title: string; subtitle: string }) {
   return (
@@ -176,6 +382,7 @@ export default async function Home() {
             <nav className="hidden gap-6 text-sm text-white/70 md:flex">
               <a href="#features" className="transition-colors hover:text-white">Features</a>
               <a href="#pricing" className="transition-colors hover:text-white">Pricing</a>
+              <a href="#tech-stack" className="transition-colors hover:text-white">Architecture</a>
               <a href="#community" className="transition-colors hover:text-white">Community</a>
             </nav>
           </div>
@@ -221,7 +428,7 @@ export default async function Home() {
               className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white/85 transition-colors hover:bg-white/8"
             >
               <CirclePlay className="h-4 w-4" />
-              Watch video
+              See how it works
             </Link>
           </div>
         </div>
@@ -252,6 +459,18 @@ export default async function Home() {
               </article>
             );
           })}
+        </div>
+      </section>
+
+      <section id="feature-details" className="border-t border-white/10 bg-[#0d1117] py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading title="Every tool, built in." subtitle="A closer look at what's under each feature." />
+
+          <div className="mt-12 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {featureDetails.map((detail) => (
+              <FeatureBox key={detail.title} icon={detail.icon} title={detail.title} items={detail.items} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -286,7 +505,7 @@ export default async function Home() {
                 </ul>
                 <div className="mt-8">
                   <Link
-                    href={plan.name === "Organization" ? "#" : "/sign-up"}
+                    href={plan.name === "Starter" ? "/sign-up" : `/pricing#${plan.name.toLowerCase()}`}
                     className={`flex h-11 w-full items-center justify-center rounded-lg text-sm font-semibold transition-colors ${plan.highlighted ? "bg-sky-500 text-white hover:bg-sky-400" : "border border-white/10 bg-white/5 text-white hover:bg-white/10"}`}
                   >
                     {plan.cta}
@@ -294,6 +513,181 @@ export default async function Home() {
                 </div>
               </article>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="tech-stack" className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
+        <SectionHeading title="Technology Stack" subtitle="The real tools this app is built and run on." />
+
+        <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {techStack.map((tech) => {
+            const Icon = tech.icon;
+            return (
+              <div
+                key={tech.name}
+                className="rounded-xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] p-4"
+              >
+                <Icon className="h-5 w-5 text-sky-400" />
+                <h4 className="mt-2.5 text-xs font-semibold text-white">{tech.name}</h4>
+                <p className="mt-1 text-[11px] leading-4 text-white/55">{tech.role}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section id="data-model" className="border-t border-white/10 bg-[#0d1117] py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading title="Data Model" subtitle="Core database tables, managed with Prisma + PostgreSQL." />
+
+          <div className="mt-12 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {dataModels.map((model) => (
+              <div key={model.name} className="rounded-xl border border-white/10 bg-white/3 p-4">
+                <Table2 className="h-5 w-5 text-sky-400" />
+                <h4 className="mt-2.5 font-mono text-xs font-semibold text-white">{model.name}</h4>
+                <p className="mt-1 text-[11px] leading-4 text-white/55">{model.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="architecture" className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
+        <SectionHeading
+          title="Project Architecture"
+          subtitle="How the client, real-time layer, and backend services fit together."
+        />
+
+        <div className="mx-auto mt-12 flex max-w-md flex-col items-center">
+          {/* Client layer */}
+          <div className="w-full rounded-2xl border border-sky-400/30 bg-[linear-gradient(180deg,rgba(13,153,255,0.12),rgba(13,153,255,0.02))] p-5 text-center shadow-[0_18px_60px_rgba(0,0,0,0.35)]">
+            <MonitorSmartphone className="mx-auto h-6 w-6 text-sky-300" />
+            <h3 className="mt-3 text-sm font-semibold text-white">Browser Client</h3>
+            <p className="mt-1 text-xs leading-5 text-white/60">
+              Next.js 16 + React 19 UI, rendered with the tldraw canvas engine and Tailwind
+            </p>
+          </div>
+
+          <Connector label="HTTPS / Server Actions" />
+
+          {/* Application layer */}
+          <div className="w-full rounded-2xl border border-white/10 bg-white/3 p-5 text-center">
+            <ServerCog className="mx-auto h-6 w-6 text-sky-300" />
+            <h3 className="mt-3 text-sm font-semibold text-white">Next.js Server</h3>
+            <p className="mt-1 text-xs leading-5 text-white/60">
+              API routes, middleware auth checks, and server components
+            </p>
+          </div>
+
+          <Connector label="Data & Integrations" />
+
+          {/* Services layer */}
+          <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {architectureServices.map((service) => {
+              const Icon = service.icon;
+              return (
+                <div
+                  key={service.title}
+                  className="rounded-xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] p-4 text-center"
+                >
+                  <Icon className="mx-auto h-5 w-5 text-sky-400" />
+                  <h4 className="mt-2 text-xs font-semibold text-white">{service.title}</h4>
+                  <p className="mt-1 text-[11px] leading-4 text-white/55">{service.description}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <p className="mt-6 max-w-lg text-center text-xs leading-5 text-white/45">
+            The canvas itself syncs peer-to-peer through a direct WebSocket connection to
+            Liveblocks — collaborators see each other&apos;s edits without a round trip through
+            the app server.
+          </p>
+        </div>
+      </section>
+
+      <section id="folder-structure" className="border-t border-white/10 bg-[#0d1117] py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading title="Folder Structure" subtitle="How the codebase is organized, top to bottom." />
+
+          <div className="mx-auto mt-12 max-w-2xl overflow-hidden rounded-[18px] border border-white/10 bg-[#252a32] shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
+            <div className="flex h-9 items-center gap-2 border-b border-white/10 bg-[#2b3038] px-3">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+            </div>
+            <div className="space-y-2.5 bg-[#11151b] p-5 sm:p-6">
+              {folderStructure.map((entry) => (
+                <div key={entry.path} className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-4">
+                  <span className="shrink-0 font-mono text-xs font-semibold text-sky-300">{entry.path}</span>
+                  <span className="text-[11px] text-white/50">{entry.note}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="performance" className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div className="rounded-2xl border border-white/10 bg-white/3 p-6">
+            <div className="flex items-center gap-2">
+              <Gauge className="h-5 w-5 text-sky-400" />
+              <h3 className="text-sm font-semibold text-white">Performance & Security</h3>
+            </div>
+            <ul className="mt-4 space-y-2">
+              {perfAndSecurity.map((item) => (
+                <li key={item} className="flex items-start gap-1.5 text-xs leading-5 text-white/65">
+                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-sky-500/70" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/3 p-6">
+            <div className="flex items-center gap-2">
+              <Keyboard className="h-5 w-5 text-sky-400" />
+              <h3 className="text-sm font-semibold text-white">Keyboard Shortcuts</h3>
+            </div>
+            <ul className="mt-4 space-y-2.5">
+              {keyboardShortcuts.map((sc) => (
+                <li key={sc.keys} className="flex items-center justify-between gap-3 text-xs text-white/65">
+                  <span className="rounded-md border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] text-sky-300">
+                    {sc.keys}
+                  </span>
+                  <span className="text-right">{sc.action}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/3 p-6">
+            <div className="flex items-center gap-2">
+              <Download className="h-5 w-5 text-sky-400" />
+              <h3 className="text-sm font-semibold text-white">Export Options</h3>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              {exportFormats.map((format) => (
+                <div
+                  key={format}
+                  className="rounded-lg border border-white/10 bg-white/5 py-3 text-center text-xs font-semibold text-sky-300"
+                >
+                  {format}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5 flex items-center gap-2">
+              <Rocket className="h-4 w-4 text-sky-400" />
+              <h4 className="text-xs font-semibold text-white">On the roadmap</h4>
+            </div>
+            <ul className="mt-2 space-y-1.5">
+              {roadmap.map((item) => (
+                <li key={item} className="text-[11px] leading-4 text-white/45">— {item}</li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
@@ -307,10 +701,9 @@ export default async function Home() {
             <span className="font-semibold">Figma Clone</span>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-6">
-            <a href="#" className="transition-colors hover:text-white">Privacy</a>
-            <a href="#" className="transition-colors hover:text-white">Terms</a>
-            <a href="#" className="transition-colors hover:text-white">Status</a>
-            <a href="#" className="transition-colors hover:text-white">Support</a>
+            <Link href="/privacy" className="transition-colors hover:text-white">Privacy</Link>
+            <Link href="/terms" className="transition-colors hover:text-white">Terms</Link>
+            <a href="mailto:cintrasoftwaresolutions@gmail.com" className="transition-colors hover:text-white">Support</a>
           </div>
           <p>© 2024 Figma Clone Inc. All rights reserved.</p>
         </div>

@@ -2,10 +2,13 @@
 
 import { useCallback, useState, useTransition, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import dynamic from "next/dynamic";
 import { FileGrid } from "./FileGrid";
 import { SearchAndFilters } from "./SearchAndFilters";
 import { SidebarUserMenu } from "./SidebarUserMenu";
+import { Dialog } from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 import type { DesignFileSummary } from "@/types";
 
 // Lazy-load heavy panels — only downloaded when the user actually opens them.
@@ -34,7 +37,8 @@ import {
   Plus,
   Bell,
   BarChart3,
-  Settings
+  Settings,
+  Sparkles
 } from "lucide-react";
 
 interface DashboardClientProps {
@@ -61,6 +65,23 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [isMounted, setIsMounted] = useState(false);
+
+  // Real plan/usage — replaces the previous static "Free" badge & dead promo card.
+  const [planInfo, setPlanInfo] = useState<{
+    planName: string;
+    projectsUsed: number;
+    projectLimit: number | null;
+    requestedPlan: string | null;
+    status: string;
+  } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/subscription")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => data && setPlanInfo(data));
+  }, []);
+
+  const [limitInfo, setLimitInfo] = useState<{ message: string } | null>(null);
 
   // Load from localStorage on client-mount to prevent hydration mismatch
   useEffect(() => {
@@ -163,6 +184,12 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title }),
       });
+      if (res.status === 403) {
+        const data = await res.json().catch(() => null);
+        setCreating(false);
+        setLimitInfo({ message: data?.message ?? "You've reached your plan's project limit." });
+        return;
+      }
       if (!res.ok) throw new Error("Failed to create file");
       const file = await res.json();
       router.push(`/editor/${file.id}`);
@@ -392,7 +419,9 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
           <div className="space-y-1">
             <div className="flex items-center justify-between px-2 py-1">
               <span className="text-[10px] font-bold text-muted uppercase tracking-wider">zohaib6511's team</span>
-              <span className="text-[9px] font-bold bg-accent/15 text-accent px-1.5 py-0.5 rounded border border-accent/20">Free</span>
+              <span className="text-[9px] font-bold bg-accent/15 text-accent px-1.5 py-0.5 rounded border border-accent/20">
+                {planInfo?.planName ?? "Free"}
+              </span>
             </div>
 
             <button
@@ -532,18 +561,49 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
           </div>
         </div>
 
-        {/* Upgrade Plan Promo Card */}
-        <div className="p-4 border-t border-border bg-surface-elevated/20">
-          <div className="bg-surface-elevated/60 border border-border p-3.5 rounded-lg flex flex-col gap-2.5 shadow-sm">
-            <span className="text-[10px] font-bold text-muted uppercase tracking-wider block">Upgrade plans</span>
-            <p className="text-[11px] text-muted font-medium leading-relaxed">
-              You're running out of files in your free team. Upgrade to grow without limits.
-            </p>
-            <button className="w-full bg-accent text-white font-semibold text-xs py-1.5 rounded-md hover:bg-accent/90 transition-colors shadow">
-              View plans
-            </button>
+        {/* Upgrade Plan Promo Card — hidden once on a paid, active plan */}
+        {planInfo && planInfo.planName === "Free" && (
+          <div className="p-4 border-t border-border bg-surface-elevated/20">
+            <div
+              className={`p-3.5 rounded-lg flex flex-col gap-2.5 shadow-sm border ${
+                planInfo.status === "rejected" || planInfo.status === "past_due"
+                  ? "bg-red-500/5 border-red-500/20"
+                  : "bg-surface-elevated/60 border-border"
+              }`}
+            >
+              <span className="text-[10px] font-bold uppercase tracking-wider block text-muted">
+                {planInfo.requestedPlan
+                  ? "Upgrade pending"
+                  : planInfo.status === "rejected"
+                    ? "Payment not approved"
+                    : planInfo.status === "past_due"
+                      ? "Payment failed"
+                      : planInfo.status === "canceled"
+                        ? "Subscription canceled"
+                        : "Upgrade plans"}
+              </span>
+              <p className="text-[11px] text-muted font-medium leading-relaxed">
+                {planInfo.requestedPlan
+                  ? "Your payment is awaiting admin review. We'll activate your plan shortly."
+                  : planInfo.status === "rejected"
+                    ? "Your last payment screenshot wasn't approved. Please try again or contact support."
+                    : planInfo.status === "past_due"
+                      ? "Your last renewal payment failed, so your account is back on Free. Update your payment method to restore your plan."
+                      : planInfo.status === "canceled"
+                        ? "Your subscription was canceled and your account is back on Free."
+                        : `You've used ${planInfo.projectsUsed}/${planInfo.projectLimit} projects on the Free plan. Upgrade to grow without limits.`}
+              </p>
+              {!planInfo.requestedPlan && (
+                <Link
+                  href="/pricing"
+                  className="w-full text-center bg-accent text-white font-semibold text-xs py-1.5 rounded-md hover:bg-accent/90 transition-colors shadow"
+                >
+                  View plans
+                </Link>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </aside>
 
       {/* 2. MAIN LAYOUT CONTAINER */}
@@ -658,6 +718,29 @@ export function DashboardClient({ initialFiles }: DashboardClientProps) {
           )}
         </div>
       </main>
+
+      <Dialog
+        open={!!limitInfo}
+        onClose={() => setLimitInfo(null)}
+        title="Project limit reached"
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/10">
+              <Sparkles className="h-4 w-4 text-accent" />
+            </div>
+            <p className="text-sm text-muted">{limitInfo?.message}</p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setLimitInfo(null)}>
+              Not now
+            </Button>
+            <Link href="/pricing">
+              <Button variant="primary" size="sm">View plans</Button>
+            </Link>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 }

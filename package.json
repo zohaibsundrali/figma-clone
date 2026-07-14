@@ -10,7 +10,8 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "stripe:setup": "node scripts/setup-stripe.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.5.15",
@@ -29,6 +30,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "resend": "^6.17.2",
+    "stripe": "^22.3.1",
     "tailwind-merge": "3.6.0",
     "tldraw": "^5.2.3",
     "zod": "^4.4.3"

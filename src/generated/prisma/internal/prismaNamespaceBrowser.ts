@@ -62,6 +62,7 @@ export const ModelName = {
   VersionHistory: 'VersionHistory',
   Activity: 'Activity',
   Template: 'Template',
+  Subscription: 'Subscription',
   Guide: 'Guide'
 } as const
 
@@ -250,6 +251,25 @@ export const TemplateScalarFieldEnum = {
 } as const
 
 export type TemplateScalarFieldEnum = (typeof TemplateScalarFieldEnum)[keyof typeof TemplateScalarFieldEnum]
+
+
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  plan: 'plan',
+  status: 'status',
+  stripeCustomerId: 'stripeCustomerId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
+  stripeSessionId: 'stripeSessionId',
+  screenshotUrl: 'screenshotUrl',
+  transactionNote: 'transactionNote',
+  reviewedByEmail: 'reviewedByEmail',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
 
 
 export const GuideScalarFieldEnum = {

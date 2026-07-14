@@ -212,6 +212,27 @@ model Template {
   @@index([createdAt])
 }
 
+// One row per user (Clerk userId). Absence of a row, or status !== "active",
+// means the user is effectively on the Free plan — see src/lib/subscription.ts.
+model Subscription {
+  id                   String    @id @default(cuid())
+  userId               String    @unique
+  plan                 String    @default("free") // free | professional | organization
+  status               String    @default("active") // active | pending_review | rejected | canceled | past_due
+  stripeCustomerId     String?
+  stripeSubscriptionId String?   @unique
+  stripeSessionId      String?
+  screenshotUrl        String? // base64 data URL, same pattern as DesignFile.thumbnail
+  transactionNote      String?
+  reviewedByEmail      String?
+  reviewedAt           DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
 model Guide {
   id        String   @id @default(cuid())
   fileId    String

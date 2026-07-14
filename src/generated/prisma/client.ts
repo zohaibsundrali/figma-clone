@@ -97,6 +97,11 @@ export type Activity = Prisma.ActivityModel
  */
 export type Template = Prisma.TemplateModel
 /**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel
+/**
  * Model Guide
  * 
  */

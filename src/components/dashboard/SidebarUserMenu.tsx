@@ -74,8 +74,12 @@ export function SidebarUserMenu() {
     } finally {
       // Hard navigation (not router.push): forces the server to re-evaluate auth
       // with the now-cleared cookies, so we never bounce off a stale RSC render
-      // of "/" that still thinks we're signed in.
-      window.location.href = "/";
+      // that still thinks we're signed in.
+      //
+      // Land on /sign-in, not "/": the marketing homepage is a much heavier
+      // page (pricing/features sections) and was making sign-out feel slow
+      // even though the actual session-clear step is fast.
+      window.location.href = "/sign-in";
     }
   };
 

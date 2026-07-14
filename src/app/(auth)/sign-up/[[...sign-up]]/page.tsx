@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { Layers3 } from "lucide-react";
 import { SignUpForm } from "@/components/auth/SignUpForm";
+import { BackToHomeButton } from "@/components/auth/BackToHomeButton";
 
 export default function SignUpPage() {
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-y-auto bg-[#0f141a] p-4 py-10 text-[#dfe2eb]">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top,rgba(13,153,255,0.18),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent_30%)]" />
+
+      <BackToHomeButton />
 
       <div className="relative w-full max-w-md">
         <Link href="/" className="mb-6 flex items-center justify-center gap-2 font-semibold text-white">

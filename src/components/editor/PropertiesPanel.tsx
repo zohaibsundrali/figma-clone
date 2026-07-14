@@ -546,7 +546,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
     const loadingView = <div className="p-3 text-xs text-muted">Loading...</div>;
     if (embedded) return loadingView;
     return (
-      <aside className="flex w-72 flex-col border-l border-border bg-surface">
+      <aside className="flex w-[280px] flex-col border-l border-border bg-surface">
         <div className="flex h-10 items-center gap-2 border-b border-border px-3 bg-surface">
           <Settings2 className="h-4 w-4 text-muted" />
           <span className="text-sm font-medium text-foreground">Properties</span>
@@ -564,7 +564,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
     );
     if (embedded) return emptyView;
     return (
-      <aside className="flex w-72 flex-col border-l border-border bg-surface h-full">
+      <aside className="flex w-[280px] flex-col border-l border-border bg-surface h-full">
         <div className="flex h-10 items-center gap-2 border-b border-border px-3 bg-surface">
           <Settings2 className="h-4 w-4 text-muted" />
           <span className="text-sm font-medium text-foreground">Properties</span>
@@ -763,20 +763,20 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
   };
 
   return (
-    <div className="flex-grow overflow-y-auto divide-y divide-border/60 bg-surface select-none pb-10 text-foreground">
+    <div className="flex-grow overflow-y-auto bg-surface select-none pb-10 text-foreground">
 
       {/* 1. LAYOUT SECTION */}
-      <div className="p-3.5 space-y-3.5">
+      <div className="px-3 py-2.5 space-y-2.5 border-b border-border/50">
         <button
           onClick={() => toggleCollapse("layout")}
-          className="flex w-full items-center justify-between text-xs font-bold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
+          className="flex w-full items-center justify-between text-[11px] font-semibold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
           aria-label="Toggle Layout Section"
         >
           <span className="flex items-center gap-1.5">
             <Compass className="h-3.5 w-3.5" />
             <span>Layout</span>
           </span>
-          {collapsed.layout ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+          {collapsed.layout ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
         </button>
 
         {!collapsed.layout && (
@@ -784,33 +784,33 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
             <div className="grid grid-cols-2 gap-x-4 gap-y-3">
               {/* X position */}
               <div className="flex items-center space-x-2">
-                <span className="text-[10px] text-muted w-3 font-mono">X</span>
+          <span className="text-[10px] text-muted/80 w-3 font-mono">X</span>
                 <input
                   type="number"
                   aria-label="X position"
                   value={sharedX === "Mixed" ? "" : sharedX}
                   placeholder={sharedX === "Mixed" ? "Mixed" : ""}
                   onChange={(e) => updateProp("x", Number(e.target.value))}
-                  className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2 py-1 focus:border-accent outline-none"
+                  className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2 py-[5px] focus:border-accent outline-none"
                 />
               </div>
 
               {/* Y position */}
               <div className="flex items-center space-x-2">
-                <span className="text-[10px] text-muted w-3 font-mono">Y</span>
+                <span className="text-[10px] text-muted/80 w-3 font-mono">Y</span>
                 <input
                   type="number"
                   aria-label="Y position"
                   value={sharedY === "Mixed" ? "" : sharedY}
                   placeholder={sharedY === "Mixed" ? "Mixed" : ""}
                   onChange={(e) => updateProp("y", Number(e.target.value))}
-                  className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2 py-1 focus:border-accent outline-none"
+                  className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2 py-[5px] focus:border-accent outline-none"
                 />
               </div>
 
               {/* Width */}
               <div className="flex items-center space-x-2">
-                <span className="text-[10px] text-muted w-3 font-mono">W</span>
+                <span className="text-[10px] text-muted/80 w-3 font-mono">W</span>
                 <input
                   type="number"
                   aria-label="Width"
@@ -822,13 +822,13 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     updateProp("w", val);
                     updateMetaProp("fixedWidth", val);
                   }}
-                  className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2 py-1 focus:border-accent outline-none disabled:opacity-40"
+                  className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2 py-[5px] focus:border-accent outline-none disabled:opacity-40"
                 />
               </div>
 
               {/* Height */}
               <div className="flex items-center space-x-2">
-                <span className="text-[10px] text-muted w-3 font-mono">H</span>
+                <span className="text-[10px] text-muted/80 w-3 font-mono">H</span>
                 <input
                   type="number"
                   aria-label="Height"
@@ -840,7 +840,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     updateProp("h", val);
                     updateMetaProp("fixedHeight", val);
                   }}
-                  className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2 py-1 focus:border-accent outline-none disabled:opacity-40"
+                  className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2 py-[5px] focus:border-accent outline-none disabled:opacity-40"
                 />
               </div>
             </div>
@@ -859,9 +859,9 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                       const deg = Number(e.target.value);
                       updateProp("rotation", (deg * Math.PI) / 180);
                     }}
-                    className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded pl-2 pr-5 py-1 focus:border-accent outline-none"
+                    className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] pl-2 pr-5 py-[5px] focus:border-accent outline-none"
                   />
-                  <span className="absolute right-2 top-1 text-[10px] text-muted">°</span>
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-muted">°</span>
                 </div>
               </div>
 
@@ -913,17 +913,17 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
         if (!hasGroup) return null;
 
         return (
-          <div className="p-3.5 space-y-3.5">
+          <div className="px-3 py-2.5 space-y-2.5 border-b border-border/50">
             <button
               onClick={() => toggleCollapse("autoLayout")}
-              className="flex w-full items-center justify-between text-xs font-bold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
+              className="flex w-full items-center justify-between text-[11px] font-semibold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
               aria-label="Toggle Auto Layout Section"
             >
               <span className="flex items-center gap-1.5">
                 <LayoutGrid className="h-3.5 w-3.5 text-blue-400" />
                 <span>Auto Layout</span>
               </span>
-              {collapsed.autoLayout ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+              {collapsed.autoLayout ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
             </button>
 
             {!collapsed.autoLayout && (
@@ -981,7 +981,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                         min={0}
                         value={autoConfig.gap}
                         onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { gap: Math.max(0, Number(e.target.value)) })}
-                        className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2.5 py-1 focus:border-accent outline-none"
+                        className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2.5 py-[5px] focus:border-accent outline-none"
                       />
                     </div>
 
@@ -996,7 +996,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                             min={0}
                             value={autoConfig.paddingTop}
                             onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { paddingTop: Math.max(0, Number(e.target.value)) })}
-                            className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2 py-1 focus:border-accent outline-none"
+                            className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2 py-[5px] focus:border-accent outline-none"
                           />
                         </div>
                         <div className="flex items-center gap-1">
@@ -1006,7 +1006,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                             min={0}
                             value={autoConfig.paddingRight}
                             onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { paddingRight: Math.max(0, Number(e.target.value)) })}
-                            className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2 py-1 focus:border-accent outline-none"
+                            className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2 py-[5px] focus:border-accent outline-none"
                           />
                         </div>
                         <div className="flex items-center gap-1">
@@ -1016,7 +1016,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                             min={0}
                             value={autoConfig.paddingBottom}
                             onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { paddingBottom: Math.max(0, Number(e.target.value)) })}
-                            className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2 py-1 focus:border-accent outline-none"
+                            className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2 py-[5px] focus:border-accent outline-none"
                           />
                         </div>
                         <div className="flex items-center gap-1">
@@ -1026,7 +1026,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                             min={0}
                             value={autoConfig.paddingLeft}
                             onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { paddingLeft: Math.max(0, Number(e.target.value)) })}
-                            className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2 py-1 focus:border-accent outline-none"
+                            className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2 py-[5px] focus:border-accent outline-none"
                           />
                         </div>
                       </div>
@@ -1091,7 +1091,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                         <select
                           value={autoConfig.widthMode}
                           onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { widthMode: e.target.value as SizingMode })}
-                          className="w-full bg-surface-elevated text-xs border border-border rounded px-2 py-1 outline-none text-foreground focus:border-accent cursor-pointer"
+                          className="w-full bg-surface-elevated text-[11px] border border-border rounded-[4px] px-2 py-[5px] outline-none text-foreground focus:border-accent cursor-pointer"
                         >
                           <option value="hug">Hug Contents</option>
                           <option value="fixed">Fixed</option>
@@ -1103,7 +1103,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                         <select
                           value={autoConfig.heightMode}
                           onChange={(e) => updateAutoLayoutConfig(editor, firstGroup.id, { heightMode: e.target.value as SizingMode })}
-                          className="w-full bg-surface-elevated text-xs border border-border rounded px-2 py-1 outline-none text-foreground focus:border-accent cursor-pointer"
+                          className="w-full bg-surface-elevated text-[11px] border border-border rounded-[4px] px-2 py-[5px] outline-none text-foreground focus:border-accent cursor-pointer"
                         >
                           <option value="hug">Hug Contents</option>
                           <option value="fixed">Fixed</option>
@@ -1132,17 +1132,17 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
       })()}
 
       {/* 2. CONTENT SECTION */}
-      <div className="p-3.5 space-y-3.5">
+      <div className="px-3 py-2.5 space-y-2.5 border-b border-border/50">
         <button
           onClick={() => toggleCollapse("content")}
-          className="flex w-full items-center justify-between text-xs font-bold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
+          className="flex w-full items-center justify-between text-[11px] font-semibold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
           aria-label="Toggle Content Section"
         >
           <span className="flex items-center gap-1.5">
             <FileText className="h-3.5 w-3.5" />
             <span>Content</span>
           </span>
-          {collapsed.content ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+          {collapsed.content ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
         </button>
 
         {!collapsed.content && (
@@ -1181,37 +1181,37 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
             onKeyDown={(e) => e.stopPropagation()}
             onKeyUp={(e) => e.stopPropagation()}
             rows={2}
-            className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded p-2 focus:border-accent outline-none resize-none"
+            className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] p-2 focus:border-accent outline-none resize-none"
           />
         )}
       </div>
 
       {/* 3. TYPOGRAPHY SECTION */}
       {hasTextInSelection && (
-        <div className="p-3.5 space-y-3.5">
+        <div className="px-3 py-2.5 space-y-2.5 border-b border-border/50">
           <button
             onClick={() => toggleCollapse("typography")}
-            className="flex w-full items-center justify-between text-xs font-bold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
+            className="flex w-full items-center justify-between text-[11px] font-semibold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
             aria-label="Toggle Typography Section"
           >
             <span className="flex items-center gap-1.5">
               <Type className="h-3.5 w-3.5" />
               <span>Typography</span>
             </span>
-            {collapsed.typography ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            {collapsed.typography ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
           </button>
 
           {!collapsed.typography && (
-            <div className="space-y-3.5">
+            <div className="space-y-3">
               {/* Searchable Font Family Selector */}
               <div className="space-y-1 relative" ref={fontDropdownRef}>
                 <span className="text-[10px] text-muted font-semibold">Font Family</span>
                 <div
                   onClick={() => setShowFontDropdown(!showFontDropdown)}
-                  className="flex items-center justify-between bg-surface-elevated text-xs border border-border rounded px-2.5 py-1.5 cursor-pointer hover:border-accent/60 transition-colors"
+                  className="flex items-center justify-between bg-surface-elevated text-[11px] border border-border rounded-[4px] px-2.5 py-[5px] cursor-pointer hover:border-accent/60 transition-colors"
                 >
                   <span className="text-foreground font-medium">{sharedFontFamily === "Mixed" ? "Mixed" : sharedFontFamily}</span>
-                  <ChevronDown className="h-3.5 w-3.5 text-muted" />
+                  <ChevronDown className="h-3 w-3 text-muted" />
                 </div>
 
                 {showFontDropdown && (
@@ -1318,7 +1318,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     aria-label="Font weight"
                     value={sharedFontWeight === "Mixed" ? "" : sharedFontWeight}
                     onChange={(e) => updateMetaProp("fontWeight", e.target.value)}
-                    className="w-full bg-surface-elevated text-xs border border-border rounded px-2 py-1 outline-none text-foreground focus:border-accent cursor-pointer"
+                    className="w-full bg-surface-elevated text-[11px] border border-border rounded-[4px] px-2 py-[5px] outline-none text-foreground focus:border-accent cursor-pointer"
                   >
                     {sharedFontWeight === "Mixed" && <option value="">Mixed</option>}
                     {/* Render weights based on selected font family */}
@@ -1339,7 +1339,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     aria-label="Font style"
                     value={sharedFontStyle === "Mixed" ? "" : sharedFontStyle}
                     onChange={(e) => updateMetaProp("fontStyle", e.target.value)}
-                    className="w-full bg-surface-elevated text-xs border border-border rounded px-2 py-1 outline-none text-foreground focus:border-accent cursor-pointer"
+                    className="w-full bg-surface-elevated text-[11px] border border-border rounded-[4px] px-2 py-[5px] outline-none text-foreground focus:border-accent cursor-pointer"
                   >
                     {sharedFontStyle === "Mixed" && <option value="">Mixed</option>}
                     <option value="normal">Normal</option>
@@ -1349,7 +1349,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
               </div>
 
               {/* Font Size & Alignments */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <span className="text-[10px] text-muted font-semibold">Size</span>
                   <div className="flex items-center gap-1">
@@ -1359,7 +1359,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                         updateMetaProp("fontSize", Math.max(1, current - 1));
                       }}
                       title="Decrease font size"
-                      className="p-1.5 bg-surface-elevated hover:bg-border/40 border border-border rounded text-muted hover:text-foreground transition-colors"
+                      className="p-1 bg-surface-elevated hover:bg-border/40 border border-border rounded-[4px] text-muted hover:text-foreground transition-colors text-[11px] font-semibold leading-none"
                     >
                       -
                     </button>
@@ -1372,7 +1372,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                         const val = Math.max(1, Number(e.target.value));
                         updateMetaProp("fontSize", val);
                       }}
-                      className="w-full text-center bg-surface-elevated text-xs text-foreground border border-border rounded py-1 focus:border-accent outline-none"
+                      className="w-full text-center bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] py-[5px] focus:border-accent outline-none"
                     />
                     <button
                       onClick={() => {
@@ -1380,7 +1380,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                         updateMetaProp("fontSize", current + 1);
                       }}
                       title="Increase font size"
-                      className="p-1.5 bg-surface-elevated hover:bg-border/40 border border-border rounded text-muted hover:text-foreground transition-colors"
+                      className="p-1 bg-surface-elevated hover:bg-border/40 border border-border rounded-[4px] text-muted hover:text-foreground transition-colors text-[11px] font-semibold leading-none"
                     >
                       +
                     </button>
@@ -1389,10 +1389,10 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
 
                 <div className="space-y-1">
                   <span className="text-[10px] text-muted font-semibold block mb-1">Align</span>
-                  <div className="flex items-center gap-0.5 bg-surface-elevated p-0.5 border border-border rounded">
+                  <div className="flex items-center gap-0.5 bg-surface-elevated p-0.5 border border-border rounded-[4px]">
                     <button
                       onClick={() => updateAlign("start")}
-                      className={`flex-1 py-1 rounded flex justify-center hover:bg-border/40 transition-colors ${sharedAlign === "start" ? "bg-accent text-white" : "text-muted"
+                      className={`flex-1 py-1 rounded-[3px] flex justify-center hover:bg-border/40 transition-colors ${sharedAlign === "start" ? "bg-accent text-white" : "text-muted"
                         }`}
                       title="Align Left"
                     >
@@ -1400,7 +1400,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     </button>
                     <button
                       onClick={() => updateAlign("middle")}
-                      className={`flex-1 py-1 rounded flex justify-center hover:bg-border/40 transition-colors ${sharedAlign === "middle" ? "bg-accent text-white" : "text-muted"
+                      className={`flex-1 py-1 rounded-[3px] flex justify-center hover:bg-border/40 transition-colors ${sharedAlign === "middle" ? "bg-accent text-white" : "text-muted"
                         }`}
                       title="Align Center"
                     >
@@ -1408,7 +1408,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     </button>
                     <button
                       onClick={() => updateAlign("end")}
-                      className={`flex-1 py-1 rounded flex justify-center hover:bg-border/40 transition-colors ${sharedAlign === "end" ? "bg-accent text-white" : "text-muted"
+                      className={`flex-1 py-1 rounded-[3px] flex justify-center hover:bg-border/40 transition-colors ${sharedAlign === "end" ? "bg-accent text-white" : "text-muted"
                         }`}
                       title="Align Right"
                     >
@@ -1416,7 +1416,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     </button>
                     <button
                       onClick={() => updateAlign("justify")}
-                      className={`flex-1 py-1 rounded flex justify-center hover:bg-border/40 transition-colors ${sharedAlign === "justify" ? "bg-accent text-white" : "text-muted"
+                      className={`flex-1 py-1 rounded-[3px] flex justify-center hover:bg-border/40 transition-colors ${sharedAlign === "justify" ? "bg-accent text-white" : "text-muted"
                         }`}
                       title="Justify"
                     >
@@ -1436,7 +1436,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     value={sharedLineHeight === "Mixed" ? "" : sharedLineHeight}
                     placeholder={sharedLineHeight === "Mixed" ? "Mixed" : "e.g. 130% or 1.3"}
                     onChange={(e) => updateMetaProp("lineHeight", e.target.value)}
-                    className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2.5 py-1 focus:border-accent outline-none"
+                    className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2.5 py-[5px] focus:border-accent outline-none"
                   />
                 </div>
                 <div className="space-y-1">
@@ -1447,7 +1447,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     value={sharedLetterSpacing === "Mixed" ? "" : sharedLetterSpacing}
                     placeholder={sharedLetterSpacing === "Mixed" ? "Mixed" : "e.g. 10% or 2px"}
                     onChange={(e) => updateMetaProp("letterSpacing", e.target.value)}
-                    className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2.5 py-1 focus:border-accent outline-none"
+                    className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2.5 py-[5px] focus:border-accent outline-none"
                   />
                 </div>
               </div>
@@ -1462,7 +1462,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     value={sharedParagraphSpacing === "Mixed" ? "" : sharedParagraphSpacing}
                     placeholder={sharedParagraphSpacing === "Mixed" ? "Mixed" : ""}
                     onChange={(e) => updateMetaProp("paragraphSpacing", Number(e.target.value))}
-                    className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2.5 py-1 focus:border-accent outline-none"
+                    className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2.5 py-[5px] focus:border-accent outline-none"
                   />
                 </div>
                 <div className="space-y-1">
@@ -1473,7 +1473,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     value={sharedParagraphIndentation === "Mixed" ? "" : sharedParagraphIndentation}
                     placeholder={sharedParagraphIndentation === "Mixed" ? "Mixed" : ""}
                     onChange={(e) => updateMetaProp("paragraphIndentation", Number(e.target.value))}
-                    className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2.5 py-1 focus:border-accent outline-none"
+                    className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2.5 py-[5px] focus:border-accent outline-none"
                   />
                 </div>
               </div>
@@ -1486,7 +1486,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     aria-label="Vertical alignment"
                     value={sharedVerticalAlign === "Mixed" ? "" : sharedVerticalAlign}
                     onChange={(e) => updateMetaProp("verticalAlign", e.target.value)}
-                    className="w-full bg-surface-elevated text-xs border border-border rounded px-2 py-1 outline-none text-foreground focus:border-accent cursor-pointer"
+                    className="w-full bg-surface-elevated text-[11px] border border-border rounded-[4px] px-2 py-[5px] outline-none text-foreground focus:border-accent cursor-pointer"
                   >
                     {sharedVerticalAlign === "Mixed" && <option value="">Mixed</option>}
                     <option value="top">Top</option>
@@ -1497,7 +1497,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
 
                 <div className="space-y-1">
                   <span className="text-[10px] text-muted font-semibold block mb-1">Decoration</span>
-                  <div className="flex items-center gap-1.5 p-0.5 bg-surface-elevated border border-border rounded">
+                  <div className="flex items-center gap-1 p-0.5 bg-surface-elevated border border-border rounded-[4px]">
                     <button
                       onClick={() => updateMetaProp("textDecoration", "none")}
                       className={`flex-1 py-1 text-[9px] font-bold rounded hover:bg-border/40 transition-colors ${(sharedTextDecoration as any) === "none" ? "bg-accent text-white" : "text-muted"
@@ -1531,23 +1531,23 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
       )}
 
       {/* 4. FILL (COLOR) SECTION */}
-      <div className="p-3.5 space-y-3.5">
+      <div className="px-3 py-2.5 space-y-2.5 border-b border-border/50">
         <button
           onClick={() => toggleCollapse("fill")}
-          className="flex w-full items-center justify-between text-xs font-bold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
+          className="flex w-full items-center justify-between text-[11px] font-semibold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
           aria-label="Toggle Fill Color Section"
         >
           <span className="flex items-center gap-1.5">
             <Palette className="h-3.5 w-3.5" />
             <span>Fill</span>
           </span>
-          {collapsed.fill ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+          {collapsed.fill ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
         </button>
 
         {!collapsed.fill && (
           <div className="space-y-3">
             {/* Color Swatch / Quick Select */}
-            <div className="grid grid-cols-7 gap-1.5">
+            <div className="grid grid-cols-7 gap-1">
               {Object.keys(COLOR_MAP).map((c) => {
                 const isSelected = sharedColor === COLOR_MAP[c];
                 return (
@@ -1563,7 +1563,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                       }
                     }}
                     title={c}
-                    className={`h-5 w-5 rounded-full border shadow-sm transition-transform hover:scale-110 ${isSelected ? "border-accent ring-2 ring-accent/30 scale-105" : "border-border"
+                    className={`h-[18px] w-[18px] rounded-full border shadow-sm transition-transform hover:scale-110 ${isSelected ? "border-accent ring-2 ring-accent/30 scale-105" : "border-border/60"
                       }`}
                     style={{ backgroundColor: COLOR_MAP[c] }}
                   />
@@ -1586,7 +1586,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                         updateMetaProp("color", val);
                       }
                     }}
-                    className="w-full bg-surface-elevated text-xs text-foreground font-mono border border-border rounded pl-8 pr-2.5 py-1.5 focus:border-accent outline-none"
+                    className="w-full bg-surface-elevated text-[11px] text-foreground font-mono border border-border rounded-[4px] pl-8 pr-2.5 py-[5px] focus:border-accent outline-none"
                   />
                   <button
                     ref={colorPickerBtnRef}
@@ -1675,17 +1675,17 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
 
       {/* 5. BACKGROUND (TEXT HIGHLIGHT) SECTION */}
       {hasTextInSelection && (
-        <div className="p-3.5 space-y-3.5">
+        <div className="px-3 py-2.5 space-y-2.5 border-b border-border/50">
           <button
             onClick={() => toggleCollapse("background")}
-            className="flex w-full items-center justify-between text-xs font-bold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
+            className="flex w-full items-center justify-between text-[11px] font-semibold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
             aria-label="Toggle Text Background Highlight Section"
           >
             <span className="flex items-center gap-1.5">
               <FileText className="h-3.5 w-3.5 text-orange-400" />
               <span>Background</span>
             </span>
-            {collapsed.background ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            {collapsed.background ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
           </button>
 
           {!collapsed.background && (
@@ -1699,7 +1699,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     value={sharedBgColor === "Mixed" ? "" : sharedBgColor}
                     placeholder={sharedBgColor === "Mixed" ? "Mixed" : "transparent / #HEX"}
                     onChange={(e) => updateMetaProp("backgroundColor", e.target.value)}
-                    className="w-full bg-surface-elevated text-xs text-foreground font-mono border border-border rounded pl-8 pr-2 py-1.5 focus:border-accent outline-none"
+                    className="w-full bg-surface-elevated text-[11px] text-foreground font-mono border border-border rounded-[4px] pl-8 pr-2 py-[5px] focus:border-accent outline-none"
                   />
                   <button
                     ref={bgColorPickerBtnRef}
@@ -1750,7 +1750,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     value={sharedBgPaddingX === "Mixed" ? "" : sharedBgPaddingX}
                     placeholder={sharedBgPaddingX === "Mixed" ? "Mixed" : ""}
                     onChange={(e) => updateMetaProp("bgPaddingX", Math.max(0, Number(e.target.value)))}
-                    className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2.5 py-1 focus:border-accent outline-none"
+                    className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2.5 py-[5px] focus:border-accent outline-none"
                   />
                 </div>
                 <div className="space-y-1">
@@ -1762,7 +1762,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     value={sharedBgPaddingY === "Mixed" ? "" : sharedBgPaddingY}
                     placeholder={sharedBgPaddingY === "Mixed" ? "Mixed" : ""}
                     onChange={(e) => updateMetaProp("bgPaddingY", Math.max(0, Number(e.target.value)))}
-                    className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2.5 py-1 focus:border-accent outline-none"
+                    className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2.5 py-[5px] focus:border-accent outline-none"
                   />
                 </div>
                 <div className="space-y-1">
@@ -1774,7 +1774,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     value={sharedBgRadius === "Mixed" ? "" : sharedBgRadius}
                     placeholder={sharedBgRadius === "Mixed" ? "Mixed" : ""}
                     onChange={(e) => updateMetaProp("bgRadius", Math.max(0, Number(e.target.value)))}
-                    className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2.5 py-1 focus:border-accent outline-none"
+                    className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2.5 py-[5px] focus:border-accent outline-none"
                   />
                 </div>
               </div>
@@ -1785,17 +1785,17 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
 
       {/* 6. STROKE / OUTLINE SECTION */}
       {hasTextInSelection && (
-        <div className="p-3.5 space-y-3.5">
+        <div className="px-3 py-2.5 space-y-2.5 border-b border-border/50">
           <button
             onClick={() => toggleCollapse("stroke")}
-            className="flex w-full items-center justify-between text-xs font-bold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
+            className="flex w-full items-center justify-between text-[11px] font-semibold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
             aria-label="Toggle Stroke Outline Section"
           >
             <span className="flex items-center gap-1.5">
               <Layers className="h-3.5 w-3.5 text-blue-400" />
               <span>Stroke</span>
             </span>
-            {collapsed.stroke ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            {collapsed.stroke ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
           </button>
 
           {!collapsed.stroke && (
@@ -1822,7 +1822,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                         aria-label="Stroke Color"
                         value={sharedStrokeColor === "Mixed" ? "" : sharedStrokeColor}
                         onChange={(e) => updateMetaProp("strokeColor", e.target.value)}
-                        className="w-full bg-surface-elevated text-xs text-foreground font-mono border border-border rounded pl-8 pr-2 py-1.5 focus:border-accent outline-none"
+                        className="w-full bg-surface-elevated text-[11px] text-foreground font-mono border border-border rounded-[4px] pl-8 pr-2 py-[5px] focus:border-accent outline-none"
                       />
                       <button
                         ref={strokeColorPickerBtnRef}
@@ -1864,7 +1864,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                       max={20}
                       value={sharedStrokeWidth === "Mixed" ? "" : sharedStrokeWidth}
                       onChange={(e) => updateMetaProp("strokeWidth", Math.max(1, Number(e.target.value)))}
-                      className="w-20 bg-surface-elevated text-xs text-foreground border border-border rounded px-2.5 py-1 focus:border-accent outline-none"
+                      className="w-20 bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2.5 py-[5px] focus:border-accent outline-none"
                     />
                   </div>
                 </div>
@@ -1875,17 +1875,17 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
       )}
 
       {/* 7. EFFECTS SECTION */}
-      <div className="p-3.5 space-y-3.5">
+      <div className="px-3 py-2.5 space-y-2.5 border-b border-border/50">
         <button
           onClick={() => toggleCollapse("effects")}
-          className="flex w-full items-center justify-between text-xs font-bold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
+          className="flex w-full items-center justify-between text-[11px] font-semibold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
           aria-label="Toggle Effects Section"
         >
           <span className="flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-yellow-400" />
             <span>Effects</span>
           </span>
-          {collapsed.effects ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+          {collapsed.effects ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
         </button>
 
         {!collapsed.effects && (
@@ -1912,7 +1912,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                       aria-label="Shadow Color"
                       value={sharedShadowColor === "Mixed" ? "" : sharedShadowColor}
                       onChange={(e) => updateMetaProp("shadowColor", e.target.value)}
-                      className="w-full bg-surface-elevated text-xs text-foreground font-mono border border-border rounded pl-8 pr-2 py-1.5 focus:border-accent outline-none"
+                      className="w-full bg-surface-elevated text-[11px] text-foreground font-mono border border-border rounded-[4px] pl-8 pr-2 py-[5px] focus:border-accent outline-none"
                     />
                     <button
                       ref={shadowColorPickerBtnRef}
@@ -1945,7 +1945,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                       aria-label="Shadow X offset"
                       value={sharedShadowX === "Mixed" ? "" : sharedShadowX}
                       onChange={(e) => updateMetaProp("shadowX", Number(e.target.value))}
-                      className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2.5 py-1 focus:border-accent outline-none"
+                      className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2.5 py-[5px] focus:border-accent outline-none"
                     />
                   </div>
                   <div className="flex items-center space-x-2">
@@ -1955,7 +1955,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                       aria-label="Shadow Y offset"
                       value={sharedShadowY === "Mixed" ? "" : sharedShadowY}
                       onChange={(e) => updateMetaProp("shadowY", Number(e.target.value))}
-                      className="w-full bg-surface-elevated text-xs text-foreground border border-border rounded px-2.5 py-1 focus:border-accent outline-none"
+                      className="w-full bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2.5 py-[5px] focus:border-accent outline-none"
                     />
                   </div>
                 </div>
@@ -1969,7 +1969,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     min={0}
                     value={sharedShadowBlur === "Mixed" ? "" : sharedShadowBlur}
                     onChange={(e) => updateMetaProp("shadowBlur", Math.max(0, Number(e.target.value)))}
-                    className="w-20 bg-surface-elevated text-xs text-foreground border border-border rounded px-2.5 py-1 focus:border-accent outline-none"
+                    className="w-20 bg-surface-elevated text-[11px] text-foreground border border-border rounded-[4px] px-2.5 py-[5px] focus:border-accent outline-none"
                   />
                 </div>
               </div>
@@ -1980,17 +1980,17 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
 
       {/* 8. ADVANCED TEXT SECTION */}
       {hasTextInSelection && (
-        <div className="p-3.5 space-y-3.5">
+        <div className="px-3 py-2.5 space-y-2.5 border-b border-border/50">
           <button
             onClick={() => toggleCollapse("advanced")}
-            className="flex w-full items-center justify-between text-xs font-bold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
+            className="flex w-full items-center justify-between text-[11px] font-semibold text-muted uppercase tracking-wider hover:text-foreground transition-colors"
             aria-label="Toggle Advanced Text Section"
           >
             <span className="flex items-center gap-1.5">
               <Settings2 className="h-3.5 w-3.5 text-purple-400" />
               <span>Advanced Text</span>
             </span>
-            {collapsed.advanced ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            {collapsed.advanced ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
           </button>
 
           {!collapsed.advanced && (
@@ -2039,7 +2039,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                       }) as any
                     );
                   }}
-                  className="w-full bg-surface-elevated text-xs border border-border rounded px-2 py-1 outline-none text-foreground focus:border-accent cursor-pointer"
+                  className="w-full bg-surface-elevated text-[11px] border border-border rounded-[4px] px-2 py-[5px] outline-none text-foreground focus:border-accent cursor-pointer"
                 >
                   {sharedResizeMode === "Mixed" && <option value="">Mixed</option>}
                   <option value="auto-width">Auto Width</option>
@@ -2068,7 +2068,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                       });
                     }
                   }}
-                  className="w-full bg-surface-elevated text-xs border border-border rounded px-2 py-1 outline-none text-foreground focus:border-accent cursor-pointer"
+                  className="w-full bg-surface-elevated text-[11px] border border-border rounded-[4px] px-2 py-[5px] outline-none text-foreground focus:border-accent cursor-pointer"
                 >
                   {sharedTextCase === "Mixed" && <option value="">Mixed</option>}
                   <option value="none">Original Case</option>
@@ -2165,7 +2165,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     aria-label="Text direction"
                     value={sharedTextDirection === "Mixed" ? "" : sharedTextDirection}
                     onChange={(e) => updateMetaProp("direction", e.target.value)}
-                    className="w-full bg-surface-elevated text-xs border border-border rounded px-2 py-1 outline-none text-foreground focus:border-accent cursor-pointer"
+                    className="w-full bg-surface-elevated text-[11px] border border-border rounded-[4px] px-2 py-[5px] outline-none text-foreground focus:border-accent cursor-pointer"
                   >
                     {sharedTextDirection === "Mixed" && <option value="">Mixed</option>}
                     <option value="ltr">LTR (English/Latin)</option>
@@ -2179,7 +2179,7 @@ export function PropertiesPanel({ embedded = false }: { embedded?: boolean } = {
                     aria-label="Text overflow mode"
                     value={sharedTextOverflow === "Mixed" ? "" : sharedTextOverflow}
                     onChange={(e) => updateMetaProp("overflow", e.target.value)}
-                    className="w-full bg-surface-elevated text-xs border border-border rounded px-2 py-1 outline-none text-foreground focus:border-accent cursor-pointer"
+                    className="w-full bg-surface-elevated text-[11px] border border-border rounded-[4px] px-2 py-[5px] outline-none text-foreground focus:border-accent cursor-pointer"
                   >
                     {sharedTextOverflow === "Mixed" && <option value="">Mixed</option>}
                     <option value="visible">Visible</option>

@@ -135,12 +135,12 @@ export function AssetsPanel() {
 
   if (!editor) {
     return (
-      <aside className="flex w-60 flex-col border-r border-border bg-surface">
+      <aside className="flex w-[240px] flex-col border-r border-border bg-surface">
         <div className="flex border-b border-border px-1">
-          <button className="flex-1 border-b-2 border-accent py-2 text-xs font-semibold text-accent">
+          <button className="flex-1 border-b-2 border-accent py-2 text-[11px] font-semibold text-accent">
             Layers
           </button>
-          <button className="flex-1 py-2 text-xs text-muted">Assets</button>
+          <button className="flex-1 py-2 text-[11px] text-muted">Assets</button>
         </div>
         <div className="p-3 text-xs text-muted">Loading sidebar...</div>
       </aside>
@@ -148,11 +148,11 @@ export function AssetsPanel() {
   }
 
   return (
-    <aside className="flex w-60 flex-col border-r border-border bg-surface">
+    <aside className="flex w-[240px] flex-col border-r border-border bg-surface">
       <div className="flex border-b border-border px-1">
         <button
           onClick={() => setTab("layers")}
-          className={`flex-1 py-2 text-xs font-semibold transition-colors ${
+          className={`flex-1 py-2 text-[11px] font-semibold transition-colors ${
             tab === "layers"
               ? "border-b-2 border-accent text-accent"
               : "text-muted hover:text-foreground"
@@ -162,7 +162,7 @@ export function AssetsPanel() {
         </button>
         <button
           onClick={() => setTab("assets")}
-          className={`flex-1 py-2 text-xs font-semibold transition-colors ${
+          className={`flex-1 py-2 text-[11px] font-semibold transition-colors ${
             tab === "assets"
               ? "border-b-2 border-accent text-accent"
               : "text-muted hover:text-foreground"

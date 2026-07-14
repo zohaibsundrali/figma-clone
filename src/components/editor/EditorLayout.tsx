@@ -216,98 +216,32 @@ export function EditorLayout({
               onSave={handleSave}
             />
           </EditorErrorBoundary>
-          <aside className="flex w-72 flex-col border-l border-border bg-surface h-full">
-            <div className="flex border-b border-border bg-surface flex-shrink-0">
-              <button
-                onClick={() => setActiveRightTab("design")}
-                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
-                  activeRightTab === "design"
-                    ? "border-accent text-accent"
-                    : "border-transparent text-muted hover:text-foreground"
-                }`}
-              >
-                Design
-              </button>
-              <button
-                onClick={() => setActiveRightTab("prototype")}
-                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
-                  activeRightTab === "prototype"
-                    ? "border-accent text-accent"
-                    : "border-transparent text-muted hover:text-foreground"
-                }`}
-              >
-                Prototype
-              </button>
-              <button
-                onClick={() => setActiveRightTab("inspect")}
-                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
-                  activeRightTab === "inspect"
-                    ? "border-accent text-accent"
-                    : "border-transparent text-muted hover:text-foreground"
-                }`}
-              >
-                Inspect
-              </button>
-              <button
-                onClick={() => setActiveRightTab("activity")}
-                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
-                  activeRightTab === "activity"
-                    ? "border-accent text-accent"
-                    : "border-transparent text-muted hover:text-foreground"
-                }`}
-              >
-                Activity
-              </button>
-              <button
-                onClick={() => setActiveRightTab("collaborators")}
-                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
-                  activeRightTab === "collaborators"
-                    ? "border-accent text-accent"
-                    : "border-transparent text-muted hover:text-foreground"
-                }`}
-              >
-                People
-              </button>
-              <button
-                onClick={() => setActiveRightTab("guides")}
-                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
-                  activeRightTab === "guides"
-                    ? "border-accent text-accent"
-                    : "border-transparent text-muted hover:text-foreground"
-                }`}
-              >
-                Guides
-              </button>
-              <button
-                onClick={() => setActiveRightTab("constraints")}
-                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
-                  activeRightTab === "constraints"
-                    ? "border-accent text-accent"
-                    : "border-transparent text-muted hover:text-foreground"
-                }`}
-              >
-                Constraints
-              </button>
-              <button
-                onClick={() => setActiveRightTab("components")}
-                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
-                  activeRightTab === "components"
-                    ? "border-accent text-accent"
-                    : "border-transparent text-muted hover:text-foreground"
-                }`}
-              >
-                Components
-              </button>
-              <button
-                onClick={() => setActiveRightTab("tokens")}
-                className={`flex-grow py-2.5 text-xs font-semibold border-b-2 transition-colors ${
-                  activeRightTab === "tokens"
-                    ? "border-accent text-accent"
-                    : "border-transparent text-muted hover:text-foreground"
-                }`}
-              >
-                Tokens
-              </button>
+          <aside className="flex w-[280px] flex-col border-l border-border bg-surface h-full">
+            {/* ── Figma-style tab bar ── */}
+            <div className="flex items-end border-b border-border bg-surface flex-shrink-0 overflow-x-auto hide-scrollbar">
+              {([
+                { id: "design",        label: "Design" },
+                { id: "prototype",     label: "Prototype" },
+                { id: "inspect",       label: "Inspect" },
+                { id: "activity",      label: "Activity" },
+                { id: "collaborators", label: "People" },
+                { id: "guides",        label: "Guides" },
+                { id: "constraints",   label: "Constraints" },
+                { id: "components",    label: "Components" },
+                { id: "tokens",        label: "Tokens" },
+              ] as const).map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveRightTab(tab.id)}
+                  className={`whitespace-nowrap px-2.5 py-2 text-[11px] font-semibold border-b-2 transition-colors flex-shrink-0 ${
+                    activeRightTab === tab.id
+                      ? "border-accent text-accent"
+                      : "border-transparent text-muted hover:text-foreground"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
             
             <div className="flex-1 overflow-hidden flex flex-col">

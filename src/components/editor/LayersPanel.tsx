@@ -27,7 +27,7 @@ export function LayersPanel() {
 
   if (!editor) {
     return (
-      <aside className="flex w-60 flex-col border-r border-border bg-surface">
+      <aside className="flex w-[240px] flex-col border-r border-border bg-surface">
         <PagesPanel />
         <div className="flex h-10 items-center gap-2 border-b border-border px-3">
           <Layers className="h-4 w-4 text-muted" />
@@ -39,7 +39,7 @@ export function LayersPanel() {
   }
 
   return (
-    <aside className="flex w-60 flex-col border-r border-border bg-surface">
+    <aside className="flex w-[240px] flex-col border-r border-border bg-surface">
       <PagesPanel />
       <div className="flex h-10 items-center gap-2 border-b border-border px-3">
         <Layers className="h-4 w-4 text-muted" />

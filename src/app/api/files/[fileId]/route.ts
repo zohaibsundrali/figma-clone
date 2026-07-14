@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getCurrentUserId, getOwnedFile } from "@/lib/file-access";
 import { prisma } from "@/lib/prisma";
 import { clearCache } from "@/lib/api-cache";
@@ -85,6 +86,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   }
 
   clearCache(userId);
+  revalidateTag(`user-files-${userId}`);
   return NextResponse.json(updated);
 }
 
@@ -117,5 +119,6 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
   }).catch((err) => console.error("[Activity logging]", err));
 
   clearCache(userId);
+  revalidateTag(`user-files-${userId}`);
   return NextResponse.json({ success: true });
 }

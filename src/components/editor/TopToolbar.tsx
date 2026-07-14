@@ -27,15 +27,19 @@ import { useState, useEffect } from "react";
 import { GeoShapeGeoStyle } from "@tldraw/tlschema";
 import { track } from "tldraw";
 import { useEditorContext } from "./EditorContext";
-import { ExportMenu } from "./ExportMenu";
 import { PresenceBar } from "./PresenceBar";
-import { ShareDialog } from "./ShareDialog";
-import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
-import { NotificationsPanel } from "./NotificationsPanel";
-import { CommandPalette } from "./CommandPalette";
-import { AlignmentToolsMenu } from "./AlignmentToolsMenu";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/Button";
 import type { DesignFile, SaveStatus } from "@/types";
+
+// These dialogs are only needed when user explicitly clicks their trigger buttons.
+// Lazy-loading them removes ~80KB from the critical editor parse budget.
+const ExportMenu = dynamic(() => import("./ExportMenu").then(m => ({ default: m.ExportMenu })));
+const ShareDialog = dynamic(() => import("./ShareDialog").then(m => ({ default: m.ShareDialog })));
+const KeyboardShortcutsDialog = dynamic(() => import("./KeyboardShortcutsDialog").then(m => ({ default: m.KeyboardShortcutsDialog })));
+const NotificationsPanel = dynamic(() => import("./NotificationsPanel").then(m => ({ default: m.NotificationsPanel })));
+const CommandPalette = dynamic(() => import("./CommandPalette").then(m => ({ default: m.CommandPalette })));
+const AlignmentToolsMenu = dynamic(() => import("./AlignmentToolsMenu").then(m => ({ default: m.AlignmentToolsMenu })));
 
 interface TopToolbarProps {
   file: DesignFile;

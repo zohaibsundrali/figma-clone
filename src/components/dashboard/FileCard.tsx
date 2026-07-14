@@ -101,15 +101,18 @@ export function FileCard({
     <div className="group relative">
       <Link
         href={`/editor/${file.id}`}
+        prefetch={true}
         className="block overflow-hidden rounded-lg border border-border bg-surface-elevated/40 transition-all hover:border-accent/40 hover:shadow-md"
       >
         {/* Canvas Thumbnail Preview */}
         <div className="flex aspect-[1.5] items-center justify-center bg-surface-elevated border-b border-border/50 overflow-hidden relative">
-          {file.thumbnail ? (
+          {file.hasThumbnail ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={file.thumbnail}
+              src={`/api/files/${file.id}/thumbnail?v=${encodeURIComponent(file.updatedAt)}`}
               alt={file.title}
+              loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover"
             />
           ) : (

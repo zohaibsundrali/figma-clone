@@ -29,6 +29,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        {/* Preconnect to Clerk CDN for fast avatar loading */}
+        <link rel="preconnect" href="https://img.clerk.com" />
+        <link rel="dns-prefetch" href="https://img.clerk.com" />
+      </head>
       <body className="min-h-full" suppressHydrationWarning>
         <ClerkProvider afterSignOutUrl="/sign-in">{children}</ClerkProvider>
       </body>

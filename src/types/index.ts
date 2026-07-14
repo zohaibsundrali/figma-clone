@@ -18,7 +18,10 @@ export interface DesignFileSummary {
   id: string;
   title: string;
   isPublic: boolean;
-  thumbnail: string | null;
+  // Whether a thumbnail exists. The actual image is loaded lazily from
+  // /api/files/[fileId]/thumbnail instead of being inlined as a base64 data
+  // URL — inlining bloated the dashboard payload by megabytes and slowed render.
+  hasThumbnail: boolean;
   isDeleted: boolean;
   isStarred: boolean;
   workspaceId: string | null;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { Search, X, Filter, Calendar } from "lucide-react";
 import type { DesignFileSummary } from "@/types";
 
@@ -15,6 +15,8 @@ export function SearchAndFilters({ files, onFilterChange }: SearchAndFiltersProp
   const [filterDateRange, setFilterDateRange] = useState<"all" | "week" | "month" | "year">("all");
   const [filterStarred, setFilterStarred] = useState<"all" | "starred" | "unstarred">("all");
   const [sortBy, setSortBy] = useState<"recent" | "oldest" | "name-asc" | "name-desc">("recent");
+  // Debounce ref — avoids re-filtering on every keypress
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const applyFilters = useCallback(() => {
     let filtered = [...files];
@@ -75,9 +77,12 @@ export function SearchAndFilters({ files, onFilterChange }: SearchAndFiltersProp
     onFilterChange(filtered);
   }, [files, searchQuery, filterDateRange, filterStarred, sortBy, onFilterChange]);
 
-  // Apply filters whenever any filter changes
+  // Re-apply whenever the filter params or file list changes.
+  // A 50ms debounce on searchQuery avoids firing on every keypress.
   useEffect(() => {
-    applyFilters();
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => applyFilters(), searchQuery ? 50 : 0);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [applyFilters]);
 
   return (
@@ -92,7 +97,6 @@ export function SearchAndFilters({ files, onFilterChange }: SearchAndFiltersProp
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
-              applyFilters();
             }}
             className="w-full bg-surface-elevated border border-border rounded-lg pl-9 pr-3 py-2 text-sm placeholder-muted focus:border-accent focus:ring-1 focus:ring-accent/50 outline-none transition-colors"
           />
@@ -100,7 +104,6 @@ export function SearchAndFilters({ files, onFilterChange }: SearchAndFiltersProp
             <button
               onClick={() => {
                 setSearchQuery("");
-                applyFilters();
               }}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition-colors"
             >
@@ -124,7 +127,6 @@ export function SearchAndFilters({ files, onFilterChange }: SearchAndFiltersProp
           value={sortBy}
           onChange={(e) => {
             setSortBy(e.target.value as typeof sortBy);
-            applyFilters();
           }}
           className="px-3 py-1.5 rounded-lg bg-surface-elevated border border-border text-sm focus:border-accent outline-none transition-colors"
         >
@@ -150,7 +152,6 @@ export function SearchAndFilters({ files, onFilterChange }: SearchAndFiltersProp
                   key={range}
                   onClick={() => {
                     setFilterDateRange(range);
-                    applyFilters();
                   }}
                   className={`px-2 py-1.5 rounded text-xs font-medium transition-colors ${
                     filterDateRange === range
@@ -173,7 +174,6 @@ export function SearchAndFilters({ files, onFilterChange }: SearchAndFiltersProp
                   key={status}
                   onClick={() => {
                     setFilterStarred(status);
-                    applyFilters();
                   }}
                   className={`px-2 py-1.5 rounded text-xs font-medium transition-colors ${
                     filterStarred === status

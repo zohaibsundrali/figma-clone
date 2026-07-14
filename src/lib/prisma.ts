@@ -4,42 +4,39 @@ import { PrismaPg } from "@prisma/adapter-pg";
 
 function getDatabaseUrl() {
   const databaseUrl = process.env.DATABASE_URL;
-
   if (!databaseUrl) {
     throw new Error(
       "DATABASE_URL is required to initialize Prisma. Set it in .env.local or .env."
     );
   }
-
   return databaseUrl;
 }
 
-const globalForPrisma = globalThis as unknown as {
+const g = globalThis as unknown as {
   prisma: PrismaClient | undefined;
-  pool: Pool | undefined;
+  pgPool: Pool | undefined;
 };
 
-function createPrismaClient() {
-  let pool = globalForPrisma.pool;
-
-  if (!pool) {
-    pool = new Pool({
-      connectionString: getDatabaseUrl(),
-      max: 5, // Small headroom above the 3 concurrent queries the dashboard fires on load
-      idleTimeoutMillis: 30000, // Was 5000 — that tore down connections every 5s, forcing
-      // a full reconnect (+ possible Neon compute cold-start) on nearly every request.
-      connectionTimeoutMillis: 30000, // Allow 30 seconds for cold database wake-ups
-    });
-
-    if (process.env.NODE_ENV !== "production") {
-      globalForPrisma.pool = pool;
-    }
-  }
-
-  const adapter = new PrismaPg(pool);
-  return new PrismaClient({ adapter });
+// Reuse the Pool across hot-reloads in dev — avoids exhausting Neon's
+// connection limit and eliminates cold-start penalty on every save.
+if (!g.pgPool) {
+  g.pgPool = new Pool({
+    connectionString: getDatabaseUrl(),
+    max: 5,              // Neon free tier: keep pool small
+    idleTimeoutMillis: 30_000,  // Was 5000 — too aggressive, forced reconnects
+    connectionTimeoutMillis: 10_000, // 10s is enough; cold Neon wake ~3-5s
+  });
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+if (!g.prisma) {
+  const adapter = new PrismaPg(g.pgPool);
+  g.prisma = new PrismaClient({ adapter });
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+  // Warm up the connection in the background immediately on module load.
+  // This fires a cheap SELECT 1 so the TCP + TLS handshake to Neon is done
+  // before the first real request arrives (eliminates cold-start latency).
+  void g.pgPool.query("SELECT 1").catch(() => {/* ignore warm-up failures */});
+}
+
+export const prisma = g.prisma;
+export const pool = g.pgPool;

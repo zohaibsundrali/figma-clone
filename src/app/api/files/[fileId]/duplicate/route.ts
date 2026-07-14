@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getCurrentUserId, getOwnedFile } from "@/lib/file-access";
 import { prisma } from "@/lib/prisma";
 import { clearCache } from "@/lib/api-cache";
@@ -28,5 +29,19 @@ export async function POST(_request: Request, { params }: RouteParams) {
   });
 
   clearCache(userId);
-  return NextResponse.json(duplicate, { status: 201 });
+  revalidateTag(`user-files-${userId}`);
+
+  // Return a DesignFileSummary shape (a new duplicate has no thumbnail yet).
+  const summary = {
+    id: duplicate.id,
+    title: duplicate.title,
+    isPublic: duplicate.isPublic,
+    hasThumbnail: duplicate.thumbnail != null,
+    isDeleted: duplicate.isDeleted,
+    isStarred: duplicate.isStarred,
+    workspaceId: duplicate.workspaceId,
+    createdAt: duplicate.createdAt.toISOString(),
+    updatedAt: duplicate.updatedAt.toISOString(),
+  };
+  return NextResponse.json(summary, { status: 201 });
 }

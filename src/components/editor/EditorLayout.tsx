@@ -2,20 +2,28 @@
 
 import { useCallback, useState, lazy, Suspense } from "react";
 import type React from "react";
-import { AssetsPanel } from "./AssetsPanel";
-import { CommentsPanel } from "./CommentsPanel";
+import dynamic from "next/dynamic";
 import { EditorCanvas } from "./EditorCanvas";
 import { EditorContext } from "./EditorContext";
 import { EditorErrorBoundary } from "./EditorErrorBoundary";
 import { TopToolbar } from "./TopToolbar";
-import { VersionHistorySidebar } from "./VersionHistorySidebar";
 import { RoomProvider } from "@/lib/liveblocks";
 import { ClientSideSuspense } from "@liveblocks/react";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import type { DesignFile, SaveStatus, Comment } from "@/types";
 import type { Editor } from "tldraw";
 
-// Lazy load right sidebar panels to reduce initial bundle
+// Left panel — only one is ever visible at a time
+const AssetsPanel = dynamic(() => import("./AssetsPanel").then(m => ({ default: m.AssetsPanel })), {
+  loading: () => <div className="w-52 border-r border-border bg-surface animate-pulse" />,
+});
+const CommentsPanel = dynamic(() => import("./CommentsPanel").then(m => ({ default: m.CommentsPanel })), {
+  loading: () => <div className="w-52 border-r border-border bg-surface animate-pulse" />,
+});
+// Version history is opened on demand
+const VersionHistorySidebar = dynamic(() => import("./VersionHistorySidebar").then(m => ({ default: m.VersionHistorySidebar })));
+
+// Right sidebar panels — lazy loaded (already were, keeping consistent)
 const PropertiesPanel = lazy(() => import("./PropertiesPanel").then(m => ({ default: m.PropertiesPanel })));
 const PrototypePanel = lazy(() => import("./PrototypePanel").then(m => ({ default: m.PrototypePanel })));
 const InspectPanel = lazy(() => import("./InspectPanel").then(m => ({ default: m.InspectPanel })));

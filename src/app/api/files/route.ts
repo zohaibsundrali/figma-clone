@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import { getCurrentUserId } from "@/lib/file-access";
+import { revalidateTag } from "next/cache";
+import { Prisma } from "@/generated/prisma/client";
+import { getCurrentUserId, listFileSummaries } from "@/lib/file-access";
 import { prisma } from "@/lib/prisma";
 import { getCacheIfValid, setCacheWithTTL, getCacheKey, clearCache } from "@/lib/api-cache";
 
@@ -14,25 +16,10 @@ export async function GET(request: Request) {
 
   // For search queries, don't use cache (results may vary)
   if (q) {
-    const files = await prisma.designFile.findMany({
-      where: {
-        ownerId: userId,
-        isDeleted: false,
-        title: { contains: q, mode: "insensitive" },
-      },
-      orderBy: { updatedAt: "desc" },
-      take: 50, // Limit search results
-      select: {
-        id: true,
-        title: true,
-        isPublic: true,
-        thumbnail: true,
-        isDeleted: true,
-        isStarred: true,
-        workspaceId: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+    const files = await listFileSummaries({
+      where: Prisma.sql`"ownerId" = ${userId} AND "isDeleted" = false AND "title" ILIKE ${"%" + q + "%"}`,
+      orderBy: Prisma.sql`"updatedAt" DESC`,
+      limit: 50, // Limit search results
     });
     return NextResponse.json(files);
   }
@@ -44,28 +31,18 @@ export async function GET(request: Request) {
     return NextResponse.json(cached);
   }
 
-  const files = await prisma.designFile.findMany({
-    where: {
-      ownerId: userId,
-      isDeleted: false,
-    },
-    orderBy: { updatedAt: "desc" },
-    take: 100,
-    select: {
-      id: true,
-      title: true,
-      isPublic: true,
-      thumbnail: true,
-      isDeleted: true,
-      isStarred: true,
-      workspaceId: true,
-      createdAt: true,
-      updatedAt: true,
-    },
+  const files = await listFileSummaries({
+    where: Prisma.sql`"ownerId" = ${userId} AND "isDeleted" = false`,
+    orderBy: Prisma.sql`"updatedAt" DESC`,
+    limit: 100,
   });
 
   setCacheWithTTL(cacheKey, files, 30);
-  return NextResponse.json(files);
+  return NextResponse.json(files, {
+    headers: {
+      "Cache-Control": "private, max-age=30, stale-while-revalidate=60",
+    },
+  });
 }
 
 export async function POST() {
@@ -82,10 +59,12 @@ export async function POST() {
     },
   });
 
-  // Clear caches for this user
+  // Clear both in-memory cache and Next.js server cache
   clearCache(userId);
+  revalidateTag(`user-files-${userId}`);
 
-  await prisma.activity.create({
+  // Fire-and-forget: activity log doesn't need to block the response
+  void prisma.activity.create({
     data: {
       fileId: file.id,
       authorId: userId,

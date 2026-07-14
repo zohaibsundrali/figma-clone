@@ -1,9 +1,60 @@
 import { auth } from "@clerk/nextjs/server";
+import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "./prisma";
+import type { DesignFileSummary } from "@/types";
 
 export async function getCurrentUserId(): Promise<string | null> {
   const { userId } = await auth();
   return userId;
+}
+
+type RawFileSummary = {
+  id: string;
+  title: string;
+  isPublic: boolean;
+  hasThumbnail: boolean;
+  isDeleted: boolean;
+  isStarred: boolean;
+  workspaceId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+/**
+ * Lists file summaries WITHOUT pulling the heavy `thumbnail` column (base64 PNG
+ * data URLs, often 50-200 KB each). Instead it returns a cheap `hasThumbnail`
+ * boolean; the image itself is fetched lazily per-card from the thumbnail route.
+ * This keeps list payloads tiny and makes the dashboard render fast.
+ */
+export async function listFileSummaries(options: {
+  where: Prisma.Sql;
+  orderBy: Prisma.Sql;
+  limit: number;
+}): Promise<DesignFileSummary[]> {
+  const { where, orderBy, limit } = options;
+
+  const rows = await prisma.$queryRaw<RawFileSummary[]>`
+    SELECT "id", "title", "isPublic",
+           ("thumbnail" IS NOT NULL) AS "hasThumbnail",
+           "isDeleted", "isStarred", "workspaceId",
+           "createdAt", "updatedAt"
+    FROM "public"."DesignFile"
+    WHERE ${where}
+    ORDER BY ${orderBy}
+    LIMIT ${limit}
+  `;
+
+  return rows.map((r) => ({
+    id: r.id,
+    title: r.title,
+    isPublic: r.isPublic,
+    hasThumbnail: r.hasThumbnail,
+    isDeleted: r.isDeleted,
+    isStarred: r.isStarred,
+    workspaceId: r.workspaceId,
+    createdAt: r.createdAt.toISOString(),
+    updatedAt: r.updatedAt.toISOString(),
+  }));
 }
 
 export async function getOwnedFile(fileId: string, userId: string) {

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getCurrentUserId } from "@/lib/file-access";
-import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma/client";
+import { getCurrentUserId, listFileSummaries } from "@/lib/file-access";
 import { getCacheIfValid, setCacheWithTTL, getCacheKey } from "@/lib/api-cache";
 
 export async function GET() {
@@ -16,25 +16,10 @@ export async function GET() {
     return NextResponse.json(cached);
   }
 
-  const starredFiles = await prisma.designFile.findMany({
-    where: {
-      ownerId: userId,
-      isDeleted: false,
-      isStarred: true,
-    },
-    orderBy: { updatedAt: "desc" },
-    take: 100,
-    select: {
-      id: true,
-      title: true,
-      isPublic: true,
-      thumbnail: true,
-      isDeleted: true,
-      isStarred: true,
-      workspaceId: true,
-      createdAt: true,
-      updatedAt: true,
-    },
+  const starredFiles = await listFileSummaries({
+    where: Prisma.sql`"ownerId" = ${userId} AND "isDeleted" = false AND "isStarred" = true`,
+    orderBy: Prisma.sql`"updatedAt" DESC`,
+    limit: 100,
   });
 
   setCacheWithTTL(cacheKey, starredFiles, 30);

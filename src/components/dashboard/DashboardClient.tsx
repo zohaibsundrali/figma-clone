@@ -2,12 +2,19 @@
 
 import { useCallback, useState, useTransition, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { FileGrid } from "./FileGrid";
 import { SearchAndFilters } from "./SearchAndFilters";
-import { AnalyticsPanel } from "./AnalyticsPanel";
-import { WorkspaceSettings } from "./WorkspaceSettings";
 import { SidebarUserMenu } from "./SidebarUserMenu";
 import type { DesignFileSummary } from "@/types";
+
+// Lazy-load heavy panels — only downloaded when the user actually opens them.
+const AnalyticsPanel = dynamic(() => import("./AnalyticsPanel").then((m) => ({ default: m.AnalyticsPanel })), {
+  loading: () => <div className="animate-pulse h-64 rounded-lg bg-surface-elevated" />,
+});
+const WorkspaceSettings = dynamic(() => import("./WorkspaceSettings").then((m) => ({ default: m.WorkspaceSettings })), {
+  loading: () => <div className="animate-pulse h-64 rounded-lg bg-surface-elevated" />,
+});
 import {
   Folder,
   FolderPlus,

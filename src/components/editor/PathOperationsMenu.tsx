@@ -15,6 +15,10 @@ export const PathOperationsMenu = track(function PathOperationsMenu() {
   const selectedShapes = editor.getSelectedShapes();
   const canPerformOperation = selectedShapes.length >= 2;
 
+  // Contextual tool — only show once a qualifying selection exists, matching
+  // Figma's behavior (no floating disabled buttons sitting over empty canvas).
+  if (!canPerformOperation) return null;
+
   const handleUnion = () => {
     if (!canPerformOperation) return;
 
@@ -177,9 +181,8 @@ export const PathOperationsMenu = track(function PathOperationsMenu() {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        disabled={selectedShapes.length < 2}
-        className="fixed bottom-32 left-1/2 -translate-x-1/2 bg-surface-elevated border border-border rounded-lg shadow-lg p-2 z-40 hover:bg-border disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        title="Path Operations (2+ shapes required)"
+        className="fixed bottom-32 left-1/2 -translate-x-1/2 bg-surface-elevated border border-border rounded-lg shadow-lg p-2 z-40 hover:bg-border transition-colors"
+        title="Path Operations"
       >
         <Combine className="h-4 w-4" />
       </button>

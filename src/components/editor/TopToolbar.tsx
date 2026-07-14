@@ -24,12 +24,19 @@ import type { DesignFile, SaveStatus } from "@/types";
 
 // These dialogs are only needed when user explicitly clicks their trigger buttons.
 // Lazy-loading them removes ~80KB from the critical editor parse budget.
-const ExportMenu = dynamic(() => import("./ExportMenu").then(m => ({ default: m.ExportMenu })));
-const ShareDialog = dynamic(() => import("./ShareDialog").then(m => ({ default: m.ShareDialog })));
-const KeyboardShortcutsDialog = dynamic(() => import("./KeyboardShortcutsDialog").then(m => ({ default: m.KeyboardShortcutsDialog })));
-const NotificationsPanel = dynamic(() => import("./NotificationsPanel").then(m => ({ default: m.NotificationsPanel })));
-const CommandPalette = dynamic(() => import("./CommandPalette").then(m => ({ default: m.CommandPalette })));
-const AlignmentToolsMenu = dynamic(() => import("./AlignmentToolsMenu").then(m => ({ default: m.AlignmentToolsMenu })));
+//
+// IMPORTANT: every one of these must pass its own `loading` fallback. Without
+// one, next/dynamic has no local Suspense boundary to resolve against and the
+// suspend bubbles up to Liveblocks' <ClientSideSuspense>, which wraps the
+// entire editor — unmounting and remounting the whole Tldraw instance (wiping
+// the in-memory canvas) the first time any of these is opened. Confirmed via
+// instrumented mount/unmount logging before this fix — do not remove `loading`.
+const ExportMenu = dynamic(() => import("./ExportMenu").then(m => ({ default: m.ExportMenu })), { loading: () => null });
+const ShareDialog = dynamic(() => import("./ShareDialog").then(m => ({ default: m.ShareDialog })), { loading: () => null });
+const KeyboardShortcutsDialog = dynamic(() => import("./KeyboardShortcutsDialog").then(m => ({ default: m.KeyboardShortcutsDialog })), { loading: () => null });
+const NotificationsPanel = dynamic(() => import("./NotificationsPanel").then(m => ({ default: m.NotificationsPanel })), { loading: () => null });
+const CommandPalette = dynamic(() => import("./CommandPalette").then(m => ({ default: m.CommandPalette })), { loading: () => null });
+const AlignmentToolsMenu = dynamic(() => import("./AlignmentToolsMenu").then(m => ({ default: m.AlignmentToolsMenu })), { loading: () => null });
 
 interface TopToolbarProps {
   file: DesignFile;

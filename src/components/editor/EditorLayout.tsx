@@ -31,8 +31,20 @@ const AssetsPanel = dynamic(() => import("./AssetsPanel").then(m => ({ default: 
 const CommentsPanel = dynamic(() => import("./CommentsPanel").then(m => ({ default: m.CommentsPanel })), {
   loading: () => <div className="w-52 border-r border-border bg-surface animate-pulse" />,
 });
-// Version history is opened on demand
-const VersionHistorySidebar = dynamic(() => import("./VersionHistorySidebar").then(m => ({ default: m.VersionHistorySidebar })));
+// Version history is opened on demand.
+//
+// IMPORTANT: this (and every other on-demand dynamic() import mounted inside
+// the editor) must always pass its own `loading` fallback. Without one,
+// next/dynamic has no local Suspense boundary to resolve against and the
+// suspend bubbles up to the nearest ancestor Suspense — which is Liveblocks'
+// <ClientSideSuspense> wrapping the *entire* editor. That unmounts and
+// remounts the whole Tldraw instance (wiping the in-memory canvas and
+// racing tldraw's internal FontManager) the first time any such panel is
+// opened. Reproduced and confirmed via instrumented mount/unmount logging
+// before this fix — do not remove the `loading` option.
+const VersionHistorySidebar = dynamic(() => import("./VersionHistorySidebar").then(m => ({ default: m.VersionHistorySidebar })), {
+  loading: () => null,
+});
 
 // Right sidebar panels — lazy loaded (already were, keeping consistent)
 const PropertiesPanel = lazy(() => import("./PropertiesPanel").then(m => ({ default: m.PropertiesPanel })));

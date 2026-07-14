@@ -15,6 +15,10 @@ export const DistributionToolsMenu = track(function DistributionToolsMenu() {
   const selectedShapes = editor.getSelectedShapes();
   const canDistribute = selectedShapes.length >= 3;
 
+  // Contextual tool — only show once a qualifying selection exists, matching
+  // Figma's behavior (no floating disabled buttons sitting over empty canvas).
+  if (!canDistribute) return null;
+
   const distributeHorizontally = (mode: "equal-gap" | "equal-space") => {
     if (selectedShapes.length < 3) return;
 
@@ -237,9 +241,8 @@ export const DistributionToolsMenu = track(function DistributionToolsMenu() {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        disabled={selectedShapes.length < 3}
-        className="fixed bottom-44 left-1/2 -translate-x-1/2 bg-surface-elevated border border-border rounded-lg shadow-lg p-2 z-40 hover:bg-border disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        title="Distribution Tools (3+ shapes required)"
+        className="fixed bottom-44 left-1/2 -translate-x-1/2 bg-surface-elevated border border-border rounded-lg shadow-lg p-2 z-40 hover:bg-border transition-colors"
+        title="Distribution Tools"
       >
         <Grid3x3 className="h-4 w-4" />
       </button>

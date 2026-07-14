@@ -77,6 +77,14 @@ export function VersionHistorySidebar({ fileId, onClose }: { fileId: string, onC
     };
   }, [fileId]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   const handleSaveVersion = async () => {
     if (!editor || !description.trim() || isSaving) return;
     setIsSaving(true);

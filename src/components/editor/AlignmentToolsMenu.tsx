@@ -16,7 +16,7 @@ import {
   Lock,
   LockOpen,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect } from "react";
 
 interface AlignmentMenuProps {
   isOpen: boolean;
@@ -28,6 +28,15 @@ export const AlignmentToolsMenu = track(function AlignmentToolsMenu({
   onClose,
 }: AlignmentMenuProps) {
   const { editor } = useEditorContext();
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen || !editor) return null;
 
@@ -85,8 +94,14 @@ export const AlignmentToolsMenu = track(function AlignmentToolsMenu({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="rounded-lg border border-border bg-surface shadow-lg max-w-sm w-96 max-h-96 overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={onClose}
+    >
+      <div
+        className="rounded-lg border border-border bg-surface shadow-lg max-w-sm w-96 max-h-96 overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="sticky top-0 flex items-center justify-between border-b border-border bg-surface-elevated px-4 py-3">
           <h2 className="text-sm font-semibold">Arrange & Align</h2>
           <button

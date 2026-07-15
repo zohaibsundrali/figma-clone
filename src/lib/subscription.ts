@@ -5,10 +5,8 @@ import { getPlan, type PlanDefinition } from "./plans";
  * The plan a user is actually entitled to right now.
  *
  * A Subscription row only grants its `plan` when `status === "active"`
- * (i.e. an admin has approved the payment screenshot). While a payment is
- * pending review, or after it's rejected/canceled/past_due, the user's
- * effective plan is Free — matching the "admin must approve before the plan
- * activates, and missing a monthly payment drops you back to Free" rules.
+ * (set by the Stripe webhook on successful checkout). After a canceled or
+ * past_due subscription, the user's effective plan drops back to Free.
  */
 export async function getEffectivePlan(userId: string): Promise<PlanDefinition> {
   const sub = await prisma.subscription.findUnique({ where: { userId } });

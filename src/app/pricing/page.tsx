@@ -11,12 +11,10 @@ import { PLANS, type PlanId } from "@/lib/plans";
 interface SubscriptionStatus {
   plan: PlanId;
   projectsUsed: number;
-  requestedPlan: PlanId | null;
   status: string;
 }
 
 const statusNotices: Record<string, string> = {
-  rejected: "Your last payment screenshot wasn't approved. Please try again below, or contact support if you think this is a mistake.",
   past_due: "Your last renewal payment failed, so your account is back on Free. Upgrading again will retry payment.",
   canceled: "Your subscription was canceled and your account is back on Free.",
 };
@@ -66,8 +64,8 @@ function PricingContent() {
     if (hasAutoCheckedOut.current) return;
     if (!isLoaded || !isSignedIn || !status) return;
     if (autoCheckoutPlan !== "professional" && autoCheckoutPlan !== "organization") return;
-    // Already on that plan, or already awaiting review — don't re-trigger checkout.
-    if (status.plan === autoCheckoutPlan || status.requestedPlan) return;
+    // Already on that plan — don't re-trigger checkout.
+    if (status.plan === autoCheckoutPlan) return;
 
     hasAutoCheckedOut.current = true;
     void handleUpgrade(autoCheckoutPlan);
@@ -99,7 +97,7 @@ function PricingContent() {
           </div>
         )}
 
-        {!error && status && !status.requestedPlan && statusNotices[status.status] && (
+        {!error && status && statusNotices[status.status] && (
           <div className="mx-auto mt-8 max-w-md rounded-lg border border-red-600/30 bg-red-600/10 px-4 py-3 text-center text-sm text-red-400">
             {statusNotices[status.status]}
           </div>
@@ -114,7 +112,6 @@ function PricingContent() {
         <div className="mt-12 grid gap-6 sm:grid-cols-3">
           {(Object.values(PLANS)).map((plan) => {
             const isCurrent = status?.plan === plan.id;
-            const isPending = status?.requestedPlan === plan.id;
             const isPaid = plan.id !== "free";
 
             return (
@@ -154,10 +151,6 @@ function PricingContent() {
                     <Button variant="secondary" className="w-full" disabled>
                       Current plan
                     </Button>
-                  ) : isPending ? (
-                    <Button variant="secondary" className="w-full" disabled>
-                      Awaiting review
-                    </Button>
                   ) : isPaid ? (
                     <Button
                       variant={plan.id === "professional" ? "primary" : "secondary"}
@@ -183,9 +176,8 @@ function PricingContent() {
         </div>
 
         <p className="mt-10 text-center text-xs text-muted">
-          After payment you&apos;ll upload a screenshot for verification. Your plan activates once
-          it&apos;s reviewed, usually within a day. Subscriptions renew monthly — if a payment
-          fails or is canceled, your account reverts to Free.
+          Your plan activates immediately after payment. Subscriptions renew monthly — if a
+          payment fails or is canceled, your account reverts to Free.
         </p>
       </main>
     </div>

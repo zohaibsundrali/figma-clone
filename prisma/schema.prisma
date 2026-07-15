@@ -214,20 +214,16 @@ model Template {
 
 // One row per user (Clerk userId). Absence of a row, or status !== "active",
 // means the user is effectively on the Free plan — see src/lib/subscription.ts.
+// Activated automatically by the Stripe webhook on checkout.session.completed.
 model Subscription {
-  id                   String    @id @default(cuid())
-  userId               String    @unique
-  plan                 String    @default("free") // free | professional | organization
-  status               String    @default("active") // active | pending_review | rejected | canceled | past_due
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  plan                 String   @default("free") // free | professional | organization
+  status               String   @default("active") // active | canceled | past_due
   stripeCustomerId     String?
-  stripeSubscriptionId String?   @unique
-  stripeSessionId      String?
-  screenshotUrl        String? // base64 data URL, same pattern as DesignFile.thumbnail
-  transactionNote      String?
-  reviewedByEmail      String?
-  reviewedAt           DateTime?
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+  stripeSubscriptionId String?  @unique
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   @@index([userId])
   @@index([status])

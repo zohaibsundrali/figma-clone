@@ -1595,11 +1595,6 @@ export const SubscriptionScalarFieldEnum = {
   status: 'status',
   stripeCustomerId: 'stripeCustomerId',
   stripeSubscriptionId: 'stripeSubscriptionId',
-  stripeSessionId: 'stripeSessionId',
-  screenshotUrl: 'screenshotUrl',
-  transactionNote: 'transactionNote',
-  reviewedByEmail: 'reviewedByEmail',
-  reviewedAt: 'reviewedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

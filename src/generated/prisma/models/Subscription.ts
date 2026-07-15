@@ -31,11 +31,6 @@ export type SubscriptionMinAggregateOutputType = {
   status: string | null
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
-  stripeSessionId: string | null
-  screenshotUrl: string | null
-  transactionNote: string | null
-  reviewedByEmail: string | null
-  reviewedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -47,11 +42,6 @@ export type SubscriptionMaxAggregateOutputType = {
   status: string | null
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
-  stripeSessionId: string | null
-  screenshotUrl: string | null
-  transactionNote: string | null
-  reviewedByEmail: string | null
-  reviewedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -63,11 +53,6 @@ export type SubscriptionCountAggregateOutputType = {
   status: number
   stripeCustomerId: number
   stripeSubscriptionId: number
-  stripeSessionId: number
-  screenshotUrl: number
-  transactionNote: number
-  reviewedByEmail: number
-  reviewedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -81,11 +66,6 @@ export type SubscriptionMinAggregateInputType = {
   status?: true
   stripeCustomerId?: true
   stripeSubscriptionId?: true
-  stripeSessionId?: true
-  screenshotUrl?: true
-  transactionNote?: true
-  reviewedByEmail?: true
-  reviewedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -97,11 +77,6 @@ export type SubscriptionMaxAggregateInputType = {
   status?: true
   stripeCustomerId?: true
   stripeSubscriptionId?: true
-  stripeSessionId?: true
-  screenshotUrl?: true
-  transactionNote?: true
-  reviewedByEmail?: true
-  reviewedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -113,11 +88,6 @@ export type SubscriptionCountAggregateInputType = {
   status?: true
   stripeCustomerId?: true
   stripeSubscriptionId?: true
-  stripeSessionId?: true
-  screenshotUrl?: true
-  transactionNote?: true
-  reviewedByEmail?: true
-  reviewedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -202,11 +172,6 @@ export type SubscriptionGroupByOutputType = {
   status: string
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
-  stripeSessionId: string | null
-  screenshotUrl: string | null
-  transactionNote: string | null
-  reviewedByEmail: string | null
-  reviewedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: SubscriptionCountAggregateOutputType | null
@@ -239,11 +204,6 @@ export type SubscriptionWhereInput = {
   status?: Prisma.StringFilter<"Subscription"> | string
   stripeCustomerId?: Prisma.StringNullableFilter<"Subscription"> | string | null
   stripeSubscriptionId?: Prisma.StringNullableFilter<"Subscription"> | string | null
-  stripeSessionId?: Prisma.StringNullableFilter<"Subscription"> | string | null
-  screenshotUrl?: Prisma.StringNullableFilter<"Subscription"> | string | null
-  transactionNote?: Prisma.StringNullableFilter<"Subscription"> | string | null
-  reviewedByEmail?: Prisma.StringNullableFilter<"Subscription"> | string | null
-  reviewedAt?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
 }
@@ -255,11 +215,6 @@ export type SubscriptionOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
-  stripeSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
-  screenshotUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  transactionNote?: Prisma.SortOrderInput | Prisma.SortOrder
-  reviewedByEmail?: Prisma.SortOrderInput | Prisma.SortOrder
-  reviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -274,11 +229,6 @@ export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
   plan?: Prisma.StringFilter<"Subscription"> | string
   status?: Prisma.StringFilter<"Subscription"> | string
   stripeCustomerId?: Prisma.StringNullableFilter<"Subscription"> | string | null
-  stripeSessionId?: Prisma.StringNullableFilter<"Subscription"> | string | null
-  screenshotUrl?: Prisma.StringNullableFilter<"Subscription"> | string | null
-  transactionNote?: Prisma.StringNullableFilter<"Subscription"> | string | null
-  reviewedByEmail?: Prisma.StringNullableFilter<"Subscription"> | string | null
-  reviewedAt?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
 }, "id" | "userId" | "stripeSubscriptionId">
@@ -290,11 +240,6 @@ export type SubscriptionOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
-  stripeSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
-  screenshotUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  transactionNote?: Prisma.SortOrderInput | Prisma.SortOrder
-  reviewedByEmail?: Prisma.SortOrderInput | Prisma.SortOrder
-  reviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SubscriptionCountOrderByAggregateInput
@@ -312,11 +257,6 @@ export type SubscriptionScalarWhereWithAggregatesInput = {
   status?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
   stripeCustomerId?: Prisma.StringNullableWithAggregatesFilter<"Subscription"> | string | null
   stripeSubscriptionId?: Prisma.StringNullableWithAggregatesFilter<"Subscription"> | string | null
-  stripeSessionId?: Prisma.StringNullableWithAggregatesFilter<"Subscription"> | string | null
-  screenshotUrl?: Prisma.StringNullableWithAggregatesFilter<"Subscription"> | string | null
-  transactionNote?: Prisma.StringNullableWithAggregatesFilter<"Subscription"> | string | null
-  reviewedByEmail?: Prisma.StringNullableWithAggregatesFilter<"Subscription"> | string | null
-  reviewedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
 }
@@ -328,11 +268,6 @@ export type SubscriptionCreateInput = {
   status?: string
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
-  stripeSessionId?: string | null
-  screenshotUrl?: string | null
-  transactionNote?: string | null
-  reviewedByEmail?: string | null
-  reviewedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -344,11 +279,6 @@ export type SubscriptionUncheckedCreateInput = {
   status?: string
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
-  stripeSessionId?: string | null
-  screenshotUrl?: string | null
-  transactionNote?: string | null
-  reviewedByEmail?: string | null
-  reviewedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -360,11 +290,6 @@ export type SubscriptionUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  transactionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reviewedByEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -376,11 +301,6 @@ export type SubscriptionUncheckedUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  transactionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reviewedByEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -392,11 +312,6 @@ export type SubscriptionCreateManyInput = {
   status?: string
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
-  stripeSessionId?: string | null
-  screenshotUrl?: string | null
-  transactionNote?: string | null
-  reviewedByEmail?: string | null
-  reviewedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -408,11 +323,6 @@ export type SubscriptionUpdateManyMutationInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  transactionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reviewedByEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -424,11 +334,6 @@ export type SubscriptionUncheckedUpdateManyInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  transactionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reviewedByEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -440,11 +345,6 @@ export type SubscriptionCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrder
-  stripeSessionId?: Prisma.SortOrder
-  screenshotUrl?: Prisma.SortOrder
-  transactionNote?: Prisma.SortOrder
-  reviewedByEmail?: Prisma.SortOrder
-  reviewedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -456,11 +356,6 @@ export type SubscriptionMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrder
-  stripeSessionId?: Prisma.SortOrder
-  screenshotUrl?: Prisma.SortOrder
-  transactionNote?: Prisma.SortOrder
-  reviewedByEmail?: Prisma.SortOrder
-  reviewedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -472,11 +367,6 @@ export type SubscriptionMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrder
-  stripeSessionId?: Prisma.SortOrder
-  screenshotUrl?: Prisma.SortOrder
-  transactionNote?: Prisma.SortOrder
-  reviewedByEmail?: Prisma.SortOrder
-  reviewedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -490,11 +380,6 @@ export type SubscriptionSelect<ExtArgs extends runtime.Types.Extensions.Internal
   status?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
-  stripeSessionId?: boolean
-  screenshotUrl?: boolean
-  transactionNote?: boolean
-  reviewedByEmail?: boolean
-  reviewedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["subscription"]>
@@ -506,11 +391,6 @@ export type SubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   status?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
-  stripeSessionId?: boolean
-  screenshotUrl?: boolean
-  transactionNote?: boolean
-  reviewedByEmail?: boolean
-  reviewedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["subscription"]>
@@ -522,11 +402,6 @@ export type SubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   status?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
-  stripeSessionId?: boolean
-  screenshotUrl?: boolean
-  transactionNote?: boolean
-  reviewedByEmail?: boolean
-  reviewedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["subscription"]>
@@ -538,16 +413,11 @@ export type SubscriptionSelectScalar = {
   status?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
-  stripeSessionId?: boolean
-  screenshotUrl?: boolean
-  transactionNote?: boolean
-  reviewedByEmail?: boolean
-  reviewedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "plan" | "status" | "stripeCustomerId" | "stripeSubscriptionId" | "stripeSessionId" | "screenshotUrl" | "transactionNote" | "reviewedByEmail" | "reviewedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>
+export type SubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "plan" | "status" | "stripeCustomerId" | "stripeSubscriptionId" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>
 
 export type $SubscriptionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Subscription"
@@ -559,11 +429,6 @@ export type $SubscriptionPayload<ExtArgs extends runtime.Types.Extensions.Intern
     status: string
     stripeCustomerId: string | null
     stripeSubscriptionId: string | null
-    stripeSessionId: string | null
-    screenshotUrl: string | null
-    transactionNote: string | null
-    reviewedByEmail: string | null
-    reviewedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["subscription"]>
@@ -995,11 +860,6 @@ export interface SubscriptionFieldRefs {
   readonly status: Prisma.FieldRef<"Subscription", 'String'>
   readonly stripeCustomerId: Prisma.FieldRef<"Subscription", 'String'>
   readonly stripeSubscriptionId: Prisma.FieldRef<"Subscription", 'String'>
-  readonly stripeSessionId: Prisma.FieldRef<"Subscription", 'String'>
-  readonly screenshotUrl: Prisma.FieldRef<"Subscription", 'String'>
-  readonly transactionNote: Prisma.FieldRef<"Subscription", 'String'>
-  readonly reviewedByEmail: Prisma.FieldRef<"Subscription", 'String'>
-  readonly reviewedAt: Prisma.FieldRef<"Subscription", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Subscription", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Subscription", 'DateTime'>
 }

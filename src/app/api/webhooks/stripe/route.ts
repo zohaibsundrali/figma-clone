@@ -36,6 +36,29 @@ export async function POST(request: Request) {
   }
 
   switch (event.type) {
+    // Checkout was completed and paid — activate the selected plan immediately.
+    // This is the sole activation path now (no manual review step).
+    case "checkout.session.completed": {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const userId = session.metadata?.userId;
+      const plan = session.metadata?.plan;
+      if (userId && (plan === "professional" || plan === "organization")) {
+        const stripeCustomerId =
+          typeof session.customer === "string" ? session.customer : session.customer?.id ?? null;
+        const stripeSubscriptionId =
+          typeof session.subscription === "string" ? session.subscription : session.subscription?.id ?? null;
+
+        await prisma.subscription
+          .upsert({
+            where: { userId },
+            create: { userId, plan, status: "active", stripeCustomerId, stripeSubscriptionId },
+            update: { plan, status: "active", stripeCustomerId, stripeSubscriptionId },
+          })
+          .catch((err) => console.error("[stripe webhook] failed to activate subscription", err));
+      }
+      break;
+    }
+
     // A subscription's payment failed to renew — drop the user back to Free
     // until they fix their payment method (matches "miss a month, lose the plan").
     case "invoice.payment_failed": {

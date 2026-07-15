@@ -19,9 +19,6 @@ export async function GET() {
     planName: limit.plan.name,
     projectLimit: Number.isFinite(limit.plan.projectLimit) ? limit.plan.projectLimit : null,
     projectsUsed: limit.used,
-    // Raw pending/rejected/canceled state, so the UI can show "Awaiting review"
-    // even though the *effective* plan above is still Free.
-    requestedPlan: sub?.status === "pending_review" ? sub.plan : null,
     status: sub?.status ?? "active",
   });
 }

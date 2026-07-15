@@ -68,18 +68,20 @@ export function SidebarUserMenu() {
     setIsSigningOut(true);
     closeMenu();
     try {
-      // Clear the Clerk session. We pass a no-op redirectUrl callback target so
-      // Clerk doesn't also fire its own navigation and race with ours.
-      await signOut();
-    } finally {
-      // Hard navigation (not router.push): forces the server to re-evaluate auth
-      // with the now-cleared cookies, so we never bounce off a stale RSC render
-      // that still thinks we're signed in.
+      // Pass a callback so Clerk clears the session and then hands navigation
+      // back to us — otherwise it ALSO redirects to afterSignOutUrl on its own,
+      // and we'd end up navigating to /sign-in twice (once soft via Clerk, once
+      // as the hard reload below). That double navigation is what made sign-out
+      // feel slow.
       //
-      // Land on /sign-in, not "/": the marketing homepage is a much heavier
-      // page (pricing/features sections) and was making sign-out feel slow
-      // even though the actual session-clear step is fast.
-      window.location.href = "/sign-in";
+      // window.location.replace (a hard navigation) forces the server to
+      // re-evaluate auth with the now-cleared cookies, so we never bounce off a
+      // stale RSC render that still thinks we're signed in; replace() rather than
+      // href so the now-inaccessible dashboard is dropped from history.
+      await signOut(() => window.location.replace("/sign-in"));
+    } catch {
+      // Sign-out failed (e.g. network) — let the user try again.
+      setIsSigningOut(false);
     }
   };
 
